@@ -75,6 +75,23 @@
 
 ---
 
+
+## 🖥️ Screenshots
+
+<div align="center">
+
+![screenshot-1](assets/screenshots/screenshot-1.png)
+
+![screenshot-2](assets/screenshots/screenshot-2.png)
+
+![screenshot-3](assets/screenshots/screenshot-3.png)
+
+![screenshot-4](assets/screenshots/screenshot-4.png)
+
+</div>
+
+---
+
 ## 📦 Field Types
 
 ### Text Fields
