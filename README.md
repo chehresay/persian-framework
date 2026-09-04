@@ -80,13 +80,13 @@
 
 <div align="center">
 
-![screenshot-1](assets/screenshots/screenshot-1.png)
+![screenshot-1](assets/screenshots/screenshot-1.webp)
 
-![screenshot-2](assets/screenshots/screenshot-2.png)
+![screenshot-2](assets/screenshots/screenshot-2.webp)
 
-![screenshot-3](assets/screenshots/screenshot-3.png)
+![screenshot-3](assets/screenshots/screenshot-3.webp)
 
-![screenshot-4](assets/screenshots/screenshot-4.png)
+![screenshot-4](assets/screenshots/screenshot-4.webp)
 
 </div>
 
