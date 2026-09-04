@@ -1,0 +1,49 @@
+# Plugin specific
+/vendor/
+/node_modules/
+/composer.lock
+/package-lock.json
+/yarn.lock
+.DS_Store
+Thumbs.db
+*.log
+*.sql
+*.sqlite
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# IDE files
+/.idea/
+/.vscode/
+*.sublime-*
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+*.tmp
+
+# Build files
+/dist/
+/build/
+/temp/
+/tmp/
+
+# Backup files
+*.bak
+*.backup
+*-backup.sql
+
+# WordPress debug files
+debug.log
+error_log
+php_error.log
