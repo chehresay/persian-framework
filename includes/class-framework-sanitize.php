@@ -85,48 +85,45 @@ class PersianFramework_Sanitize {
     public function validate($value, $field, $type) {
         $errors = array();
 
-        // Required validation
         if (isset($field['required']) && $field['required']) {
             if (empty($value) || (is_array($value) && empty(array_filter($value)))) {
                 $errors[] = sprintf(
-                    __('Field "%s" is required.', 'persian-framework'),
+                /* translators: %s: Field title or ID */
+                    esc_html__('Field "%s" is required.', 'persian-framework'),
                     $field['title'] ?? $field['id']
                 );
             }
         }
 
-        // Email validation
         if ($type === 'email' && !empty($value) && !is_email($value)) {
-            $errors[] = __('Invalid email address.', 'persian-framework');
+            $errors[] = esc_html__('Invalid email address.', 'persian-framework');
         }
 
-        // URL validation
         if ($type === 'url' && !empty($value) && !filter_var($value, FILTER_VALIDATE_URL)) {
-            $errors[] = __('Invalid URL.', 'persian-framework');
+            $errors[] = esc_html__('Invalid URL.', 'persian-framework');
         }
 
-        // Number validation
         if ($type === 'number' && !empty($value) && !is_numeric($value)) {
-            $errors[] = __('Value must be a number.', 'persian-framework');
+            $errors[] = esc_html__('Value must be a number.', 'persian-framework');
         }
 
-        // Min/Max validation
         if ($type === 'number') {
             if (isset($field['min']) && $value < $field['min']) {
                 $errors[] = sprintf(
-                    __('Value must be at least %d.', 'persian-framework'),
+                /* translators: %d: Minimum value */
+                    esc_html__('Value must be at least %d.', 'persian-framework'),
                     $field['min']
                 );
             }
             if (isset($field['max']) && $value > $field['max']) {
                 $errors[] = sprintf(
-                    __('Value cannot exceed %d.', 'persian-framework'),
+                /* translators: %d: Maximum value */
+                    esc_html__('Value cannot exceed %d.', 'persian-framework'),
                     $field['max']
                 );
             }
         }
 
-        // Custom validation
         if (isset($field['validate_callback']) && is_callable($field['validate_callback'])) {
             $custom_error = call_user_func($field['validate_callback'], $value, $field);
             if (is_wp_error($custom_error)) {

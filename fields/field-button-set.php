@@ -26,7 +26,6 @@ class PersianFramework_Field_ButtonSet {
         $value = $this->value !== null ? $this->value : (isset($this->field['default']) ? $this->field['default'] : '');
         $options = isset($this->field['options']) ? $this->field['options'] : array();
 
-        // Multi-select support
         $multi = isset($this->field['multi']) && $this->field['multi'];
         $input_type = $multi ? 'checkbox' : 'radio';
         $name_suffix = $multi ? '[]' : '';
@@ -48,7 +47,7 @@ class PersianFramework_Field_ButtonSet {
                         <input type="<?php echo esc_attr($input_type); ?>"
                                name="<?php echo esc_attr($name . $name_suffix); ?>"
                                value="<?php echo esc_attr($key); ?>"
-                            <?php echo $this->is_selected($value, $key, $multi) ? 'checked' : ''; ?> />
+                                <?php echo $this->is_selected($value, $key, $multi) ? 'checked' : ''; ?> />
                         <span class="pf-button-set-label">
                             <?php if (isset($this->field['icons']) && isset($this->field['icons'][$key])): ?>
                                 <span class="dashicons <?php echo esc_attr($this->field['icons'][$key]); ?>"></span>
@@ -77,9 +76,9 @@ class PersianFramework_Field_ButtonSet {
     }
 
     private function enqueue_scripts() {
-        static $enqueued = false;
+        static $pf_buttonset_enqueued = false;
 
-        if (!$enqueued) {
+        if (!$pf_buttonset_enqueued) {
             ?>
             <style>
                 .pf-button-set-container {
@@ -149,7 +148,6 @@ class PersianFramework_Field_ButtonSet {
                     color: white;
                 }
 
-                /* Size variants */
                 .pf-button-set-item.small .pf-button-set-label {
                     padding: 4px 12px;
                     font-size: 12px;
@@ -178,18 +176,15 @@ class PersianFramework_Field_ButtonSet {
                 (function($) {
                     'use strict';
 
-                    // Handle button set selection
                     $(document).on('change', '.pf-button-set-item input', function() {
                         var $item = $(this).closest('.pf-button-set-item');
                         var $container = $item.closest('.pf-button-set-container');
                         var isMulti = $item.closest('.pf-field-button-set').hasClass('pf-multi');
 
                         if (!isMulti) {
-                            // Radio mode - deselect others
                             $container.find('.pf-button-set-item').removeClass('selected');
                             $item.addClass('selected');
                         } else {
-                            // Checkbox mode - toggle class
                             $item.toggleClass('selected');
                         }
 
@@ -200,7 +195,6 @@ class PersianFramework_Field_ButtonSet {
                         ]);
                     });
 
-                    // Initialize selected state
                     $(document).ready(function() {
                         $('.pf-button-set-item input:checked').each(function() {
                             $(this).closest('.pf-button-set-item').addClass('selected');
@@ -210,7 +204,29 @@ class PersianFramework_Field_ButtonSet {
                 })(jQuery);
             </script>
             <?php
-            $enqueued = true;
+            $pf_buttonset_enqueued = true;
         }
+    }
+
+    public function sanitize($value) {
+        if (!isset($this->field['options'])) {
+            return $value;
+        }
+
+        $options = array_keys($this->field['options']);
+        $multi = isset($this->field['multi']) && $this->field['multi'];
+
+        if ($multi) {
+            $values = (array) $value;
+            $sanitized = array();
+            foreach ($values as $val) {
+                if (in_array($val, $options)) {
+                    $sanitized[] = $val;
+                }
+            }
+            return $sanitized;
+        }
+
+        return in_array($value, $options) ? $value : '';
     }
 }

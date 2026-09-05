@@ -34,14 +34,11 @@ class PersianFramework_Field_SelectImage {
         $desc = isset($this->field['desc']) ? $this->field['desc'] : '';
         $required = isset($this->field['required']) && $this->field['required'] ? 'required' : '';
 
-        // Build image paths
         $image_urls = array();
         foreach ($options as $key => $label) {
-            // If images_dir is set, use it to build the image URL
             if (!empty($images_dir)) {
                 $image_url = trailingslashit($images_dir) . $key . '.png';
             } else {
-                // Fallback: use the key as the image name
                 $image_url = PERSIAN_FRAMEWORK_ASSETS . 'images/' . $key . '.png';
             }
             $image_urls[$key] = $image_url;
@@ -71,8 +68,8 @@ class PersianFramework_Field_SelectImage {
                         <input type="radio"
                                name="<?php echo esc_attr($name); ?>"
                                value="<?php echo esc_attr($key); ?>"
-                            <?php checked($value, $key); ?>
-                            <?php echo $required; ?> />
+                                <?php checked($value, $key); ?>
+                                <?php echo wp_kses_data($required); ?> />
 
                         <div class="pf-select-image-preview" style="width:<?php echo intval($image_width); ?>px; height:<?php echo intval($image_height); ?>px;">
                             <?php if ($image_url): ?>
@@ -100,14 +97,11 @@ class PersianFramework_Field_SelectImage {
     }
 
     private function enqueue_scripts() {
-        static $enqueued = false;
+        static $pf_selectimage_enqueued = false;
 
-        if (!$enqueued) {
+        if (!$pf_selectimage_enqueued) {
             ?>
             <style>
-                /* ============================================================
-                   Select Image Field
-                   ============================================================ */
                 .pf-select-image-container {
                     display: grid;
                     grid-template-columns: repeat(var(--pf-cols, 4), 1fr);
@@ -122,7 +116,7 @@ class PersianFramework_Field_SelectImage {
                     gap: 6px;
                     cursor: pointer;
                     padding: 8px;
-                    border: 3px solid transparent;
+                    border: 1px solid transparent;
                     border-radius: 12px;
                     background: #fafbfc;
                     transition: all 0.25s ease;
@@ -167,7 +161,7 @@ class PersianFramework_Field_SelectImage {
                     border-radius: 8px;
                     overflow: hidden;
                     background: white;
-                    border: 2px solid #e8edf4;
+                    border: 1px solid #e8edf4;
                     transition: all 0.25s ease;
                     flex-shrink: 0;
                 }
@@ -244,7 +238,6 @@ class PersianFramework_Field_SelectImage {
                     color: #818cf8;
                 }
 
-                /* Responsive */
                 @media (max-width: 1024px) {
                     .pf-select-image-container {
                         --pf-cols: 3;
@@ -280,35 +273,23 @@ class PersianFramework_Field_SelectImage {
                 (function($) {
                     'use strict';
 
-                    // Handle image selection
                     $(document).on('change', '.pf-select-image-item input[type="radio"]', function() {
                         var $item = $(this).closest('.pf-select-image-item');
                         var $container = $item.closest('.pf-select-image-container');
 
-                        // Remove selected class from all items in this container
                         $container.find('.pf-select-image-item').removeClass('selected');
-
-                        // Add selected class to the clicked item
                         $item.addClass('selected');
 
-                        // Trigger change event
                         $container.trigger('pf-select-image-change', [$item.data('value')]);
                         $(document).trigger('pf-select-image-updated', [$item.data('value')]);
                     });
 
-                    // Initialize selected state
                     $(document).ready(function() {
                         $('.pf-select-image-container').each(function() {
                             var $container = $(this);
                             var $checked = $container.find('input[type="radio"]:checked');
                             if ($checked.length) {
                                 $checked.closest('.pf-select-image-item').addClass('selected');
-                            } else {
-                                // If no checked item, select the first one if default is set
-                                var $first = $container.find('.pf-select-image-item').first();
-                                if ($first.length) {
-                                    // Don't auto-select, let the default value handle it
-                                }
                             }
                         });
                     });
@@ -316,7 +297,18 @@ class PersianFramework_Field_SelectImage {
                 })(jQuery);
             </script>
             <?php
-            $enqueued = true;
+            $pf_selectimage_enqueued = true;
         }
+    }
+
+    public function sanitize($value) {
+        $options = isset($this->field['options']) ? array_keys($this->field['options']) : array();
+        $value = wp_unslash($value);
+
+        if (in_array($value, $options)) {
+            return sanitize_text_field($value);
+        }
+
+        return isset($this->field['default']) ? $this->field['default'] : '';
     }
 }

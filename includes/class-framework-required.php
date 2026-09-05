@@ -26,16 +26,15 @@ class PersianFramework_Required {
         $operator = $required[1];
         $value = $required[2];
 
-        // Sanitize
         $field_id = esc_attr($field_id);
         $operator = esc_attr($operator);
         $value = esc_attr($value);
 
         return sprintf(
-                ' data-required="%s" data-operator="%s" data-required-value="%s"',
-                $field_id,
-                $operator,
-                $value
+            ' data-required="%s" data-operator="%s" data-required-value="%s"',
+            $field_id,
+            $operator,
+            $value
         );
     }
 
@@ -95,24 +94,22 @@ class PersianFramework_Required {
      * Enqueue required field JavaScript
      */
     public static function enqueue_scripts() {
-        static $enqueued = false;
+        static $pf_required_enqueued = false;
 
-        if (!$enqueued) {
-            // ✅ ثبت اسکریپت با وابستگی به jQuery
+        if (!$pf_required_enqueued) {
             add_action('admin_enqueue_scripts', function() {
                 wp_enqueue_script(
-                        'pf-required-fields',
-                        false, // بدون فایل خارجی
-                        array('jquery'), // ✅ وابستگی به jQuery
-                        PERSIAN_FRAMEWORK_VERSION,
-                        true // در فوتر بارگذاری شود
+                    'pf-required-fields',
+                    false,
+                    array('jquery'),
+                    PERSIAN_FRAMEWORK_VERSION,
+                    true
                 );
 
-                // ✅ اضافه کردن اسکریپت inline با jQuery
                 wp_add_inline_script('jquery', self::get_script());
             });
 
-            $enqueued = true;
+            $pf_required_enqueued = true;
         }
     }
 
@@ -126,9 +123,6 @@ class PersianFramework_Required {
             (function($) {
                 "use strict";
 
-                /**
-                 * Check if a field should be visible
-                 */
                 function checkRequired($field) {
                     var required = $field.data("required");
                     if (!required) {
@@ -138,18 +132,14 @@ class PersianFramework_Required {
                     var operator = $field.data("operator") || "=";
                     var requiredValue = $field.data("required-value");
 
-                    // Find the source field
                     var $sourceField = $("#" + required);
                     if (!$sourceField.length) {
                         return true;
                     }
 
                     var currentValue = getFieldValue($sourceField);
-
-                    // Check condition
                     var isVisible = compareValues(currentValue, operator, requiredValue);
 
-                    // Show/hide the field
                     if (isVisible) {
                         $field.show();
                     } else {
@@ -159,9 +149,6 @@ class PersianFramework_Required {
                     return isVisible;
                 }
 
-                /**
-                 * Get field value based on field type
-                 */
                 function getFieldValue($field) {
                     var type = $field.attr("type") || $field.prop("tagName").toLowerCase();
 
@@ -180,11 +167,7 @@ class PersianFramework_Required {
                     return $field.val();
                 }
 
-                /**
-                 * Compare two values with operator
-                 */
                 function compareValues(current, operator, required) {
-                    // Convert to string for comparison if needed
                     if (operator === "=" || operator === "==") {
                         return current == required;
                     }
@@ -226,9 +209,6 @@ class PersianFramework_Required {
                     return true;
                 }
 
-                /**
-                 * Initialize all required fields
-                 */
                 function initRequiredFields() {
                     $(".pf-field-wrapper[data-required]").each(function() {
                         var $field = $(this);
@@ -236,9 +216,6 @@ class PersianFramework_Required {
                     });
                 }
 
-                /**
-                 * Watch for changes on source fields
-                 */
                 function watchRequiredFields() {
                     $(".pf-field-wrapper[data-required]").each(function() {
                         var required = $(this).data("required");
@@ -255,12 +232,10 @@ class PersianFramework_Required {
                     });
                 }
 
-                // Initialize on document ready
                 $(document).ready(function() {
                     initRequiredFields();
                     watchRequiredFields();
 
-                    // Re-initialize after AJAX
                     $(document).on("pf-field-rendered", function() {
                         initRequiredFields();
                         watchRequiredFields();

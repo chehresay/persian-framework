@@ -24,83 +24,76 @@ class PersianFramework_Field_Typography {
         $id = isset($this->field['id']) ? $this->field['id'] : '';
         $name = isset($this->field['name']) ? $this->field['name'] : $id;
 
-        // Default values
         $defaults = array(
-            'font-family' => '',
-            'font-size' => '',
-            'font-weight' => '400',
-            'font-style' => 'normal',
-            'line-height' => '',
-            'letter-spacing' => '',
-            'text-align' => '',
-            'text-transform' => 'none',
-            'color' => '#111827',
-            'unit' => 'px'
+                'font-family' => '',
+                'font-size' => '',
+                'font-weight' => '400',
+                'font-style' => 'normal',
+                'line-height' => '',
+                'letter-spacing' => '',
+                'text-align' => '',
+                'text-transform' => 'none',
+                'color' => '#111827',
+                'unit' => 'px'
         );
 
         $value = wp_parse_args(
-            is_array($this->value) ? $this->value : array(),
-            $defaults
+                is_array($this->value) ? $this->value : array(),
+                $defaults
         );
 
-        // Font options
         $fonts = isset($this->field['fonts']) ? $this->field['fonts'] : array(
-            'inherit' => __('Inherit', 'persian-framework'),
-            'Arial, sans-serif' => 'Arial',
-            'Helvetica, sans-serif' => 'Helvetica',
-            'Tahoma, sans-serif' => 'Tahoma',
-            'Verdana, sans-serif' => 'Verdana',
-            'Georgia, serif' => 'Georgia',
-            'Times New Roman, serif' => 'Times New Roman',
-            'Courier New, monospace' => 'Courier New',
-            'Vazirmatn, sans-serif' => 'Vazirmatn',
-            'IRANSans, sans-serif' => 'IRANSans',
-            'Yekan, sans-serif' => 'Yekan',
+                'inherit' => esc_html__('Inherit', 'persian-framework'),
+                'Arial, sans-serif' => 'Arial',
+                'Helvetica, sans-serif' => 'Helvetica',
+                'Tahoma, sans-serif' => 'Tahoma',
+                'Verdana, sans-serif' => 'Verdana',
+                'Georgia, serif' => 'Georgia',
+                'Times New Roman, serif' => 'Times New Roman',
+                'Courier New, monospace' => 'Courier New',
+                'Vazirmatn, sans-serif' => 'Vazirmatn',
+                'IRANSans, sans-serif' => 'IRANSans',
+                'Yekan, sans-serif' => 'Yekan',
         );
 
-        // Weight options
         $weights = array(
-            '100' => '100 ' . __('Thin', 'persian-framework'),
-            '200' => '200 ' . __('Extra Light', 'persian-framework'),
-            '300' => '300 ' . __('Light', 'persian-framework'),
-            '400' => '400 ' . __('Normal', 'persian-framework'),
-            '500' => '500 ' . __('Medium', 'persian-framework'),
-            '600' => '600 ' . __('Semi Bold', 'persian-framework'),
-            '700' => '700 ' . __('Bold', 'persian-framework'),
-            '800' => '800 ' . __('Extra Bold', 'persian-framework'),
-            '900' => '900 ' . __('Black', 'persian-framework'),
+                '100' => '100 ' . esc_html__('Thin', 'persian-framework'),
+                '200' => '200 ' . esc_html__('Extra Light', 'persian-framework'),
+                '300' => '300 ' . esc_html__('Light', 'persian-framework'),
+                '400' => '400 ' . esc_html__('Normal', 'persian-framework'),
+                '500' => '500 ' . esc_html__('Medium', 'persian-framework'),
+                '600' => '600 ' . esc_html__('Semi Bold', 'persian-framework'),
+                '700' => '700 ' . esc_html__('Bold', 'persian-framework'),
+                '800' => '800 ' . esc_html__('Extra Bold', 'persian-framework'),
+                '900' => '900 ' . esc_html__('Black', 'persian-framework'),
         );
 
-        // Style options
         $styles = array(
-            'normal' => __('Normal', 'persian-framework'),
-            'italic' => __('Italic', 'persian-framework'),
-            'oblique' => __('Oblique', 'persian-framework'),
+                'normal' => esc_html__('Normal', 'persian-framework'),
+                'italic' => esc_html__('Italic', 'persian-framework'),
+                'oblique' => esc_html__('Oblique', 'persian-framework'),
         );
 
-        // Text align options
         $aligns = array(
-            '' => __('Default', 'persian-framework'),
-            'start' => __('Start', 'persian-framework'),
-            'center' => __('Center', 'persian-framework'),
-            'end' => __('End', 'persian-framework'),
-            'justify' => __('Justify', 'persian-framework'),
+                '' => esc_html__('Default', 'persian-framework'),
+                'start' => esc_html__('Start', 'persian-framework'),
+                'center' => esc_html__('Center', 'persian-framework'),
+                'end' => esc_html__('End', 'persian-framework'),
+                'justify' => esc_html__('Justify', 'persian-framework'),
         );
 
-        // Transform options
         $transforms = array(
-            'none' => __('None', 'persian-framework'),
-            'uppercase' => __('Uppercase', 'persian-framework'),
-            'lowercase' => __('Lowercase', 'persian-framework'),
-            'capitalize' => __('Capitalize', 'persian-framework'),
+                'none' => esc_html__('None', 'persian-framework'),
+                'uppercase' => esc_html__('Uppercase', 'persian-framework'),
+                'lowercase' => esc_html__('Lowercase', 'persian-framework'),
+                'capitalize' => esc_html__('Capitalize', 'persian-framework'),
         );
 
-        // Units
         $units = array('px', 'em', 'rem', '%', 'pt', 'vw', 'vh');
 
         $preview_text = isset($this->field['preview']) && is_string($this->field['preview'])
-            ? $this->field['preview']
-            : __('Typography preview', 'persian-framework');
+                ? $this->field['preview']
+                : esc_html__('Typography preview', 'persian-framework');
 
         ?>
         <div class="pf-field-wrapper pf-field-typography">
@@ -117,7 +110,7 @@ class PersianFramework_Field_Typography {
                 <!-- Font Family -->
                 <div class="pf-typography-row pf-typography-font-family">
                     <label class="pf-typography-label">
-                        <span class="pf-typography-label-text"><?php _e('Font Family', 'persian-framework'); ?></span>
+                        <span class="pf-typography-label-text"><?php esc_html_e('Font Family', 'persian-framework'); ?></span>
                         <select name="<?php echo esc_attr($name); ?>[font-family]" class="pf-typography-select">
                             <?php foreach ($fonts as $key => $label): ?>
                                 <option value="<?php echo esc_attr($key); ?>" <?php selected($value['font-family'], $key); ?>>
@@ -131,7 +124,7 @@ class PersianFramework_Field_Typography {
                 <!-- Font Size & Line Height & Letter Spacing -->
                 <div class="pf-typography-row pf-typography-size-row">
                     <label class="pf-typography-label">
-                        <span class="pf-typography-label-text"><?php _e('Font Size', 'persian-framework'); ?></span>
+                        <span class="pf-typography-label-text"><?php esc_html_e('Font Size', 'persian-framework'); ?></span>
                         <input type="number"
                                step="any"
                                min="0"
@@ -141,7 +134,7 @@ class PersianFramework_Field_Typography {
                     </label>
 
                     <label class="pf-typography-label">
-                        <span class="pf-typography-label-text"><?php _e('Line Height', 'persian-framework'); ?></span>
+                        <span class="pf-typography-label-text"><?php esc_html_e('Line Height', 'persian-framework'); ?></span>
                         <input type="number"
                                step="any"
                                min="0"
@@ -151,7 +144,7 @@ class PersianFramework_Field_Typography {
                     </label>
 
                     <label class="pf-typography-label">
-                        <span class="pf-typography-label-text"><?php _e('Letter Spacing', 'persian-framework'); ?></span>
+                        <span class="pf-typography-label-text"><?php esc_html_e('Letter Spacing', 'persian-framework'); ?></span>
                         <input type="number"
                                step="any"
                                name="<?php echo esc_attr($name); ?>[letter-spacing]"
@@ -163,7 +156,7 @@ class PersianFramework_Field_Typography {
                 <!-- Weight & Style -->
                 <div class="pf-typography-row pf-typography-style-row">
                     <label class="pf-typography-label">
-                        <span class="pf-typography-label-text"><?php _e('Weight', 'persian-framework'); ?></span>
+                        <span class="pf-typography-label-text"><?php esc_html_e('Weight', 'persian-framework'); ?></span>
                         <select name="<?php echo esc_attr($name); ?>[font-weight]" class="pf-typography-select">
                             <?php foreach ($weights as $key => $label): ?>
                                 <option value="<?php echo esc_attr($key); ?>" <?php selected($value['font-weight'], $key); ?>>
@@ -174,7 +167,7 @@ class PersianFramework_Field_Typography {
                     </label>
 
                     <label class="pf-typography-label">
-                        <span class="pf-typography-label-text"><?php _e('Style', 'persian-framework'); ?></span>
+                        <span class="pf-typography-label-text"><?php esc_html_e('Style', 'persian-framework'); ?></span>
                         <select name="<?php echo esc_attr($name); ?>[font-style]" class="pf-typography-select">
                             <?php foreach ($styles as $key => $label): ?>
                                 <option value="<?php echo esc_attr($key); ?>" <?php selected($value['font-style'], $key); ?>>
@@ -188,7 +181,7 @@ class PersianFramework_Field_Typography {
                 <!-- Text Align & Transform -->
                 <div class="pf-typography-row pf-typography-align-row">
                     <label class="pf-typography-label">
-                        <span class="pf-typography-label-text"><?php _e('Text Align', 'persian-framework'); ?></span>
+                        <span class="pf-typography-label-text"><?php esc_html_e('Text Align', 'persian-framework'); ?></span>
                         <select name="<?php echo esc_attr($name); ?>[text-align]" class="pf-typography-select">
                             <?php foreach ($aligns as $key => $label): ?>
                                 <option value="<?php echo esc_attr($key); ?>" <?php selected($value['text-align'], $key); ?>>
@@ -199,7 +192,7 @@ class PersianFramework_Field_Typography {
                     </label>
 
                     <label class="pf-typography-label">
-                        <span class="pf-typography-label-text"><?php _e('Text Transform', 'persian-framework'); ?></span>
+                        <span class="pf-typography-label-text"><?php esc_html_e('Text Transform', 'persian-framework'); ?></span>
                         <select name="<?php echo esc_attr($name); ?>[text-transform]" class="pf-typography-select">
                             <?php foreach ($transforms as $key => $label): ?>
                                 <option value="<?php echo esc_attr($key); ?>" <?php selected($value['text-transform'], $key); ?>>
@@ -213,7 +206,7 @@ class PersianFramework_Field_Typography {
                 <!-- Color & Unit -->
                 <div class="pf-typography-row pf-typography-color-row">
                     <label class="pf-typography-label pf-typography-color">
-                        <span class="pf-typography-label-text"><?php _e('Color', 'persian-framework'); ?></span>
+                        <span class="pf-typography-label-text"><?php esc_html_e('Color', 'persian-framework'); ?></span>
                         <input type="color"
                                name="<?php echo esc_attr($name); ?>[color]"
                                value="<?php echo esc_attr($value['color']); ?>"
@@ -225,7 +218,7 @@ class PersianFramework_Field_Typography {
                     </label>
 
                     <label class="pf-typography-label">
-                        <span class="pf-typography-label-text"><?php _e('Unit', 'persian-framework'); ?></span>
+                        <span class="pf-typography-label-text"><?php esc_html_e('Unit', 'persian-framework'); ?></span>
                         <select name="<?php echo esc_attr($name); ?>[unit]" class="pf-typography-select">
                             <?php foreach ($units as $unit): ?>
                                 <option value="<?php echo esc_attr($unit); ?>" <?php selected($value['unit'], $unit); ?>>
@@ -242,25 +235,25 @@ class PersianFramework_Field_Typography {
                         <div class="pf-typography-preview"
                              contenteditable="true"
                              style="
-                                 font-family: <?php echo esc_attr($value['font-family']); ?>;
-                                 font-size: <?php echo esc_attr($value['font-size'] . $value['unit']); ?>;
-                                 font-weight: <?php echo esc_attr($value['font-weight']); ?>;
-                                 font-style: <?php echo esc_attr($value['font-style']); ?>;
-                                 line-height: <?php echo esc_attr($value['line-height'] . $value['unit']); ?>;
-                                 letter-spacing: <?php echo esc_attr($value['letter-spacing'] . $value['unit']); ?>;
-                                 text-align: <?php echo esc_attr($value['text-align']); ?>;
-                                 text-transform: <?php echo esc_attr($value['text-transform']); ?>;
-                                 color: <?php echo esc_attr($value['color']); ?>;
-                                 padding: 16px;
-                                 border-radius: 8px;
-                                 border: 2px dashed #e8edf4;
-                                 background: white;
-                                 ">
+                                     font-family: <?php echo esc_attr($value['font-family']); ?>;
+                                     font-size: <?php echo esc_attr($value['font-size'] . $value['unit']); ?>;
+                                     font-weight: <?php echo esc_attr($value['font-weight']); ?>;
+                                     font-style: <?php echo esc_attr($value['font-style']); ?>;
+                                     line-height: <?php echo esc_attr($value['line-height'] . $value['unit']); ?>;
+                                     letter-spacing: <?php echo esc_attr($value['letter-spacing'] . $value['unit']); ?>;
+                                     text-align: <?php echo esc_attr($value['text-align']); ?>;
+                                     text-transform: <?php echo esc_attr($value['text-transform']); ?>;
+                                     color: <?php echo esc_attr($value['color']); ?>;
+                                     padding: 16px;
+                                     border-radius: 8px;
+                                     border: 2px dashed #e8edf4;
+                                     background: white;
+                                     ">
                             <?php echo esc_html($preview_text); ?>
                         </div>
                         <p class="pf-typography-preview-hint">
                             <span class="dashicons dashicons-edit"></span>
-                            <?php _e('Click to edit preview text', 'persian-framework'); ?>
+                            <?php esc_html_e('Click to edit preview text', 'persian-framework'); ?>
                         </p>
                     </div>
                 <?php endif; ?>
@@ -276,9 +269,9 @@ class PersianFramework_Field_Typography {
     }
 
     private function enqueue_scripts() {
-        static $enqueued = false;
+        static $pf_typography_enqueued = false;
 
-        if (!$enqueued) {
+        if (!$pf_typography_enqueued) {
             ?>
             <style>
                 .pf-typography-container {
@@ -447,7 +440,6 @@ class PersianFramework_Field_Typography {
                 (function($) {
                     'use strict';
 
-                    // Sync color picker with hex input
                     $(document).on('input', '.pf-typography-color-picker', function() {
                         var $wrapper = $(this).closest('.pf-typography-color');
                         var $hex = $wrapper.find('.pf-typography-color-hex');
@@ -465,7 +457,6 @@ class PersianFramework_Field_Typography {
                         }
                     });
 
-                    // Live preview update on any change
                     $(document).on('change input', '.pf-typography-container select, .pf-typography-container input', function() {
                         updateTypographyPreview($(this));
                     });
@@ -500,7 +491,6 @@ class PersianFramework_Field_Typography {
                         });
                     }
 
-                    // Initial preview update
                     $(document).ready(function() {
                         $('.pf-typography-container').each(function() {
                             var $container = $(this);
@@ -514,7 +504,65 @@ class PersianFramework_Field_Typography {
                 })(jQuery);
             </script>
             <?php
-            $enqueued = true;
+            $pf_typography_enqueued = true;
         }
+    }
+
+    public function sanitize($value) {
+        if (!is_array($value)) {
+            return array();
+        }
+
+        $sanitized = array();
+
+        if (isset($value['font-family'])) {
+            $sanitized['font-family'] = sanitize_text_field($value['font-family']);
+        }
+
+        if (isset($value['font-size'])) {
+            $sanitized['font-size'] = sanitize_text_field($value['font-size']);
+        }
+
+        if (isset($value['font-weight'])) {
+            $allowed_weights = array('100', '200', '300', '400', '500', '600', '700', '800', '900');
+            $sanitized['font-weight'] = in_array($value['font-weight'], $allowed_weights) ? $value['font-weight'] : '400';
+        }
+
+        if (isset($value['font-style'])) {
+            $allowed_styles = array('normal', 'italic', 'oblique');
+            $sanitized['font-style'] = in_array($value['font-style'], $allowed_styles) ? $value['font-style'] : 'normal';
+        }
+
+        if (isset($value['line-height'])) {
+            $sanitized['line-height'] = sanitize_text_field($value['line-height']);
+        }
+
+        if (isset($value['letter-spacing'])) {
+            $sanitized['letter-spacing'] = sanitize_text_field($value['letter-spacing']);
+        }
+
+        if (isset($value['text-align'])) {
+            $allowed_aligns = array('', 'start', 'center', 'end', 'justify');
+            $sanitized['text-align'] = in_array($value['text-align'], $allowed_aligns) ? $value['text-align'] : '';
+        }
+
+        if (isset($value['text-transform'])) {
+            $allowed_transforms = array('none', 'uppercase', 'lowercase', 'capitalize');
+            $sanitized['text-transform'] = in_array($value['text-transform'], $allowed_transforms) ? $value['text-transform'] : 'none';
+        }
+
+        if (isset($value['color'])) {
+            $sanitized['color'] = sanitize_hex_color($value['color']);
+            if (empty($sanitized['color'])) {
+                $sanitized['color'] = '#111827';
+            }
+        }
+
+        if (isset($value['unit'])) {
+            $allowed_units = array('px', 'em', 'rem', '%', 'pt', 'vw', 'vh');
+            $sanitized['unit'] = in_array($value['unit'], $allowed_units) ? $value['unit'] : 'px';
+        }
+
+        return $sanitized;
     }
 }

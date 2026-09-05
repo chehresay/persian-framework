@@ -27,7 +27,6 @@ class PersianFramework_Field_Checkbox {
         $inline = isset($this->field['inline']) && $this->field['inline'] ? 'pf-inline' : '';
         $single = isset($this->field['single']) && $this->field['single'];
 
-        // For single checkbox (boolean)
         if ($single) {
             $value = (bool) $this->value;
             ?>
@@ -42,7 +41,6 @@ class PersianFramework_Field_Checkbox {
                 <?php endif; ?>
 
                 <div class="pf-checkbox-single-wrapper">
-                    <!-- Hidden field for "off" state - sends 0 when unchecked -->
                     <input type="hidden"
                            name="<?php echo esc_attr($name); ?>"
                            value="0" />
@@ -53,7 +51,7 @@ class PersianFramework_Field_Checkbox {
                                value="1"
                                 <?php checked($value, true); ?> />
                         <span class="pf-checkbox-label">
-                            <?php echo isset($this->field['label']) ? esc_html($this->field['label']) : __('Enable', 'persian-framework'); ?>
+                            <?php echo isset($this->field['label']) ? esc_html($this->field['label']) : esc_html__('Enable', 'persian-framework'); ?>
                         </span>
                     </label>
                 </div>
@@ -66,7 +64,6 @@ class PersianFramework_Field_Checkbox {
             return;
         }
 
-        // Multiple checkboxes
         ?>
         <div class="pf-field-wrapper pf-field-checkbox">
             <?php if (isset($this->field['title'])): ?>
@@ -84,7 +81,7 @@ class PersianFramework_Field_Checkbox {
                         <input type="checkbox"
                                name="<?php echo esc_attr($name); ?>[]"
                                value="<?php echo esc_attr($key); ?>"
-                                <?php checked(in_array($key, $value)); ?> />
+                                <?php checked(in_array((string) $key, array_map('strval', $value), true)); ?> />
                         <span class="pf-checkbox-label"><?php echo esc_html($label); ?></span>
                     </label>
                 <?php endforeach; ?>
@@ -100,9 +97,9 @@ class PersianFramework_Field_Checkbox {
     }
 
     private function enqueue_scripts() {
-        static $enqueued = false;
+        static $pf_checkbox_enqueued = false;
 
-        if (!$enqueued) {
+        if (!$pf_checkbox_enqueued) {
             ?>
             <style>
                 .pf-checkbox-group {
@@ -141,7 +138,26 @@ class PersianFramework_Field_Checkbox {
                 }
             </style>
             <?php
-            $enqueued = true;
+            $pf_checkbox_enqueued = true;
         }
+    }
+
+    public function sanitize($value) {
+        if (isset($this->field['single']) && $this->field['single']) {
+            return (bool) $value;
+        }
+
+        $options = isset($this->field['options']) ? array_keys($this->field['options']) : array();
+        $value = (array) $value;
+
+        $sanitized = array();
+        foreach ($value as $val) {
+            $val = sanitize_text_field($val);
+            if (in_array($val, $options, true)) {
+                $sanitized[] = $val;
+            }
+        }
+
+        return $sanitized;
     }
 }

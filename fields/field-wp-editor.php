@@ -89,9 +89,8 @@ class PersianFramework_Field_WPEditor {
                     margin: 8px 0;
                 }
                 .pf-editor-wrapper .wp-editor-container {
-                    border-radius: 12px;
                     overflow: hidden;
-                    border: 2px solid #e8edf4;
+                    border: 1px solid #e8edf4;
                 }
                 .pf-editor-wrapper .wp-editor-container .mce-tinymce {
                     border: none !important;

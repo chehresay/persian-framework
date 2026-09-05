@@ -26,9 +26,6 @@ class PersianFramework_Field_Media {
         $id = isset($this->field['id']) ? $this->field['id'] : '';
         $name = isset($this->field['name']) ? $this->field['name'] : $id;
 
-        // ========================================
-        // Properly handle value
-        // ========================================
         $value = $this->value;
 
         if (is_string($value) && !empty($value)) {
@@ -55,9 +52,6 @@ class PersianFramework_Field_Media {
         $media_id = absint($value['id']);
         $media_url = esc_url($value['url']);
 
-        // ========================================
-        // If ID exists but URL is empty, get URL from ID
-        // ========================================
         if ($media_id > 0 && empty($media_url)) {
             $attachment_url = wp_get_attachment_url($media_id);
             if ($attachment_url) {
@@ -78,7 +72,6 @@ class PersianFramework_Field_Media {
         $preview_size = isset($this->field['preview_size']) ? $this->field['preview_size'] : 'thumbnail';
         $image_only = isset($this->field['image_only']) && $this->field['image_only'];
 
-        // Get preview URL
         $preview_url = $media_url;
         if ($media_id) {
             $image = wp_get_attachment_image_src($media_id, $preview_size);
@@ -87,20 +80,16 @@ class PersianFramework_Field_Media {
             }
         }
 
-        // required
         $required = isset($this->field['required']) ? $this->field['required'] : false;
         $required_attributes = '';
         if (is_array($required) && class_exists('PersianFramework_Required')) {
             $required_attributes = PersianFramework_Required::get_attributes($required);
         }
 
-        // ========================================
-        // UNIQUE ID for this media instance
-        // ========================================
         $unique_id = 'pf-media-' . $id . '-' . self::$frame_counter;
 
         ?>
-        <div class="pf-field-wrapper pf-field-media <?php echo $image_only ? 'pf-field-image' : ''; ?>" <?php echo $required_attributes; ?>>
+        <div class="pf-field-wrapper pf-field-media <?php echo $image_only ? 'pf-field-image' : ''; ?>" <?php echo wp_kses_data($required_attributes); ?>>
             <?php if (isset($this->field['title'])): ?>
                 <label class="pf-field-label">
                     <?php echo esc_html($this->field['title']); ?>
@@ -121,7 +110,7 @@ class PersianFramework_Field_Media {
                         <?php endif; ?>
                     <?php else: ?>
                         <span class="dashicons dashicons-format-image"></span>
-                        <span class="pf-media-placeholder"><?php _e('No media selected', 'persian-framework'); ?></span>
+                        <span class="pf-media-placeholder"><?php esc_html_e('No media selected', 'persian-framework'); ?></span>
                     <?php endif; ?>
                 </div>
 
@@ -146,11 +135,11 @@ class PersianFramework_Field_Media {
                     <div class="pf-media-actions">
                         <button type="button" class="pf-btn pf-btn-secondary pf-media-choose" data-unique-id="<?php echo esc_attr($unique_id); ?>">
                             <span class="dashicons dashicons-edit"></span>
-                            <?php _e('Choose', 'persian-framework'); ?>
+                            <?php esc_html_e('Choose', 'persian-framework'); ?>
                         </button>
                         <button type="button" class="pf-btn pf-btn-danger pf-media-remove" data-unique-id="<?php echo esc_attr($unique_id); ?>" <?php echo !$media_id ? 'style="display:none;"' : ''; ?>>
                             <span class="dashicons dashicons-no-alt"></span>
-                            <?php _e('Remove', 'persian-framework'); ?>
+                            <?php esc_html_e('Remove', 'persian-framework'); ?>
                         </button>
                     </div>
                 </div>
@@ -167,9 +156,9 @@ class PersianFramework_Field_Media {
     }
 
     private function enqueue_scripts($image_only, $unique_id) {
-        static $enqueued = false;
+        static $pf_media_enqueued = false;
 
-        if (!$enqueued) {
+        if (!$pf_media_enqueued) {
             wp_enqueue_media();
 
             ?>
@@ -307,16 +296,9 @@ class PersianFramework_Field_Media {
                 (function($) {
                     'use strict';
 
-                    // ========================================
-                    // Store frames per container unique ID
-                    // ========================================
                     var pfMediaFrames = {};
 
-                    // ========================================
-                    // Open media library for a specific container
-                    // ========================================
                     function pfOpenMediaFrame(uniqueId) {
-                        // Find the container by unique ID
                         var $container = $('.pf-media-container[data-unique-id="' + uniqueId + '"]');
                         if (!$container.length) {
                             console.warn('Media container not found for unique ID:', uniqueId);
@@ -329,13 +311,11 @@ class PersianFramework_Field_Media {
                         var $removeBtn = $container.find('.pf-media-remove');
                         var isImage = $container.closest('.pf-field-image').length > 0;
 
-                        // If frame already exists for this container, just open it
                         if (pfMediaFrames[uniqueId]) {
                             pfMediaFrames[uniqueId].open();
                             return;
                         }
 
-                        // Create new frame for this container
                         var frame = wp.media({
                             multiple: false,
                             library: {
@@ -343,20 +323,16 @@ class PersianFramework_Field_Media {
                             },
                         });
 
-                        // Store frame
                         pfMediaFrames[uniqueId] = frame;
 
-                        // On select
                         frame.on('select', function() {
                             var attachment = frame.state().get('selection').first().toJSON();
                             var id = attachment.id;
                             var url = attachment.url;
 
-                            // Set both ID and URL
                             $idInput.val(id);
                             $urlInput.val(url);
 
-                            // Update preview
                             if (isImage || attachment.type === 'image') {
                                 var previewUrl = attachment.sizes && attachment.sizes.thumbnail ?
                                     attachment.sizes.thumbnail.url :
@@ -371,20 +347,15 @@ class PersianFramework_Field_Media {
 
                             $removeBtn.show();
 
-                            // Trigger change event for saving
                             $idInput.trigger('change');
                             $urlInput.trigger('change');
 
                             $container.trigger('pf-media-selected', [attachment]);
                         });
 
-                        // Open the frame
                         frame.open();
                     }
 
-                    // ========================================
-                    // Click handler for Choose button
-                    // ========================================
                     $(document).on('click', '.pf-media-choose', function(e) {
                         e.preventDefault();
                         var uniqueId = $(this).data('unique-id');
@@ -393,9 +364,6 @@ class PersianFramework_Field_Media {
                         }
                     });
 
-                    // ========================================
-                    // Click handler for Remove button
-                    // ========================================
                     $(document).on('click', '.pf-media-remove', function(e) {
                         e.preventDefault();
                         var uniqueId = $(this).data('unique-id');
@@ -412,32 +380,26 @@ class PersianFramework_Field_Media {
                         $urlInput.val('');
                         $preview.html(
                             '<span class="dashicons dashicons-format-image"></span>' +
-                            '<span class="pf-media-placeholder"><?php esc_js(__('No media selected', 'persian-framework')); ?></span>'
+                            '<span class="pf-media-placeholder"><?php esc_html_e('No media selected', 'persian-framework'); ?></span>'
                         );
                         $(this).hide();
 
-                        // Trigger change event for saving
                         $idInput.trigger('change');
                         $urlInput.trigger('change');
 
                         $container.trigger('pf-media-removed');
 
-                        // Remove stored frame if exists
                         if (pfMediaFrames[uniqueId]) {
                             delete pfMediaFrames[uniqueId];
                         }
                     });
 
-                    // ========================================
-                    // Auto-populate URL when ID changes
-                    // ========================================
                     $(document).on('change', '.pf-media-id', function() {
                         var $container = $(this).closest('.pf-media-container');
                         var $urlInput = $container.find('.pf-media-url');
                         var id = $(this).val();
 
                         if (id && id > 0) {
-                            // If we have ID but no URL, try to get URL via AJAX
                             if (!$urlInput.val()) {
                                 $.ajax({
                                     url: ajaxurl,
@@ -445,17 +407,15 @@ class PersianFramework_Field_Media {
                                     data: {
                                         action: 'pf_get_attachment_url',
                                         attachment_id: id,
-                                        nonce: '<?php echo wp_create_nonce('pf_ajax_nonce'); ?>'
+                                        nonce: '<?php echo esc_js(wp_create_nonce('pf_ajax_nonce')); ?>'
                                     },
                                     success: function(response) {
                                         if (response.success && response.data.url) {
                                             $urlInput.val(response.data.url);
-                                            // Update preview if empty
                                             var $preview = $container.find('.pf-media-preview');
                                             if ($preview.find('img').length === 0 && response.data.url) {
                                                 $preview.html('<img src="' + response.data.url + '" alt="">');
                                             }
-                                            // Show remove button
                                             $container.find('.pf-media-remove').show();
                                         }
                                     }
@@ -464,28 +424,23 @@ class PersianFramework_Field_Media {
                         }
                     });
 
-                    // ========================================
-                    // Auto-populate ID when URL changes
-                    // ========================================
                     $(document).on('change', '.pf-media-url', function() {
                         var $container = $(this).closest('.pf-media-container');
                         var $idInput = $container.find('.pf-media-id');
                         var url = $(this).val();
 
                         if (url && !$idInput.val()) {
-                            // Try to get ID from URL via AJAX
                             $.ajax({
                                 url: ajaxurl,
                                 type: 'POST',
                                 data: {
                                     action: 'pf_get_attachment_id',
                                     attachment_url: url,
-                                    nonce: '<?php echo wp_create_nonce('pf_ajax_nonce'); ?>'
+                                    nonce: '<?php echo esc_js(wp_create_nonce('pf_ajax_nonce')); ?>'
                                 },
                                 success: function(response) {
                                     if (response.success && response.data.id) {
                                         $idInput.val(response.data.id);
-                                        // Show remove button
                                         $container.find('.pf-media-remove').show();
                                     }
                                 }
@@ -493,9 +448,6 @@ class PersianFramework_Field_Media {
                         }
                     });
 
-                    // ========================================
-                    // Clean up frames on page unload
-                    // ========================================
                     $(window).on('beforeunload', function() {
                         for (var key in pfMediaFrames) {
                             if (pfMediaFrames[key] && typeof pfMediaFrames[key].close === 'function') {
@@ -505,12 +457,42 @@ class PersianFramework_Field_Media {
                         pfMediaFrames = {};
                     });
 
-                    //console.log('PF Media Field loaded with unique ID support!');
-
                 })(jQuery);
             </script>
             <?php
-            $enqueued = true;
+            $pf_media_enqueued = true;
         }
+    }
+
+    public function sanitize($value) {
+        if (!is_array($value)) {
+            return array(
+                    'id' => 0,
+                    'url' => ''
+            );
+        }
+
+        $sanitized = array();
+
+        if (isset($value['id'])) {
+            $sanitized['id'] = absint($value['id']);
+        } else {
+            $sanitized['id'] = 0;
+        }
+
+        if (isset($value['url'])) {
+            $sanitized['url'] = esc_url_raw($value['url']);
+        } else {
+            $sanitized['url'] = '';
+        }
+
+        if ($sanitized['id'] > 0 && empty($sanitized['url'])) {
+            $attachment_url = wp_get_attachment_url($sanitized['id']);
+            if ($attachment_url) {
+                $sanitized['url'] = $attachment_url;
+            }
+        }
+
+        return $sanitized;
     }
 }

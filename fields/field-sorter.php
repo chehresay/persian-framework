@@ -28,9 +28,6 @@ class PersianFramework_Field_Sorter {
         $default = isset($this->field['default']) ? $this->field['default'] : array();
         $value = $this->value !== null ? $this->value : $default;
 
-        // ========================================
-        // FIX: Ensure value has both 'enabled' and 'disabled' keys
-        // ========================================
         if (!isset($value['enabled']) || !is_array($value['enabled'])) {
             $value['enabled'] = array();
         }
@@ -38,12 +35,8 @@ class PersianFramework_Field_Sorter {
             $value['disabled'] = array();
         }
 
-        // ========================================
-        // FIX: Convert options to flat array
-        // ========================================
         $all_items = $options;
 
-        // If options is nested (has 'enabled' key), flatten it
         if (isset($options['enabled']) && is_array($options['enabled'])) {
             $all_items = array();
             if (isset($options['enabled']) && is_array($options['enabled'])) {
@@ -54,23 +47,15 @@ class PersianFramework_Field_Sorter {
             }
         }
 
-        // ========================================
-        // FIX: Ensure all items are distributed between enabled/disabled
-        // ========================================
         foreach ($all_items as $key => $label) {
-            // Check if item exists in either enabled or disabled
             $in_enabled = isset($value['enabled'][$key]);
             $in_disabled = isset($value['disabled'][$key]);
 
             if (!$in_enabled && !$in_disabled) {
-                // If not in either, add to enabled by default
                 $value['enabled'][$key] = $label;
             }
         }
 
-        // ========================================
-        // FIX: Remove items from enabled that are not in options
-        // ========================================
         foreach ($value['enabled'] as $key => $label) {
             if (!isset($all_items[$key])) {
                 unset($value['enabled'][$key]);
@@ -100,7 +85,7 @@ class PersianFramework_Field_Sorter {
 
                 <div class="pf-sorter-column pf-sorter-enabled">
                     <div class="pf-sorter-header">
-                        <span class="pf-sorter-title"><?php _e('فعال', 'persian-framework'); ?></span>
+                        <span class="pf-sorter-title"><?php esc_html_e('Enabled', 'persian-framework'); ?></span>
                         <span class="pf-sorter-count" id="count-enabled-<?php echo esc_attr($id); ?>">
                             <?php echo count($enabled_items); ?>
                         </span>
@@ -120,7 +105,7 @@ class PersianFramework_Field_Sorter {
 
                 <div class="pf-sorter-column pf-sorter-disabled">
                     <div class="pf-sorter-header">
-                        <span class="pf-sorter-title"><?php _e('غیرفعال', 'persian-framework'); ?></span>
+                        <span class="pf-sorter-title"><?php esc_html_e('Disabled', 'persian-framework'); ?></span>
                         <span class="pf-sorter-count" id="count-disabled-<?php echo esc_attr($id); ?>">
                             <?php echo count($disabled_items); ?>
                         </span>
@@ -150,7 +135,7 @@ class PersianFramework_Field_Sorter {
     }
 
     private function enqueue_scripts($id = '') {
-        static $enqueued = false;
+        static $pf_sorter_enqueued = false;
         static $field_initialized = array();
 
         if (in_array($id, $field_initialized)) {
@@ -158,7 +143,7 @@ class PersianFramework_Field_Sorter {
         }
         $field_initialized[] = $id;
 
-        if (!$enqueued) {
+        if (!$pf_sorter_enqueued) {
             ?>
             <style>
                 .pf-sorter-container {
@@ -322,7 +307,6 @@ class PersianFramework_Field_Sorter {
                                 return;
                             }
 
-                            // Destroy existing sortable instances
                             if ($enabledList.data('sortable')) {
                                 $enabledList.data('sortable').destroy();
                             }
@@ -361,13 +345,10 @@ class PersianFramework_Field_Sorter {
                     }
 
                     function updateSorterData($container, fieldId) {
-                        // Remove existing hidden inputs
                         $container.find('input[type="hidden"]').remove();
 
-                        // ✅ FIX: Get opt_name dynamically from the form
                         var optName = $('#pfSettingsForm').find('input[name="opt_name"]').val();
 
-                        // Fallback: try to get from field name pattern
                         if (!optName) {
                             var firstInput = $container.find('input[type="hidden"]').first();
                             if (firstInput.length) {
@@ -381,15 +362,12 @@ class PersianFramework_Field_Sorter {
                             }
                         }
 
-                        // Final fallback
                         if (!optName) {
                             optName = 'persian_framework_options';
                         }
 
-                        // Create new hidden inputs for each item
                         $container.find('.pf-sorter-list').each(function() {
                             var column = $(this).data('column');
-                            // ✅ FIX: Use dynamic optName
                             var columnName = optName + '[' + fieldId + '][' + column + ']';
 
                             $(this).find('.pf-sorter-item').each(function() {
@@ -405,14 +383,12 @@ class PersianFramework_Field_Sorter {
                             });
                         });
 
-                        // Update counters
                         $container.find('.pf-sorter-column').each(function() {
                             var count = $(this).find('.pf-sorter-item').length;
                             var $count = $(this).find('.pf-sorter-count');
                             $count.text(count);
                         });
 
-                        // Trigger change event
                         $container.trigger('change');
                         $(document).trigger('pf-sorter-updated', [fieldId]);
                     }
@@ -436,7 +412,33 @@ class PersianFramework_Field_Sorter {
                 $GLOBALS['pf_sorter_initialized'][] = $id;
             }
 
-            $enqueued = true;
+            $pf_sorter_enqueued = true;
         }
+    }
+
+    public function sanitize($value) {
+        if (!is_array($value)) {
+            return array(
+                    'enabled' => array(),
+                    'disabled' => array()
+            );
+        }
+
+        $sanitized = array(
+                'enabled' => array(),
+                'disabled' => array()
+        );
+
+        $columns = array('enabled', 'disabled');
+
+        foreach ($columns as $column) {
+            if (isset($value[$column]) && is_array($value[$column])) {
+                foreach ($value[$column] as $key => $label) {
+                    $sanitized[$column][sanitize_text_field($key)] = sanitize_text_field($label);
+                }
+            }
+        }
+
+        return $sanitized;
     }
 }

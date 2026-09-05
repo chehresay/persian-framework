@@ -25,6 +25,7 @@ class PersianFramework_Field_ImportExport {
         $name = isset($this->field['name']) ? $this->field['name'] : $id;
         $value = $this->value !== null ? $this->value : (isset($this->field['default']) ? $this->field['default'] : '');
         $rows = isset($this->field['rows']) ? $this->field['rows'] : 8;
+        $current_value = is_scalar($value) ? $value : '';
 
         ?>
         <div class="pf-field-wrapper pf-field-import-export">
@@ -41,19 +42,19 @@ class PersianFramework_Field_ImportExport {
                 <div class="pf-ie-actions">
                     <button type="button" class="pf-btn pf-btn-secondary pf-ie-export">
                         <span class="dashicons dashicons-download"></span>
-                        <?php _e('Export', 'persian-framework'); ?>
+                        <?php esc_html_e('Export', 'persian-framework'); ?>
                     </button>
                     <button type="button" class="pf-btn pf-btn-secondary pf-ie-import">
                         <span class="dashicons dashicons-upload"></span>
-                        <?php _e('Import', 'persian-framework'); ?>
+                        <?php esc_html_e('Import', 'persian-framework'); ?>
                     </button>
                     <button type="button" class="pf-btn pf-btn-secondary pf-ie-format">
                         <span class="dashicons dashicons-editor-code"></span>
-                        <?php _e('Format JSON', 'persian-framework'); ?>
+                        <?php esc_html_e('Format JSON', 'persian-framework'); ?>
                     </button>
                     <button type="button" class="pf-btn pf-btn-danger pf-ie-clear">
                         <span class="dashicons dashicons-trash"></span>
-                        <?php _e('Clear', 'persian-framework'); ?>
+                        <?php esc_html_e('Clear', 'persian-framework'); ?>
                     </button>
                 </div>
 
@@ -62,12 +63,14 @@ class PersianFramework_Field_ImportExport {
                           rows="<?php echo esc_attr($rows); ?>"
                           class="pf-field-input pf-ie-textarea"
                           spellcheck="false"
-                          placeholder='<?php esc_attr_e('Paste JSON data here...', 'persian-framework'); ?>'><?php echo esc_textarea(is_scalar($value) ? $value : ''); ?></textarea>
+                          placeholder='<?php esc_attr_e('Paste JSON data here...', 'persian-framework'); ?>'><?php echo esc_textarea($current_value); ?></textarea>
 
                 <div class="pf-ie-status">
-                    <span class="pf-ie-status-text"><?php _e('Ready', 'persian-framework'); ?></span>
+                    <span class="pf-ie-status-text"><?php esc_html_e('Ready', 'persian-framework'); ?></span>
                     <span class="pf-ie-status-count">
-                        <?php printf(__('Characters: %d', 'persian-framework'), strlen(is_scalar($value) ? $value : '')); ?>
+                        <?php
+                        printf( esc_html__( 'Characters: %d', 'persian-framework' ), esc_html( strlen( $current_value ) ) );
+                        ?>
                     </span>
                 </div>
             </div>
@@ -158,7 +161,8 @@ class PersianFramework_Field_ImportExport {
                     // Update character count
                     function updateCount() {
                         var val = $textarea.val();
-                        $count.text('Characters: ' + val.length);
+                        /* translators: %d: number of characters in the textarea */
+                        $count.text('<?php esc_js( esc_html__( 'Characters: %d', 'persian-framework' ) ); ?>'.replace('%d', val.length));
                     }
 
                     $textarea.on('input', updateCount);
@@ -167,7 +171,7 @@ class PersianFramework_Field_ImportExport {
                     $(document).on('click', '.pf-ie-export', function() {
                         var val = $textarea.val();
                         if (!val) {
-                            alert('<?php esc_js(__('Nothing to export. Please enter some JSON data.', 'persian-framework')); ?>');
+                            alert('<?php echo esc_js( esc_html__( 'Nothing to export. Please enter some JSON data.', 'persian-framework' ) ); ?>');
                             return;
                         }
 
@@ -176,10 +180,10 @@ class PersianFramework_Field_ImportExport {
                             var json = JSON.stringify(data, null, 2);
                             $textarea.val(json);
                             updateCount();
-                            $status.text('Formatted').addClass('success');
+                            $status.text('<?php echo esc_js( esc_html__( 'Formatted', 'persian-framework' ) ); ?>').addClass('success');
                         } catch(e) {
-                            $status.text('Error: Invalid JSON').addClass('error');
-                            alert('<?php esc_js(__('Invalid JSON data. Please check your input.', 'persian-framework')); ?>');
+                            $status.text('<?php echo esc_js( esc_html__( 'Error: Invalid JSON', 'persian-framework' ) ); ?>').addClass('error');
+                            alert('<?php echo esc_js( esc_html__( 'Invalid JSON data. Please check your input.', 'persian-framework' ) ); ?>');
                         }
                     });
 
@@ -197,10 +201,10 @@ class PersianFramework_Field_ImportExport {
                                     var json = JSON.stringify(data, null, 2);
                                     $textarea.val(json);
                                     updateCount();
-                                    $status.text('Imported successfully').addClass('success');
+                                    $status.text('<?php echo esc_js( esc_html__( 'Imported successfully', 'persian-framework' ) ); ?>').addClass('success');
                                 } catch(err) {
-                                    $status.text('Error: Invalid file').addClass('error');
-                                    alert('<?php esc_js(__('Invalid JSON file.', 'persian-framework')); ?>');
+                                    $status.text('<?php echo esc_js( esc_html__( 'Error: Invalid file', 'persian-framework' ) ); ?>').addClass('error');
+                                    alert('<?php echo esc_js( esc_html__( 'Invalid JSON file.', 'persian-framework' ) ); ?>');
                                 }
                             };
                             reader.readAsText(file);
@@ -212,7 +216,7 @@ class PersianFramework_Field_ImportExport {
                     $(document).on('click', '.pf-ie-format', function() {
                         var val = $textarea.val();
                         if (!val) {
-                            alert('<?php esc_js(__('Nothing to format.', 'persian-framework')); ?>');
+                            alert('<?php echo esc_js( esc_html__( 'Nothing to format.', 'persian-framework' ) ); ?>');
                             return;
                         }
 
@@ -221,19 +225,19 @@ class PersianFramework_Field_ImportExport {
                             var json = JSON.stringify(data, null, 2);
                             $textarea.val(json);
                             updateCount();
-                            $status.text('Formatted').addClass('success');
+                            $status.text('<?php echo esc_js( esc_html__( 'Formatted', 'persian-framework' ) ); ?>').addClass('success');
                         } catch(e) {
-                            $status.text('Error: Invalid JSON').addClass('error');
-                            alert('<?php esc_js(__('Invalid JSON data. Please check your input.', 'persian-framework')); ?>');
+                            $status.text('<?php echo esc_js( esc_html__( 'Error: Invalid JSON', 'persian-framework' ) ); ?>').addClass('error');
+                            alert('<?php echo esc_js( esc_html__( 'Invalid JSON data. Please check your input.', 'persian-framework' ) ); ?>');
                         }
                     });
 
                     // Clear
                     $(document).on('click', '.pf-ie-clear', function() {
-                        if (confirm('<?php esc_js(__('Clear the textarea?', 'persian-framework')); ?>')) {
+                        if (confirm('<?php echo esc_js( esc_html__( 'Clear the textarea?', 'persian-framework' ) ); ?>')) {
                             $textarea.val('');
                             updateCount();
-                            $status.text('Cleared');
+                            $status.text('<?php echo esc_js( esc_html__( 'Cleared', 'persian-framework' ) ); ?>');
                         }
                     });
 
@@ -241,16 +245,16 @@ class PersianFramework_Field_ImportExport {
                     $textarea.on('change blur', function() {
                         var val = $textarea.val();
                         if (!val) {
-                            $status.text('Empty');
+                            $status.text('<?php echo esc_js( esc_html__( 'Empty', 'persian-framework' ) ); ?>');
                             $status.removeClass('success error');
                             return;
                         }
 
                         try {
                             JSON.parse(val);
-                            $status.text('Valid JSON').addClass('success').removeClass('error');
+                            $status.text('<?php echo esc_js( esc_html__( 'Valid JSON', 'persian-framework' ) ); ?>').addClass('success').removeClass('error');
                         } catch(e) {
-                            $status.text('Invalid JSON').addClass('error').removeClass('success');
+                            $status.text('<?php echo esc_js( esc_html__( 'Invalid JSON', 'persian-framework' ) ); ?>').addClass('error').removeClass('success');
                         }
                     });
 

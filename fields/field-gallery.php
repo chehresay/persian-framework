@@ -35,7 +35,11 @@ class PersianFramework_Field_Gallery {
                         <span class="pf-subtitle"><?php echo esc_html($this->field['subtitle']); ?></span>
                     <?php endif; ?>
                     <?php if ($max_items > 0): ?>
-                        <span class="pf-gallery-max"><?php printf(__('(Max: %d)', 'persian-framework'), $max_items); ?></span>
+                        <span class="pf-gallery-max">
+                            <?php
+                            printf( esc_html__( '(Max: %d)', 'persian-framework' ), esc_html( $max_items ) );
+                            ?>
+                        </span>
                     <?php endif; ?>
                 </label>
             <?php endif; ?>

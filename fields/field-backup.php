@@ -26,7 +26,6 @@ class PersianFramework_Field_Backup {
         $instance_id = isset($this->field['instance_id']) ? $this->field['instance_id'] : '';
         $opt_name = isset($this->field['opt_name']) ? $this->field['opt_name'] : '';
 
-        // Get existing backups
         $backups = get_option($opt_name . '_backups', array());
 
         ?>
@@ -46,7 +45,7 @@ class PersianFramework_Field_Backup {
                             data-optname="<?php echo esc_attr($opt_name); ?>"
                             data-instance="<?php echo esc_attr($instance_id); ?>">
                         <span class="dashicons dashicons-backup"></span>
-                        <?php _e('Create Backup', 'persian-framework'); ?>
+                        <?php esc_html_e('Create Backup', 'persian-framework'); ?>
                     </button>
                     <span class="pf-backup-spinner" style="display:none;">
                         <span class="dashicons dashicons-update spin"></span>
@@ -54,19 +53,19 @@ class PersianFramework_Field_Backup {
                 </div>
 
                 <div class="pf-backup-list">
-                    <h4><?php _e('Available Backups', 'persian-framework'); ?></h4>
+                    <h4><?php esc_html_e('Available Backups', 'persian-framework'); ?></h4>
                     <?php if (empty($backups)): ?>
-                        <p class="pf-backup-empty"><?php _e('No backups found.', 'persian-framework'); ?></p>
+                        <p class="pf-backup-empty"><?php esc_html_e('No backups found.', 'persian-framework'); ?></p>
                     <?php else: ?>
                         <div class="pf-backup-items">
                             <?php foreach (array_reverse($backups) as $timestamp => $data): ?>
                                 <div class="pf-backup-item" data-timestamp="<?php echo esc_attr($timestamp); ?>">
                                     <div class="pf-backup-info">
                                         <span class="pf-backup-date">
-                                            <?php echo date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $timestamp); ?>
+                                            <?php echo esc_html(date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $timestamp)); ?>
                                         </span>
                                         <span class="pf-backup-size">
-                                            <?php echo size_format(strlen(json_encode($data))); ?>
+                                            <?php echo esc_html(size_format(strlen(wp_json_encode($data)))); ?>
                                         </span>
                                     </div>
                                     <div class="pf-backup-actions">
@@ -74,13 +73,13 @@ class PersianFramework_Field_Backup {
                                                 data-optname="<?php echo esc_attr($opt_name); ?>"
                                                 data-timestamp="<?php echo esc_attr($timestamp); ?>">
                                             <span class="dashicons dashicons-restore"></span>
-                                            <?php _e('Restore', 'persian-framework'); ?>
+                                            <?php esc_html_e('Restore', 'persian-framework'); ?>
                                         </button>
                                         <button type="button" class="pf-btn pf-btn-danger pf-delete-backup-btn"
                                                 data-optname="<?php echo esc_attr($opt_name); ?>"
                                                 data-timestamp="<?php echo esc_attr($timestamp); ?>">
                                             <span class="dashicons dashicons-trash"></span>
-                                            <?php _e('Delete', 'persian-framework'); ?>
+                                            <?php esc_html_e('Delete', 'persian-framework'); ?>
                                         </button>
                                     </div>
                                 </div>
@@ -100,9 +99,9 @@ class PersianFramework_Field_Backup {
     }
 
     private function enqueue_scripts($opt_name, $instance_id) {
-        static $enqueued = false;
+        static $pf_backup_enqueued = false;
 
-        if (!$enqueued) {
+        if (!$pf_backup_enqueued) {
             ?>
             <style>
                 .pf-backup-container {
@@ -223,7 +222,6 @@ class PersianFramework_Field_Backup {
                     var optName = '<?php echo esc_js($opt_name); ?>';
                     var instanceId = '<?php echo esc_js($instance_id); ?>';
 
-                    // Create backup
                     $(document).on('click', '.pf-create-backup-btn', function() {
                         var $btn = $(this);
                         var $spinner = $btn.closest('.pf-backup-actions').find('.pf-backup-spinner');
@@ -244,11 +242,11 @@ class PersianFramework_Field_Backup {
                                 if (response.success) {
                                     location.reload();
                                 } else {
-                                    alert(response.data.message || '<?php _e('Failed to create backup.', 'persian-framework'); ?>');
+                                    alert(response.data.message || '<?php esc_html_e('Failed to create backup.', 'persian-framework'); ?>');
                                 }
                             },
                             error: function() {
-                                alert('<?php _e('Connection error.', 'persian-framework'); ?>');
+                                alert('<?php esc_html_e('Connection error.', 'persian-framework'); ?>');
                             },
                             complete: function() {
                                 $btn.prop('disabled', false);
@@ -257,12 +255,11 @@ class PersianFramework_Field_Backup {
                         });
                     });
 
-                    // Restore backup
                     $(document).on('click', '.pf-restore-backup-btn', function() {
                         var $btn = $(this);
                         var timestamp = $btn.data('timestamp');
 
-                        if (confirm('<?php _e('Restore this backup? This will overwrite all current settings.', 'persian-framework'); ?>')) {
+                        if (confirm('<?php esc_html_e('Restore this backup? This will overwrite all current settings.', 'persian-framework'); ?>')) {
                             $.ajax({
                                 url: ajaxurl,
                                 type: 'POST',
@@ -274,25 +271,24 @@ class PersianFramework_Field_Backup {
                                 },
                                 success: function(response) {
                                     if (response.success) {
-                                        alert(response.data.message || '<?php _e('Backup restored successfully.', 'persian-framework'); ?>');
+                                        alert(response.data.message || '<?php esc_html_e('Backup restored successfully.', 'persian-framework'); ?>');
                                         location.reload();
                                     } else {
-                                        alert(response.data.message || '<?php _e('Failed to restore backup.', 'persian-framework'); ?>');
+                                        alert(response.data.message || '<?php esc_html_e('Failed to restore backup.', 'persian-framework'); ?>');
                                     }
                                 },
                                 error: function() {
-                                    alert('<?php _e('Connection error.', 'persian-framework'); ?>');
+                                    alert('<?php esc_html_e('Connection error.', 'persian-framework'); ?>');
                                 }
                             });
                         }
                     });
 
-                    // Delete backup
                     $(document).on('click', '.pf-delete-backup-btn', function() {
                         var $btn = $(this);
                         var timestamp = $btn.data('timestamp');
 
-                        if (confirm('<?php _e('Delete this backup?', 'persian-framework'); ?>')) {
+                        if (confirm('<?php esc_html_e('Delete this backup?', 'persian-framework'); ?>')) {
                             $.ajax({
                                 url: ajaxurl,
                                 type: 'POST',
@@ -307,15 +303,15 @@ class PersianFramework_Field_Backup {
                                         $btn.closest('.pf-backup-item').fadeOut(300, function() {
                                             $(this).remove();
                                             if (!$('.pf-backup-item').length) {
-                                                $('.pf-backup-list').append('<p class="pf-backup-empty"><?php _e('No backups found.', 'persian-framework'); ?></p>');
+                                                $('.pf-backup-list').append('<p class="pf-backup-empty"><?php esc_html_e('No backups found.', 'persian-framework'); ?></p>');
                                             }
                                         });
                                     } else {
-                                        alert(response.data.message || '<?php _e('Failed to delete backup.', 'persian-framework'); ?>');
+                                        alert(response.data.message || '<?php esc_html_e('Failed to delete backup.', 'persian-framework'); ?>');
                                     }
                                 },
                                 error: function() {
-                                    alert('<?php _e('Connection error.', 'persian-framework'); ?>');
+                                    alert('<?php esc_html_e('Connection error.', 'persian-framework'); ?>');
                                 }
                             });
                         }
@@ -324,7 +320,7 @@ class PersianFramework_Field_Backup {
                 })(jQuery);
             </script>
             <?php
-            $enqueued = true;
+            $pf_backup_enqueued = true;
         }
     }
 }

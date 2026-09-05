@@ -42,7 +42,7 @@ class PersianFramework_Field_CodeEditor {
             <div class="pf-code-editor-container">
                 <div class="pf-code-editor-toolbar">
                     <span class="pf-code-editor-language"><?php echo esc_html(strtoupper($language)); ?></span>
-                    <span class="pf-code-editor-line-count"><?php echo substr_count($value, "\n") + 1; ?> lines</span>
+                    <span class="pf-code-editor-line-count"><?php echo esc_html(substr_count($value, "\n") + 1); ?> <?php esc_html_e('lines', 'persian-framework'); ?></span>
                 </div>
                 <textarea id="<?php echo esc_attr($id); ?>"
                           name="<?php echo esc_attr($name); ?>"
@@ -63,16 +63,15 @@ class PersianFramework_Field_CodeEditor {
     }
 
     private function enqueue_scripts() {
-        static $enqueued = false;
+        static $pf_codeeditor_enqueued = false;
 
-        if (!$enqueued) {
+        if (!$pf_codeeditor_enqueued) {
             ?>
             <style>
                 .pf-code-editor-container {
                     margin-top: 8px;
-                    border-radius: 12px;
                     overflow: hidden;
-                    border: 2px solid #e8edf4;
+                    border: 1px solid #e8edf4;
                 }
                 body.dark-mode .pf-code-editor-container {
                     border-color: #334155;
@@ -142,21 +141,18 @@ class PersianFramework_Field_CodeEditor {
                 (function($) {
                     'use strict';
 
-                    // Update line count on change
                     $(document).on('input', '.pf-code-editor-textarea', function() {
                         var $toolbar = $(this).closest('.pf-code-editor-container').find('.pf-code-editor-line-count');
                         var lines = $(this).val().split('\n').length;
-                        $toolbar.text(lines + ' lines');
+                        $toolbar.text(lines + ' <?php esc_html_e('lines', 'persian-framework'); ?>');
                     });
 
-                    // Tab support in textarea
                     $(document).on('keydown', '.pf-code-editor-textarea', function(e) {
                         if (e.key === 'Tab') {
                             e.preventDefault();
                             var start = this.selectionStart;
                             var end = this.selectionEnd;
 
-                            // Insert tab at cursor position
                             this.value = this.value.substring(0, start) + '    ' + this.value.substring(end);
                             this.selectionStart = this.selectionEnd = start + 4;
 
@@ -167,7 +163,12 @@ class PersianFramework_Field_CodeEditor {
                 })(jQuery);
             </script>
             <?php
-            $enqueued = true;
+            $pf_codeeditor_enqueued = true;
         }
+    }
+
+    public function sanitize($value) {
+        $value = wp_unslash($value);
+        return sanitize_textarea_field($value);
     }
 }

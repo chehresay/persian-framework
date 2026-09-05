@@ -26,7 +26,6 @@ class PersianFramework_Field_Sortable {
         $options = isset($this->field['options']) ? $this->field['options'] : array();
         $value = $this->value !== null ? (array) $this->value : (isset($this->field['default']) ? (array) $this->field['default'] : array());
 
-        // Use options if value is empty
         if (empty($value)) {
             $value = $options;
         }
@@ -35,21 +34,15 @@ class PersianFramework_Field_Sortable {
         $max_items = isset($this->field['max']) ? intval($this->field['max']) : 0;
         $min_items = isset($this->field['min']) ? intval($this->field['min']) : 0;
 
-        // ✅ CRITICAL FIX: If allow_new is enabled, merge saved values with options
         if ($allow_new) {
-            // Start with saved values
             $merged = $value;
-
-            // Add any options that are not in saved values (preserve order)
             foreach ($options as $key => $label) {
                 if (!isset($merged[$key])) {
-                    //$merged[$key] = $label;
+                    // Keep only saved values
                 }
             }
-
             $value = $merged;
         } else {
-            // Original behavior: only show options that exist in saved values
             $ordered = array();
             foreach ($options as $key => $label) {
                 if (isset($value[$key])) {
@@ -67,7 +60,15 @@ class PersianFramework_Field_Sortable {
                         <span class="pf-subtitle"><?php echo esc_html($this->field['subtitle']); ?></span>
                     <?php endif; ?>
                     <?php if ($max_items > 0): ?>
-                        <span class="pf-sortable-max-label"><?php printf(__('(Max: %d)', 'persian-framework'), $max_items); ?></span>
+                        <span class="pf-sortable-max-label">
+                            <?php
+                            printf(
+                            /* translators: %d: Maximum number of items */
+                                    esc_html__('(Max: %d)', 'persian-framework'),
+                                    $max_items
+                            );
+                            ?>
+                        </span>
                     <?php endif; ?>
                 </label>
             <?php endif; ?>
@@ -80,7 +81,7 @@ class PersianFramework_Field_Sortable {
 
                 <div class="pf-sortable-list" id="sortable-<?php echo esc_attr($id); ?>">
                     <?php if (empty($value)): ?>
-                        <div class="pf-sortable-empty"><?php _e('No items. Add new items below.', 'persian-framework'); ?></div>
+                        <div class="pf-sortable-empty"><?php esc_html_e('No items. Add new items below.', 'persian-framework'); ?></div>
                     <?php else: ?>
                         <?php foreach ($value as $key => $label): ?>
                             <div class="pf-sortable-item" data-key="<?php echo esc_attr($key); ?>">
@@ -101,7 +102,7 @@ class PersianFramework_Field_Sortable {
                             <input type="text" class="pf-sortable-new-key" placeholder="<?php esc_attr_e('Key', 'persian-framework'); ?>" />
                             <input type="text" class="pf-sortable-new-label" placeholder="<?php esc_attr_e('Label', 'persian-framework'); ?>" />
                             <button type="button" class="pf-btn pf-btn-secondary pf-sortable-add-btn">
-                                <span class="dashicons dashicons-plus-alt"></span> <?php _e('Add Item', 'persian-framework'); ?>
+                                <span class="dashicons dashicons-plus-alt"></span> <?php esc_html_e('Add Item', 'persian-framework'); ?>
                             </button>
                         </div>
                     </div>
@@ -118,10 +119,10 @@ class PersianFramework_Field_Sortable {
     }
 
     private function enqueue_scripts($id) {
-        static $enqueued = false;
+        static $pf_sortable_enqueued = false;
         $field_id = $id;
 
-        if (!$enqueued) {
+        if (!$pf_sortable_enqueued) {
             ?>
             <style>
                 .pf-sortable-container {
@@ -295,7 +296,7 @@ class PersianFramework_Field_Sortable {
                 }
             </style>
             <?php
-            $enqueued = true;
+            $pf_sortable_enqueued = true;
         }
 
         ?>
@@ -309,28 +310,23 @@ class PersianFramework_Field_Sortable {
                 var sortableInstance = null;
                 var isInitializing = false;
 
-                // CRITICAL FIX: Ensure each item has data-key from hidden input
                 function ensureDataKeys(container) {
                     var items = container.querySelectorAll('.pf-sortable-item');
                     items.forEach(function(item) {
-                        // If data-key is missing or empty, try to get it from hidden input
                         if (!item.dataset.key || item.dataset.key === '') {
                             var input = item.querySelector('input[type="hidden"]');
                             if (input) {
                                 var name = input.getAttribute('name');
-                                // Extract key from name: field_name[key]
                                 var match = name.match(/\[([^\]]+)\]$/);
                                 if (match) {
                                     var key = match[1];
                                     item.dataset.key = key;
-                                    //console.log('Restored data-key for item:', key);
                                 }
                             }
                         }
                     });
                 }
 
-                // Main function to initialize Sortable
                 function initSortable() {
                     if (isInitializing) return;
 
@@ -341,15 +337,12 @@ class PersianFramework_Field_Sortable {
                     }
 
                     if (typeof Sortable === 'undefined') {
-                        console.warn('SortableJS not loaded. Retrying in 500ms...');
                         setTimeout(initSortable, 500);
                         return;
                     }
 
-                    // Prevent concurrent initialization
                     isInitializing = true;
 
-                    // Destroy previous instance
                     if (sortableInstance) {
                         try {
                             sortableInstance.destroy();
@@ -359,30 +352,25 @@ class PersianFramework_Field_Sortable {
                         sortableInstance = null;
                     }
 
-                    // Find items
                     var items = container.querySelectorAll('.pf-sortable-item');
                     var hasItems = items.length > 0;
 
-                    // If no items, show empty message
                     if (!hasItems) {
                         var emptyEl = container.querySelector('.pf-sortable-empty');
                         if (!emptyEl) {
-                            container.innerHTML = '<div class="pf-sortable-empty"><?php _e('No items. Add new items below.', 'persian-framework'); ?></div>';
+                            container.innerHTML = '<div class="pf-sortable-empty"><?php esc_html_e('No items. Add new items below.', 'persian-framework'); ?></div>';
                         }
                         isInitializing = false;
                         return;
                     }
 
-                    // Remove empty message if exists
                     var emptyEl = container.querySelector('.pf-sortable-empty');
                     if (emptyEl) {
                         emptyEl.remove();
                     }
 
-                    // CRITICAL FIX: Ensure each item has data-key
                     ensureDataKeys(container);
 
-                    // Create new Sortable instance
                     try {
                         sortableInstance = new Sortable(container, {
                             animation: 150,
@@ -398,10 +386,7 @@ class PersianFramework_Field_Sortable {
                             }
                         });
 
-                        // Store instance in DOM for later access
                         container._sortableInstance = sortableInstance;
-
-                        //console.log('✅ Sortable initialized for:', fieldId);
                     } catch(e) {
                         console.error('Error creating sortable:', e);
                     }
@@ -409,7 +394,6 @@ class PersianFramework_Field_Sortable {
                     isInitializing = false;
                 }
 
-                // Update data and field names
                 function updateSortableData(container) {
                     if (!container) return;
 
@@ -424,27 +408,22 @@ class PersianFramework_Field_Sortable {
                         var labelEl = item.querySelector('.pf-sortable-label');
                         var input = item.querySelector('input[type="hidden"]');
 
-                        // Skip if key or label doesn't exist
                         if (!key || !labelEl) return;
 
-                        // Create input if it doesn't exist
                         if (!input) {
                             input = document.createElement('input');
                             input.type = 'hidden';
                             item.appendChild(input);
                         }
 
-                        // Update input
                         input.name = name + '[' + key + ']';
                         input.value = labelEl.textContent.trim();
                     });
 
-                    // Trigger change event
                     $(container).trigger('change');
                     $(document).trigger('pf-sortable-updated', [fieldId]);
                 }
 
-                // Add new item function
                 function addSortableItem(key, label) {
                     var container = document.getElementById('sortable-' + fieldId);
                     if (!container) return;
@@ -453,27 +432,23 @@ class PersianFramework_Field_Sortable {
                     var name = $container.data('name');
                     var max = parseInt($container.data('max')) || 0;
 
-                    // Check max limit
                     var currentItems = container.querySelectorAll('.pf-sortable-item').length;
                     if (max > 0 && currentItems >= max) {
-                        alert('<?php _e('Maximum number of items reached.', 'persian-framework'); ?>');
+                        alert('<?php esc_html_e('Maximum number of items reached.', 'persian-framework'); ?>');
                         return false;
                     }
 
-                    // Remove empty message
                     var emptyEl = container.querySelector('.pf-sortable-empty');
                     if (emptyEl) {
                         emptyEl.remove();
                     }
 
-                    // Check for duplicate key
                     var existing = container.querySelector('.pf-sortable-item[data-key="' + key + '"]');
                     if (existing) {
-                        alert('<?php _e('Item with this key already exists.', 'persian-framework'); ?>');
+                        alert('<?php esc_html_e('Item with this key already exists.', 'persian-framework'); ?>');
                         return false;
                     }
 
-                    // Build new item HTML
                     var html = '<div class="pf-sortable-item" data-key="' + key + '">';
                     html += '<span class="pf-sortable-handle dashicons dashicons-move"></span>';
                     html += '<span class="pf-sortable-label">' + label + '</span>';
@@ -481,25 +456,21 @@ class PersianFramework_Field_Sortable {
                     html += '<button type="button" class="pf-sortable-remove dashicons dashicons-no-alt" title="<?php esc_attr_e('Remove', 'persian-framework'); ?>"></button>';
                     html += '</div>';
 
-                    // Add to DOM
                     var tempDiv = document.createElement('div');
                     tempDiv.innerHTML = html;
                     var newItem = tempDiv.firstElementChild;
                     container.appendChild(newItem);
 
-                    // Reinitialize Sortable
                     setTimeout(function() {
                         initSortable();
                     }, 50);
 
-                    // Trigger events
                     $(container).trigger('change');
                     $(document).trigger('pf-sortable-add', [fieldId, key, label]);
 
                     return true;
                 }
 
-                // Remove item function
                 function removeSortableItem($item) {
                     var container = $item.closest('.pf-sortable-list')[0];
                     var $container = $item.closest('.pf-sortable-container');
@@ -507,11 +478,11 @@ class PersianFramework_Field_Sortable {
                     var currentCount = container.querySelectorAll('.pf-sortable-item').length;
 
                     if (currentCount <= min) {
-                        alert('<?php _e('Minimum number of items required.', 'persian-framework'); ?>');
+                        alert('<?php esc_html_e('Minimum number of items required.', 'persian-framework'); ?>');
                         return;
                     }
 
-                    if (!confirm('<?php esc_js(__('Remove this item?', 'persian-framework')); ?>')) {
+                    if (!confirm('<?php esc_html_e('Remove this item?', 'persian-framework'); ?>')) {
                         return;
                     }
 
@@ -519,12 +490,10 @@ class PersianFramework_Field_Sortable {
                     $item.fadeOut(300, function() {
                         $item.remove();
 
-                        // If no items left, show empty message
                         if (container.querySelectorAll('.pf-sortable-item').length === 0) {
-                            container.innerHTML = '<div class="pf-sortable-empty"><?php _e('No items. Add new items below.', 'persian-framework'); ?></div>';
+                            container.innerHTML = '<div class="pf-sortable-empty"><?php esc_html_e('No items. Add new items below.', 'persian-framework'); ?></div>';
                         }
 
-                        // Reinitialize Sortable
                         setTimeout(function() {
                             initSortable();
                         }, 50);
@@ -534,11 +503,6 @@ class PersianFramework_Field_Sortable {
                     });
                 }
 
-                // ============================================================
-                // Events
-                // ============================================================
-
-                // Add new item
                 $(document).on('click', '.pf-sortable-add-btn', function(e) {
                     e.preventDefault();
 
@@ -549,7 +513,7 @@ class PersianFramework_Field_Sortable {
                     var label = $labelInput.val().trim();
 
                     if (!key || !label) {
-                        alert('<?php esc_js(__('Please enter both key and label.', 'persian-framework')); ?>');
+                        alert('<?php esc_html_e('Please enter both key and label.', 'persian-framework'); ?>');
                         return;
                     }
 
@@ -560,14 +524,12 @@ class PersianFramework_Field_Sortable {
                     }
                 });
 
-                // Remove item
                 $(document).on('click', '.pf-sortable-remove', function(e) {
                     e.stopPropagation();
                     var $item = $(this).closest('.pf-sortable-item');
                     removeSortableItem($item);
                 });
 
-                // Enter key to add item
                 $(document).on('keydown', '.pf-sortable-new-key, .pf-sortable-new-label', function(e) {
                     if (e.key === 'Enter') {
                         e.preventDefault();
@@ -575,39 +537,29 @@ class PersianFramework_Field_Sortable {
                     }
                 });
 
-                // ============================================================
-                // Initialization
-                // ============================================================
-
                 $(document).ready(function() {
-                    // CRITICAL FIX: Ensure data-keys before initialization
                     var container = document.getElementById('sortable-' + fieldId);
                     if (container) {
                         ensureDataKeys(container);
                     }
 
-                    // Initialize with delay
                     setTimeout(initSortable, 300);
                 });
 
-                // Reinitialize after tab switch
                 $(document).on('pf-tab-switch', function() {
                     setTimeout(initSortable, 400);
                 });
 
-                // Reinitialize after repeater add
                 $(document).on('pf-repeater-add', function() {
                     setTimeout(initSortable, 500);
                 });
 
-                // Reinitialize after updates
                 $(document).on('pf-sortable-updated', function() {
                     if (!isInitializing) {
                         setTimeout(initSortable, 100);
                     }
                 });
 
-                // Export functions for use in other files
                 window.pfSortable = {
                     init: initSortable,
                     add: addSortableItem,
@@ -616,10 +568,21 @@ class PersianFramework_Field_Sortable {
                     ensureDataKeys: ensureDataKeys
                 };
 
-                //console.log('✅ Sortable field ready:', fieldId);
-
             })(jQuery);
         </script>
         <?php
+    }
+
+    public function sanitize($value) {
+        if (!is_array($value)) {
+            return array();
+        }
+
+        $sanitized = array();
+        foreach ($value as $key => $label) {
+            $sanitized[sanitize_text_field($key)] = sanitize_text_field($label);
+        }
+
+        return $sanitized;
     }
 }

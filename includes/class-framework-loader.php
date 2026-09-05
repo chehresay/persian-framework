@@ -26,10 +26,10 @@ class PersianFramework_Loader {
 
     public function load_fields() {
         $field_types = array(
-            'accordion','section',
+            'accordion', 'section',
             'text', 'textarea', 'number', 'email', 'url', 'password', 'hidden', 'multi-text',
             'switch', 'checkbox', 'radio', 'select', 'multi-select', 'select-image',
-            'gallery', 'media', 'image','slides',
+            'gallery', 'media', 'image', 'slides',
             'color', 'gradient', 'palette-color',
             'typography', 'border', 'spacing', 'dimensions',
             'date', 'time', 'datetime',
@@ -45,7 +45,7 @@ class PersianFramework_Loader {
         );
 
         foreach ($field_types as $type) {
-            $file = PERSIAN_FRAMEWORK_FIELDS . '/field-' . $type . '.php';
+            $file = PERSIAN_FRAMEWORK_FIELDS . 'field-' . $type . '.php';
             if (file_exists($file)) {
                 require_once $file;
             }

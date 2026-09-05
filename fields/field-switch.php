@@ -24,17 +24,16 @@ class PersianFramework_Field_Switch {
         $name = isset($this->field['name']) ? $this->field['name'] : $id;
         $value = $this->value !== null ? (bool) $this->value : (isset($this->field['default']) ? (bool) $this->field['default'] : false);
         $disabled = isset($this->field['disabled']) && $this->field['disabled'] ? 'disabled' : '';
-        $on_text = isset($this->field['on']) ? $this->field['on'] : __('ON', 'persian-framework');
-        $off_text = isset($this->field['off']) ? $this->field['off'] : __('OFF', 'persian-framework');
+        $on_text = isset($this->field['on']) ? $this->field['on'] : esc_html__('ON', 'persian-framework');
+        $off_text = isset($this->field['off']) ? $this->field['off'] : esc_html__('OFF', 'persian-framework');
 
-        // Switch itself can also have a conditional required rule.
         $required_attributes = '';
         if (isset($this->field['required']) && is_array($this->field['required']) && class_exists('PersianFramework_Required')) {
             $required_attributes = PersianFramework_Required::get_attributes($this->field['required']);
         }
         ?>
 
-        <div class="pf-field-wrapper pf-field-switch"<?php echo $required_attributes; ?>>
+        <div class="pf-field-wrapper pf-field-switch"<?php echo wp_kses_data($required_attributes); ?>>
             <?php if (isset($this->field['title'])): ?>
                 <label class="pf-field-label">
                     <?php echo esc_html($this->field['title']); ?>
@@ -45,7 +44,6 @@ class PersianFramework_Field_Switch {
             <?php endif; ?>
 
             <div class="pf-switch-wrapper">
-                <!-- Hidden field for "off" state - sends 0 when unchecked -->
                 <input type="hidden"
                        name="<?php echo esc_attr($name); ?>"
                        value="0" />
@@ -54,14 +52,16 @@ class PersianFramework_Field_Switch {
                        id="<?php echo esc_attr($id); ?>"
                        name="<?php echo esc_attr($name); ?>"
                        value="1"
+                       data-on-text="<?php echo esc_attr($on_text); ?>"
+                       data-off-text="<?php echo esc_attr($off_text); ?>"
                         <?php checked($value, true); ?>
-                        <?php echo $disabled; ?> />
+                        <?php echo wp_kses_data($disabled); ?> />
 
                 <label for="<?php echo esc_attr($id); ?>" class="pf-switch-label">
                     <span class="pf-switch-slider"></span>
                 </label>
 
-                <span class="pf-switch-status"><?php echo $value ? $on_text : $off_text; ?></span>
+                <span class="pf-switch-status"><?php echo $value ? esc_html($on_text) : esc_html($off_text); ?></span>
             </div>
 
             <?php if (isset($this->field['desc'])): ?>
@@ -74,9 +74,9 @@ class PersianFramework_Field_Switch {
     }
 
     private function enqueue_scripts() {
-        static $enqueued = false;
+        static $pf_switch_enqueued = false;
 
-        if (!$enqueued) {
+        if (!$pf_switch_enqueued) {
             ?>
             <style>
                 .pf-switch-wrapper {
@@ -151,8 +151,8 @@ class PersianFramework_Field_Switch {
                         var $status = $wrapper.find('.pf-switch-status');
                         var isChecked = $(this).is(':checked');
 
-                        var onText = $(this).data('on-text') || '<?php _e('ON', 'persian-framework');?>';
-                        var offText = $(this).data('off-text') || '<?php _e('OFF', 'persian-framework');?>';
+                        var onText = $(this).data('on-text') || 'ON';
+                        var offText = $(this).data('off-text') || 'OFF';
                         $status.text(isChecked ? onText : offText);
 
                         var fieldId = $(this).attr('id');
@@ -162,7 +162,12 @@ class PersianFramework_Field_Switch {
                 })(jQuery);
             </script>
             <?php
-            $enqueued = true;
+            $pf_switch_enqueued = true;
         }
+    }
+
+    public function sanitize($value) {
+        $value = wp_unslash($value);
+        return (bool) $value;
     }
 }

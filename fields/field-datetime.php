@@ -26,13 +26,12 @@ class PersianFramework_Field_Datetime {
         $value = $this->value !== null ? $this->value : (isset($this->field['default']) ? $this->field['default'] : '');
         $placeholder = isset($this->field['placeholder']) ? $this->field['placeholder'] : 'YYYY-MM-DDTHH:MM';
         $required = isset($this->field['required']) && $this->field['required'] ? 'required' : '';
-        $step = isset($this->field['step']) ? $this->field['step'] : 60; // seconds
+        $step = isset($this->field['step']) ? $this->field['step'] : 60;
         $min = isset($this->field['min']) ? $this->field['min'] : '';
         $max = isset($this->field['max']) ? $this->field['max'] : '';
 
-        // Format value for datetime-local input
         if (!empty($value) && is_numeric($value)) {
-            $value = date('Y-m-d\TH:i', intval($value));
+            $value = gmdate('Y-m-d\TH:i', intval($value));
         }
 
         ?>
@@ -57,9 +56,9 @@ class PersianFramework_Field_Datetime {
                        placeholder="<?php echo esc_attr($placeholder); ?>"
                        class="pf-field-input pf-datetime-input"
                        step="<?php echo esc_attr($step); ?>"
-                    <?php echo $min ? 'min="' . esc_attr($min) . '"' : ''; ?>
-                    <?php echo $max ? 'max="' . esc_attr($max) . '"' : ''; ?>
-                    <?php echo $required; ?> />
+                        <?php echo $min ? 'min="' . esc_attr($min) . '"' : ''; ?>
+                        <?php echo $max ? 'max="' . esc_attr($max) . '"' : ''; ?>
+                        <?php echo wp_kses_data($required); ?> />
 
                 <?php if (isset($this->field['date_format'])): ?>
                     <span class="pf-datetime-format"><?php echo esc_html($this->field['date_format']); ?></span>
@@ -76,9 +75,9 @@ class PersianFramework_Field_Datetime {
     }
 
     private function enqueue_scripts() {
-        static $enqueued = false;
+        static $pf_datetime_enqueued = false;
 
-        if (!$enqueued) {
+        if (!$pf_datetime_enqueued) {
             ?>
             <style>
                 .pf-datetime-wrapper {
@@ -137,7 +136,12 @@ class PersianFramework_Field_Datetime {
                 }
             </style>
             <?php
-            $enqueued = true;
+            $pf_datetime_enqueued = true;
         }
+    }
+
+    public function sanitize($value) {
+        $value = wp_unslash($value);
+        return sanitize_text_field($value);
     }
 }

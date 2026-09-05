@@ -34,7 +34,7 @@ class PersianFramework_Field_Textarea {
         }
         ?>
 
-        <div class="pf-field-wrapper pf-field-textarea" <?php echo $required_attributes; ?>>
+        <div class="pf-field-wrapper pf-field-textarea" <?php echo wp_kses_data($required_attributes); ?>>
             <?php if (isset($this->field['title'])): ?>
                 <label for="<?php echo esc_attr($id); ?>" class="pf-field-label">
                     <?php echo esc_html($this->field['title']); ?>
@@ -50,7 +50,7 @@ class PersianFramework_Field_Textarea {
                       rows="<?php echo esc_attr($rows); ?>"
                       cols="<?php echo esc_attr($cols); ?>"
                       class="pf-field-input pf-textarea-input"
-                      <?php echo $required; ?>><?php echo esc_textarea($value); ?></textarea>
+                      <?php echo wp_kses_data($required); ?>><?php echo esc_textarea($value); ?></textarea>
 
             <?php if (isset($this->field['desc'])): ?>
                 <p class="pf-field-desc"><?php echo esc_html($this->field['desc']); ?></p>
@@ -62,8 +62,8 @@ class PersianFramework_Field_Textarea {
     }
 
     private function enqueue_scripts() {
-        static $enqueued = false;
-        if (!$enqueued) {
+        static $pf_textarea_enqueued = false;
+        if (!$pf_textarea_enqueued) {
             ?>
             <style>
                 .pf-textarea-input {
@@ -71,10 +71,37 @@ class PersianFramework_Field_Textarea {
                     min-height: 100px;
                     resize: vertical;
                     font-family: inherit;
+                    padding: 12px 16px;
+                    border: 2px solid #e8edf4;
+                    border-radius: 10px;
+                    background: #fafbfc;
+                    color: #1a2332;
+                    transition: all 0.2s ease;
+                    font-size: 14px;
+                    line-height: 1.6;
+                }
+                body.dark-mode .pf-textarea-input {
+                    background: #0f172a;
+                    border-color: #334155;
+                    color: #e2e8f0;
+                }
+                .pf-textarea-input:focus {
+                    border-color: #6366f1;
+                    outline: none;
+                    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+                    background: white;
+                }
+                body.dark-mode .pf-textarea-input:focus {
+                    background: #1e293b;
                 }
             </style>
             <?php
-            $enqueued = true;
+            $pf_textarea_enqueued = true;
         }
+    }
+
+    public function sanitize($value) {
+        $value = wp_unslash($value);
+        return sanitize_textarea_field($value);
     }
 }

@@ -84,11 +84,17 @@ class PersianFramework_Field_Repeater {
 
             <?php if (isset($this->field['title'])): ?>
                 <label class="pf-field-label">
+                    <?php echo esc_html($this->field['title']); ?>
                     <?php if (isset($this->field['subtitle'])): ?>
                         <span class="pf-subtitle"><?php echo esc_html($this->field['subtitle']); ?></span>
                     <?php endif; ?>
                     <?php if ($max_items > 0): ?>
-                        <span class="pf-repeater-max-label"><?php printf(__('(Max: %d)', 'persian-framework'), $max_items); ?></span>
+                        <span class="pf-repeater-max-label">
+                            <?php
+                            /* translators: %d: maximum number of items allowed */
+                            printf( esc_html__( '(Max: %d)', 'persian-framework' ), esc_html( $max_items ) );
+                            ?>
+                        </span>
                     <?php endif; ?>
                 </label>
             <?php endif; ?>
@@ -112,7 +118,8 @@ class PersianFramework_Field_Repeater {
                                     if ($title_field && isset($item[$title_field]) && !empty($item[$title_field])) {
                                         echo esc_html($item[$title_field]);
                                     } else {
-                                        printf(__('Item %d', 'persian-framework'), $index + 1);
+                                        /* translators: %d: item number */
+                                        printf( esc_html__( 'Item %d', 'persian-framework' ), esc_html( $index + 1 ) );
                                     }
                                     ?>
                                 </span>
@@ -187,7 +194,7 @@ class PersianFramework_Field_Repeater {
                         <button type="button" class="pf-btn pf-btn-danger pf-repeater-clear"
                                 data-target="<?php echo esc_attr($unique_id); ?>">
                             <span class="dashicons dashicons-trash"></span>
-                            <?php _e('Clear All', 'persian-framework'); ?>
+                            <?php esc_html_e('Clear All', 'persian-framework'); ?>
                         </button>
                     <?php endif; ?>
                 </div>
@@ -458,7 +465,7 @@ class PersianFramework_Field_Repeater {
                 }
 
                 .pf-repeater-item {
-                    border: 2px solid #e8edf4;
+                    border: 1px solid #e8edf4;
                     border-radius: 12px;
                     background: white;
                     transition: all 0.2s ease;
@@ -805,7 +812,7 @@ class PersianFramework_Field_Repeater {
                             $url.val('');
                             $preview.html(
                                 '<span class="dashicons dashicons-format-image"></span>' +
-                                '<span class="pf-media-placeholder"><?php esc_js(__('No media selected', 'persian-framework')); ?></span>'
+                                '<span class="pf-media-placeholder"><?php echo esc_js( esc_html__( 'No media selected', 'persian-framework' ) ); ?></span>'
                             );
                             $(this).hide();
 
@@ -937,7 +944,7 @@ class PersianFramework_Field_Repeater {
                         } else {
                             html += '<div class="pf-media-empty" style="text-align: center;">';
                             html += '<span class="dashicons dashicons-format-image"></span>';
-                            html += '<span class="pf-media-placeholder"><?php _e('No media selected', 'persian-framework'); ?></span>';
+                            html += '<span class="pf-media-placeholder"><?php echo esc_js( esc_html__( 'No media selected', 'persian-framework' ) ); ?></span>';
                             html += '</div>';
                         }
                         html += '</div>';
@@ -949,20 +956,20 @@ class PersianFramework_Field_Repeater {
                         html += '<input type="hidden" class="pf-media-id" name="' + fieldConfig.name + '[id]" value="' + mediaId + '" />';
                         html += '</div>';
                         html += '<div class="pf-media-field-row">';
-                        html += '<input type="text" class="pf-field-input pf-media-url" name="' + fieldConfig.name + '[url]" value="' + mediaUrl + '" placeholder="<?php _e('Media URL', 'persian-framework'); ?>" />';
+                        html += '<input type="text" class="pf-field-input pf-media-url" name="' + fieldConfig.name + '[url]" value="' + mediaUrl + '" placeholder="<?php echo esc_js( esc_html__( 'Media URL', 'persian-framework' ) ); ?>" />';
                         html += '</div></div>';
 
                         // Actions
                         html += '<div class="pf-media-actions">';
                         html += '<button type="button" class="pf-btn pf-btn-primary pf-media-choose" data-unique-id="' + fieldConfig.id + '">';
-                        html += '<span class="dashicons dashicons-edit"></span> ' + (mediaId ? '<?php _e('Replace', 'persian-framework'); ?>' : '<?php _e('Choose', 'persian-framework'); ?>');
+                        html += '<span class="dashicons dashicons-edit"></span> ' + (mediaId ? '<?php echo esc_js( esc_html__( 'Replace', 'persian-framework' ) ); ?>' : '<?php echo esc_js( esc_html__( 'Choose', 'persian-framework' ) ); ?>');
                         html += '</button>';
                         html += '<button type="button" class="pf-btn pf-btn-danger pf-media-remove" data-unique-id="' + fieldConfig.id + '" ' + (!mediaId ? 'style="display:none;"' : '') + '>';
-                        html += '<span class="dashicons dashicons-no-alt"></span> <?php _e('Remove', 'persian-framework'); ?>';
+                        html += '<span class="dashicons dashicons-no-alt"></span> <?php echo esc_js( esc_html__( 'Remove', 'persian-framework' ) ); ?>';
                         html += '</button>';
                         if (mediaUrl) {
                             html += '<a href="' + mediaUrl + '" target="_blank" class="pf-btn pf-btn-secondary pf-media-view">';
-                            html += '<span class="dashicons dashicons-external"></span> <?php _e('View', 'persian-framework'); ?>';
+                            html += '<span class="dashicons dashicons-external"></span> <?php echo esc_js( esc_html__( 'View', 'persian-framework' ) ); ?>';
                             html += '</a>';
                         }
                         html += '</div></div></div>';
@@ -1009,12 +1016,12 @@ class PersianFramework_Field_Repeater {
                         html += '<span class="pf-repeater-handle dashicons dashicons-move"></span>';
                     }
                     html += '<span class="pf-repeater-item-title">';
-                    html += '<?php _e('Item', 'persian-framework'); ?> ' + (index + 1);
+                    html += '<?php echo esc_js( esc_html__( 'Item', 'persian-framework' ) ); ?> ' + (index + 1);
                     html += '</span>';
                     if (collapsibleEnabled) {
                         html += '<button type="button" class="pf-repeater-toggle"><span class="dashicons dashicons-arrow-down-alt2"></span></button>';
                     }
-                    html += '<button type="button" class="pf-repeater-remove" aria-label="<?php esc_attr_e('Remove', 'persian-framework'); ?>"><span class="dashicons dashicons-no-alt"></span></button>';
+                    html += '<button type="button" class="pf-repeater-remove" aria-label="<?php echo esc_js( esc_html__( 'Remove', 'persian-framework' ) ); ?>"><span class="dashicons dashicons-no-alt"></span></button>';
                     html += '</div>';
                     html += '<div class="pf-repeater-item-body">';
 
@@ -1092,10 +1099,10 @@ class PersianFramework_Field_Repeater {
                             if ($titleInput.length && $titleInput.val()) {
                                 $title.text($titleInput.val());
                             } else {
-                                $title.text('<?php _e('Item', 'persian-framework'); ?> ' + (index + 1));
+                                $title.text('<?php echo esc_js( esc_html__( 'Item', 'persian-framework' ) ); ?> ' + (index + 1));
                             }
                         } else {
-                            $title.text('<?php _e('Item', 'persian-framework'); ?> ' + (index + 1));
+                            $title.text('<?php echo esc_js( esc_html__( 'Item', 'persian-framework' ) ); ?> ' + (index + 1));
                         }
                     });
                 }
@@ -1119,7 +1126,7 @@ class PersianFramework_Field_Repeater {
                         var $title = $item.find('.pf-repeater-item-title');
                         var $field = $item.find('input[name*="[' + titleField + ']"]');
                         if ($field.length) {
-                            var value = $field.val() || '<?php _e('Item', 'persian-framework'); ?> ' + (index + 1);
+                            var value = $field.val() || '<?php echo esc_js( esc_html__( 'Item', 'persian-framework' ) ); ?> ' + (index + 1);
                             $title.text(value);
                         }
                     });
@@ -1194,7 +1201,7 @@ class PersianFramework_Field_Repeater {
                 // ========================================
                 $addBtn.on('click', function() {
                     if (maxItems > 0 && $container.find('.pf-repeater-item').length >= maxItems) {
-                        alert('<?php (_e('Maximum number of items reached.', 'persian-framework')); ?>');
+                        alert('<?php echo esc_js( esc_html__( 'Maximum number of items reached.', 'persian-framework' ) ); ?>');
                         return;
                     }
 
@@ -1249,11 +1256,11 @@ class PersianFramework_Field_Repeater {
                     var count = $container.find('.pf-repeater-item').length;
 
                     if (count <= minItems) {
-                        alert('<?php (_e('Minimum number of items required.', 'persian-framework')); ?>');
+                        alert('<?php echo esc_js( esc_html__( 'Minimum number of items required.', 'persian-framework' ) ); ?>');
                         return;
                     }
 
-                    if (confirm('<?php (_e('Remove this item?', 'persian-framework')); ?>')) {
+                    if (confirm('<?php echo esc_js( esc_html__( 'Remove this item?', 'persian-framework' ) ); ?>')) {
                         $item.fadeOut(300, function() {
                             $item.remove();
                             updateItemIndexes();
@@ -1275,11 +1282,11 @@ class PersianFramework_Field_Repeater {
                 $clearBtn.on('click', function() {
                     var count = $container.find('.pf-repeater-item').length;
                     if (count <= minItems) {
-                        alert('<?php (_e('Minimum number of items required.', 'persian-framework')); ?>');
+                        alert('<?php echo esc_js( esc_html__( 'Minimum number of items required.', 'persian-framework' ) ); ?>');
                         return;
                     }
 
-                    if (confirm('<?php (_e('Remove all items?', 'persian-framework')); ?>')) {
+                    if (confirm('<?php echo esc_js( esc_html__( 'Remove all items?', 'persian-framework' ) ); ?>')) {
                         $container.find('.pf-repeater-item').fadeOut(300, function() {
                             $container.empty();
                             for (var i = 0; i < minItems; i++) {
@@ -1329,7 +1336,7 @@ class PersianFramework_Field_Repeater {
                     var $field = $item.find('input[name*="[' + titleField + ']"]');
                     if ($field.length && $field.is(this)) {
                         var $title = $item.find('.pf-repeater-item-title');
-                        var value = $(this).val() || '<?php _e('Item', 'persian-framework'); ?> ' + ($item.data('index') + 1);
+                        var value = $(this).val() || '<?php echo esc_js( esc_html__( 'Item', 'persian-framework' ) ); ?> ' + ($item.data('index') + 1);
                         $title.text(value);
                     }
                 });

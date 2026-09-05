@@ -31,11 +31,11 @@ class PersianFramework_Widget extends WP_Widget {
      */
     public function register_widget($id, $name, $description, $fields = array(), $defaults = array()) {
         $this->registered_widgets[$id] = array(
-            'id' => $id,
-            'name' => $name,
-            'description' => $description,
-            'fields' => $fields,
-            'defaults' => $defaults
+                'id' => $id,
+                'name' => $name,
+                'description' => $description,
+                'fields' => $fields,
+                'defaults' => $defaults
         );
         return $this;
     }
@@ -91,7 +91,6 @@ class PersianFramework_Widget extends WP_Widget {
 
             echo '<div class="pf-widget-field pf-widget-field-' . esc_attr($field['type']) . '">';
 
-            // Label
             if (isset($field['label'])) {
                 echo '<label for="' . esc_attr($field['id']) . '" class="pf-widget-field-label">';
                 echo esc_html($field['label']);
@@ -101,7 +100,6 @@ class PersianFramework_Widget extends WP_Widget {
                 echo '</label>';
             }
 
-            // Field
             $field['name'] = $field['id'];
             $field['id'] = $field['id'];
 
@@ -109,7 +107,6 @@ class PersianFramework_Widget extends WP_Widget {
                 echo PersianFramework_Fields::render_field($field, $value);
             }
 
-            // Description
             if (isset($field['description'])) {
                 echo '<p class="pf-widget-field-desc">' . esc_html($field['description']) . '</p>';
             }
@@ -130,12 +127,12 @@ class PersianFramework_Widget_Instance extends WP_Widget {
         $this->widget_config = $this->get_widget_config();
 
         parent::__construct(
-            $this->widget_config['id'] ?? 'pf_widget',
-            $this->widget_config['name'] ?? __('Persian Framework Widget', 'persian-framework'),
-            array(
-                'description' => $this->widget_config['description'] ?? __('A Persian Framework widget', 'persian-framework'),
-                'classname' => 'pf-widget-' . ($this->widget_config['id'] ?? 'default')
-            )
+                $this->widget_config['id'] ?? 'pf_widget',
+                $this->widget_config['name'] ?? esc_html__('Persian Framework Widget', 'persian-framework'),
+                array(
+                        'description' => $this->widget_config['description'] ?? esc_html__('A Persian Framework widget', 'persian-framework'),
+                        'classname' => 'pf-widget-' . ($this->widget_config['id'] ?? 'default')
+                )
         );
     }
 
@@ -147,11 +144,11 @@ class PersianFramework_Widget_Instance extends WP_Widget {
         $framework = PersianFramework_Widget::get_instance();
         $config = $framework->get_widget($widget_id);
         return $config ? $config : array(
-            'id' => 'pf_widget',
-            'name' => __('Persian Framework Widget', 'persian-framework'),
-            'description' => __('Default Persian Framework widget', 'persian-framework'),
-            'fields' => array(),
-            'defaults' => array()
+                'id' => 'pf_widget',
+                'name' => esc_html__('Persian Framework Widget', 'persian-framework'),
+                'description' => esc_html__('Default Persian Framework widget', 'persian-framework'),
+                'fields' => array(),
+                'defaults' => array()
         );
     }
 
@@ -159,20 +156,16 @@ class PersianFramework_Widget_Instance extends WP_Widget {
      * Widget frontend display
      */
     public function widget($args, $instance) {
-        echo $args['before_widget'];
+        echo wp_kses_post($args['before_widget']);
 
         if (!empty($instance['title'])) {
-            echo $args['before_title'] . apply_filters('widget_title', $instance['title']) . $args['after_title'];
+            echo wp_kses_post($args['before_title']) . apply_filters('widget_title', $instance['title']) . wp_kses_post($args['after_title']);
         }
 
-        // Get widget fields
         $fields = $this->widget_config['fields'] ?? array();
-
-        // Get option key if set
         $option_key = isset($instance['option_key']) ? $instance['option_key'] : '';
 
         if (!empty($option_key)) {
-            // Display from framework options
             $value = pf_get($option_key);
             if (!empty($value)) {
                 if (is_array($value)) {
@@ -186,11 +179,10 @@ class PersianFramework_Widget_Instance extends WP_Widget {
                 }
             }
         } else {
-            // Display from instance fields
             $this->render_widget_content($instance);
         }
 
-        echo $args['after_widget'];
+        echo wp_kses_post($args['after_widget']);
     }
 
     /**
@@ -234,7 +226,7 @@ class PersianFramework_Widget_Instance extends WP_Widget {
                 } elseif (is_numeric($value)) {
                     $img = wp_get_attachment_image($value, 'medium');
                     if ($img) {
-                        echo $img;
+                        echo wp_kses_post($img);
                     }
                 }
                 break;
@@ -282,15 +274,13 @@ class PersianFramework_Widget_Instance extends WP_Widget {
         $fields = $this->widget_config['fields'] ?? array();
         $defaults = $this->widget_config['defaults'] ?? array();
 
-        // Merge defaults with instance
         $instance = wp_parse_args($instance, $defaults);
 
-        // Title field (always show)
         $title = !empty($instance['title']) ? $instance['title'] : '';
         ?>
         <p>
             <label for="<?php echo esc_attr($this->get_field_id('title')); ?>">
-                <?php _e('Title:', 'persian-framework'); ?>
+                <?php esc_html_e('Title:', 'persian-framework'); ?>
             </label>
             <input class="widefat"
                    id="<?php echo esc_attr($this->get_field_id('title')); ?>"
@@ -300,11 +290,10 @@ class PersianFramework_Widget_Instance extends WP_Widget {
         </p>
 
         <?php
-        // Option key field (to get from framework options)
         ?>
         <p>
             <label for="<?php echo esc_attr($this->get_field_id('option_key')); ?>">
-                <?php _e('Framework Option Key (optional):', 'persian-framework'); ?>
+                <?php esc_html_e('Framework Option Key (optional):', 'persian-framework'); ?>
             </label>
             <input class="widefat"
                    id="<?php echo esc_attr($this->get_field_id('option_key')); ?>"
@@ -313,14 +302,13 @@ class PersianFramework_Widget_Instance extends WP_Widget {
                    value="<?php echo esc_attr($instance['option_key'] ?? ''); ?>"
                    placeholder="<?php esc_attr_e('e.g., header_text, footer_logo, etc.', 'persian-framework'); ?>">
             <small style="color:#94a3b8;display:block;margin-top:4px;">
-                <?php _e('If set, the widget will display the value from framework options.', 'persian-framework'); ?>
+                <?php esc_html_e('If set, the widget will display the value from framework options.', 'persian-framework'); ?>
             </small>
         </p>
 
         <hr style="margin:16px 0;border-color:#e8edf4;">
 
         <?php
-        // Custom fields
         if (!empty($fields)) {
             echo '<div class="pf-widget-fields">';
             PersianFramework_Widget::render_fields($fields, $instance);
@@ -335,13 +323,9 @@ class PersianFramework_Widget_Instance extends WP_Widget {
         $instance = array();
         $fields = $this->widget_config['fields'] ?? array();
 
-        // Save title
         $instance['title'] = isset($new_instance['title']) ? sanitize_text_field($new_instance['title']) : '';
-
-        // Save option key
         $instance['option_key'] = isset($new_instance['option_key']) ? sanitize_text_field($new_instance['option_key']) : '';
 
-        // Save custom fields
         foreach ($fields as $field) {
             $field_id = $field['id'];
             if (isset($new_instance[$field_id])) {
@@ -384,7 +368,9 @@ class PersianFramework_Widget_Instance extends WP_Widget {
     }
 }
 
-// Helper function to register a widget easily
+/**
+ * Helper function to register a widget easily
+ */
 function pf_register_widget($id, $name, $description, $fields = array(), $defaults = array()) {
     return PersianFramework_Widget::get_instance()->register_widget($id, $name, $description, $fields, $defaults);
 }

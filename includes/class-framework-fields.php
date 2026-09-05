@@ -84,7 +84,6 @@ class PersianFramework_Fields {
             $field_obj = new $class_name($field, $value);
             $output = $field_obj->render();
 
-            // Enqueue required scripts
             if (isset($field['required']) && is_array($field['required']) && class_exists('PersianFramework_Required')) {
                 PersianFramework_Required::enqueue_scripts();
             }
@@ -93,7 +92,8 @@ class PersianFramework_Fields {
         }
 
         return '<div class="pf-field-error">' . sprintf(
-                __('Field type "%s" not found', 'persian-framework'),
+            /* translators: %s: Field type name */
+                esc_html__('Field type "%s" not found', 'persian-framework'),
                 esc_html($type)
             ) . '</div>';
     }
@@ -105,8 +105,8 @@ class PersianFramework_Fields {
     public function ajax_render_field() {
         check_ajax_referer('pf_ajax_nonce', 'nonce');
 
-        $field = isset($_POST['field']) ? $_POST['field'] : array();
-        $value = isset($_POST['value']) ? $_POST['value'] : null;
+        $field = isset($_POST['field']) ? map_deep(wp_unslash($_POST['field']), 'sanitize_text_field') : array();
+        $value = isset($_POST['value']) ? wp_unslash($_POST['value']) : null;
 
         $html = self::render_field($field, $value);
         wp_send_json_success(array('html' => $html));

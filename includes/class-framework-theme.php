@@ -33,8 +33,8 @@ class PersianFramework_Theme {
     private function register_themes() {
         $this->themes = array(
             'default' => array(
-                'name' => __('Default Theme', 'persian-framework'),
-                'description' => __('Clean and modern design', 'persian-framework'),
+                'name' => esc_html__('Default Theme', 'persian-framework'),
+                'description' => esc_html__('Clean and modern design', 'persian-framework'),
                 'css' => 'default.css',
                 'colors' => array(
                     'primary' => '#6366f1',
@@ -44,8 +44,8 @@ class PersianFramework_Theme {
                 )
             ),
             'dark' => array(
-                'name' => __('Dark Theme', 'persian-framework'),
-                'description' => __('Dark mode design', 'persian-framework'),
+                'name' => esc_html__('Dark Theme', 'persian-framework'),
+                'description' => esc_html__('Dark mode design', 'persian-framework'),
                 'css' => 'dark.css',
                 'colors' => array(
                     'primary' => '#818cf8',
@@ -55,8 +55,8 @@ class PersianFramework_Theme {
                 )
             ),
             'ocean' => array(
-                'name' => __('Ocean Theme', 'persian-framework'),
-                'description' => __('Ocean blue design', 'persian-framework'),
+                'name' => esc_html__('Ocean Theme', 'persian-framework'),
+                'description' => esc_html__('Ocean blue design', 'persian-framework'),
                 'css' => 'ocean.css',
                 'colors' => array(
                     'primary' => '#0284c7',
@@ -66,8 +66,8 @@ class PersianFramework_Theme {
                 )
             ),
             'forest' => array(
-                'name' => __('Forest Theme', 'persian-framework'),
-                'description' => __('Natural green design', 'persian-framework'),
+                'name' => esc_html__('Forest Theme', 'persian-framework'),
+                'description' => esc_html__('Natural green design', 'persian-framework'),
                 'css' => 'forest.css',
                 'colors' => array(
                     'primary' => '#059669',
@@ -77,8 +77,8 @@ class PersianFramework_Theme {
                 )
             ),
             'sunset' => array(
-                'name' => __('Sunset Theme', 'persian-framework'),
-                'description' => __('Warm sunset design', 'persian-framework'),
+                'name' => esc_html__('Sunset Theme', 'persian-framework'),
+                'description' => esc_html__('Warm sunset design', 'persian-framework'),
                 'css' => 'sunset.css',
                 'colors' => array(
                     'primary' => '#db2777',
@@ -88,8 +88,8 @@ class PersianFramework_Theme {
                 )
             ),
             'minimal' => array(
-                'name' => __('Minimal Theme', 'persian-framework'),
-                'description' => __('Minimalist design', 'persian-framework'),
+                'name' => esc_html__('Minimal Theme', 'persian-framework'),
+                'description' => esc_html__('Minimalist design', 'persian-framework'),
                 'css' => 'minimal.css',
                 'colors' => array(
                     'primary' => '#475569',

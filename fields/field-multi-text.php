@@ -92,7 +92,12 @@ class PersianFramework_Field_MultiText {
                         <span class="pf-subtitle"><?php echo esc_html($this->field['subtitle']); ?></span>
                     <?php endif; ?>
                     <?php if ($max_items > 0): ?>
-                        <span class="pf-multi-text-max-label"><?php printf(__('(Max: %d)', 'persian-framework'), $max_items); ?></span>
+                        <span class="pf-multi-text-max-label">
+                            <?php
+                            /* translators: %d: maximum number of items allowed */
+                            printf( esc_html__( '(Max: %d)', 'persian-framework' ), esc_html( $max_items ) );
+                            ?>
+                        </span>
                     <?php endif; ?>
                     <?php if ($required): ?>
                         <span class="pf-required">*</span>
@@ -120,7 +125,7 @@ class PersianFramework_Field_MultiText {
                                        placeholder="<?php echo esc_attr($placeholder); ?>"
                                        class="pf-field-input pf-multi-text-input"
                                        data-validate="<?php echo esc_attr($validate); ?>"
-                                        <?php echo $required; ?> />
+                                        <?php echo esc_attr($required); ?> />
                                 <button type="button" class="pf-multi-text-remove" aria-label="<?php esc_attr_e('Remove', 'persian-framework'); ?>">
                                     <span class="dashicons dashicons-no-alt"></span>
                                 </button>
@@ -144,7 +149,7 @@ class PersianFramework_Field_MultiText {
                     <?php if (count($value) > $min_items): ?>
                         <button type="button" class="pf-btn pf-btn-danger pf-multi-text-clear">
                             <span class="dashicons dashicons-trash"></span>
-                            <?php _e('Clear All', 'persian-framework'); ?>
+                            <?php esc_html_e('Clear All', 'persian-framework'); ?>
                         </button>
                     <?php endif; ?>
                 </div>
@@ -320,7 +325,7 @@ class PersianFramework_Field_MultiText {
                     var placeholder = '<?php echo esc_js($this->field['placeholder'] ?? __('Enter text...', 'persian-framework')); ?>';
                     var $container = $('#multi-text-<?php echo esc_js($id); ?>');
 
-                    // ✅ Use the count from PHP
+                    // Use the count from PHP
                     var itemCounter = <?php echo max(count($this->value), 0); ?>;
 
                     // Validation functions
@@ -366,7 +371,7 @@ class PersianFramework_Field_MultiText {
 
                         if (val === '') {
                             $input.addClass('error');
-                            if ($error) $error.text('<?php _e('This field cannot be empty.', 'persian-framework'); ?>').addClass('show');
+                            if ($error) $error.text('<?php echo esc_js( esc_html__( 'This field cannot be empty.', 'persian-framework' ) ); ?>').addClass('show');
                             return false;
                         }
 
@@ -374,13 +379,13 @@ class PersianFramework_Field_MultiText {
                             if (!validators[type](val)) {
                                 $input.addClass('error');
                                 if ($error) {
-                                    var msg = '<?php _e('Invalid value.', 'persian-framework'); ?>';
-                                    if (type === 'color') msg = '<?php _e('Invalid color value. Please enter a valid hex color or color name.', 'persian-framework'); ?>';
-                                    if (type === 'email') msg = '<?php _e('Invalid email address.', 'persian-framework'); ?>';
-                                    if (type === 'url') msg = '<?php _e('Invalid URL. Please enter a valid URL.', 'persian-framework'); ?>';
-                                    if (type === 'numeric') msg = '<?php _e('Please enter only numbers.', 'persian-framework'); ?>';
-                                    if (type === 'alpha') msg = '<?php _e('Please enter only letters.', 'persian-framework'); ?>';
-                                    if (type === 'alphanumeric') msg = '<?php _e('Please enter only letters and numbers.', 'persian-framework'); ?>';
+                                    var msg = '<?php echo esc_js( esc_html__( 'Invalid value.', 'persian-framework' ) ); ?>';
+                                    if (type === 'color') msg = '<?php echo esc_js( esc_html__( 'Invalid color value. Please enter a valid hex color or color name.', 'persian-framework' ) ); ?>';
+                                    if (type === 'email') msg = '<?php echo esc_js( esc_html__( 'Invalid email address.', 'persian-framework' ) ); ?>';
+                                    if (type === 'url') msg = '<?php echo esc_js( esc_html__( 'Invalid URL. Please enter a valid URL.', 'persian-framework' ) ); ?>';
+                                    if (type === 'numeric') msg = '<?php echo esc_js( esc_html__( 'Please enter only numbers.', 'persian-framework' ) ); ?>';
+                                    if (type === 'alpha') msg = '<?php echo esc_js( esc_html__( 'Please enter only letters.', 'persian-framework' ) ); ?>';
+                                    if (type === 'alphanumeric') msg = '<?php echo esc_js( esc_html__( 'Please enter only letters and numbers.', 'persian-framework' ) ); ?>';
                                     $error.text(msg).addClass('show');
                                 }
                                 return false;
@@ -391,7 +396,7 @@ class PersianFramework_Field_MultiText {
                         return true;
                     }
 
-                    // ✅ Update input names with proper indexing
+                    // Update input names with proper indexing
                     function updateItemIndexes() {
                         $container.find('.pf-multi-text-item').each(function(index) {
                             var $item = $(this);
@@ -405,7 +410,7 @@ class PersianFramework_Field_MultiText {
                         });
                     }
 
-                    // ✅ Generate HTML for a single item
+                    // Generate HTML for a single item
                     function generateItem(value) {
                         var html = '<div class="pf-multi-text-item" data-index="' + itemCounter + '">';
                         html += '<div class="pf-multi-text-input-wrap">';
@@ -416,7 +421,7 @@ class PersianFramework_Field_MultiText {
                         html += ' class="pf-field-input pf-multi-text-input"';
                         html += ' data-validate="' + validate + '"';
                         html += ' />';
-                        html += '<button type="button" class="pf-multi-text-remove" aria-label="<?php esc_attr_e('Remove', 'persian-framework'); ?>">';
+                        html += '<button type="button" class="pf-multi-text-remove" aria-label="<?php echo esc_js( esc_html__( 'Remove', 'persian-framework' ) ); ?>">';
                         html += '<span class="dashicons dashicons-no-alt"></span>';
                         html += '</button>';
                         html += '</div>';
@@ -431,7 +436,7 @@ class PersianFramework_Field_MultiText {
                     // Add new item
                     $('.pf-multi-text-add').on('click', function() {
                         if (maxItems > 0 && $container.find('.pf-multi-text-item').length >= maxItems) {
-                            alert('<?php esc_js(__('Maximum number of items reached.', 'persian-framework')); ?>');
+                            alert('<?php echo esc_js( esc_html__( 'Maximum number of items reached.', 'persian-framework' ) ); ?>');
                             return;
                         }
 
@@ -459,7 +464,7 @@ class PersianFramework_Field_MultiText {
                         var count = $container.find('.pf-multi-text-item').length;
 
                         if (count <= minItems) {
-                            alert('<?php esc_js(__('Minimum number of items required.', 'persian-framework')); ?>');
+                            alert('<?php echo esc_js( esc_html__( 'Minimum number of items required.', 'persian-framework' ) ); ?>');
                             return;
                         }
 
@@ -480,14 +485,14 @@ class PersianFramework_Field_MultiText {
                     $(document).on('click', '.pf-multi-text-clear', function() {
                         var count = $container.find('.pf-multi-text-item').length;
                         if (count <= minItems) {
-                            alert('<?php esc_js(__('Minimum number of items required.', 'persian-framework')); ?>');
+                            alert('<?php echo esc_js( esc_html__( 'Minimum number of items required.', 'persian-framework' ) ); ?>');
                             return;
                         }
 
-                        if (confirm('<?php esc_js(__('Remove all items?', 'persian-framework')); ?>')) {
+                        if (confirm('<?php echo esc_js( esc_html__( 'Remove all items?', 'persian-framework' ) ); ?>')) {
                             $container.find('.pf-multi-text-item').fadeOut(300, function() {
                                 $container.empty();
-                                // ✅ Reset itemCounter to minItems
+                                // Reset itemCounter to minItems
                                 itemCounter = minItems;
                                 for (var i = 0; i < minItems; i++) {
                                     var $item = $(generateItem(''));
@@ -518,7 +523,7 @@ class PersianFramework_Field_MultiText {
                         $container.find('.pf-multi-text-remove').toggle(count > minItems);
                     }
 
-                    // ✅ Initialize
+                    // Initialize
                     $(document).ready(function() {
                         // Make sure itemCounter is correct
                         var currentCount = $container.find('.pf-multi-text-item').length;

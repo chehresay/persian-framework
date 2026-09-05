@@ -36,159 +36,159 @@ class PersianFramework_Shortcode {
         $this->default_shortcodes = array(
             'pf_option' => array(
                 'callback' => array($this, 'shortcode_option'),
-                'description' => __('Display an option value', 'persian-framework'),
+                'description' => esc_html__('Display an option value', 'persian-framework'),
                 'attributes' => array(
                     'key' => array(
                         'required' => true,
-                        'description' => __('Option key to display', 'persian-framework')
+                        'description' => esc_html__('Option key to display', 'persian-framework')
                     ),
                     'default' => array(
                         'default' => '',
-                        'description' => __('Default value if option is empty', 'persian-framework')
+                        'description' => esc_html__('Default value if option is empty', 'persian-framework')
                     )
                 )
             ),
             'pf_if' => array(
                 'callback' => array($this, 'shortcode_if'),
-                'description' => __('Conditional content based on option value', 'persian-framework'),
+                'description' => esc_html__('Conditional content based on option value', 'persian-framework'),
                 'attributes' => array(
                     'key' => array(
                         'required' => true,
-                        'description' => __('Option key to check', 'persian-framework')
+                        'description' => esc_html__('Option key to check', 'persian-framework')
                     ),
                     'value' => array(
                         'required' => true,
-                        'description' => __('Value to compare against', 'persian-framework')
+                        'description' => esc_html__('Value to compare against', 'persian-framework')
                     ),
                     'operator' => array(
                         'default' => '=',
-                        'description' => __('Comparison operator: =, !=, >, <, >=, <=', 'persian-framework')
+                        'description' => esc_html__('Comparison operator: =, !=, >, <, >=, <=', 'persian-framework')
                     )
                 )
             ),
             'pf_if_not' => array(
                 'callback' => array($this, 'shortcode_if_not'),
-                'description' => __('Conditional content if option value is not equal', 'persian-framework'),
+                'description' => esc_html__('Conditional content if option value is not equal', 'persian-framework'),
                 'attributes' => array(
                     'key' => array(
                         'required' => true,
-                        'description' => __('Option key to check', 'persian-framework')
+                        'description' => esc_html__('Option key to check', 'persian-framework')
                     ),
                     'value' => array(
                         'required' => true,
-                        'description' => __('Value to compare against', 'persian-framework')
+                        'description' => esc_html__('Value to compare against', 'persian-framework')
                     )
                 )
             ),
             'pf_repeater' => array(
                 'callback' => array($this, 'shortcode_repeater'),
-                'description' => __('Loop through repeater field items', 'persian-framework'),
+                'description' => esc_html__('Loop through repeater field items', 'persian-framework'),
                 'attributes' => array(
                     'key' => array(
                         'required' => true,
-                        'description' => __('Repeater option key', 'persian-framework')
+                        'description' => esc_html__('Repeater option key', 'persian-framework')
                     ),
                     'field' => array(
                         'required' => true,
-                        'description' => __('Field to display from repeater', 'persian-framework')
+                        'description' => esc_html__('Field to display from repeater', 'persian-framework')
                     ),
                     'separator' => array(
                         'default' => ', ',
-                        'description' => __('Separator between items', 'persian-framework')
+                        'description' => esc_html__('Separator between items', 'persian-framework')
                     )
                 )
             ),
             'pf_sorter' => array(
                 'callback' => array($this, 'shortcode_sorter'),
-                'description' => __('Display sorter field items', 'persian-framework'),
+                'description' => esc_html__('Display sorter field items', 'persian-framework'),
                 'attributes' => array(
                     'key' => array(
                         'required' => true,
-                        'description' => __('Sorter option key', 'persian-framework')
+                        'description' => esc_html__('Sorter option key', 'persian-framework')
                     ),
                     'column' => array(
                         'required' => true,
-                        'description' => __('Column to display from sorter', 'persian-framework')
+                        'description' => esc_html__('Column to display from sorter', 'persian-framework')
                     ),
                     'separator' => array(
                         'default' => ', ',
-                        'description' => __('Separator between items', 'persian-framework')
+                        'description' => esc_html__('Separator between items', 'persian-framework')
                     )
                 )
             ),
             'pf_map' => array(
                 'callback' => array($this, 'shortcode_map'),
-                'description' => __('Display a Google Map', 'persian-framework'),
+                'description' => esc_html__('Display a Google Map', 'persian-framework'),
                 'attributes' => array(
                     'key' => array(
                         'required' => true,
-                        'description' => __('Map option key', 'persian-framework')
+                        'description' => esc_html__('Map option key', 'persian-framework')
                     ),
                     'width' => array(
                         'default' => '100%',
-                        'description' => __('Map width', 'persian-framework')
+                        'description' => esc_html__('Map width', 'persian-framework')
                     ),
                     'height' => array(
                         'default' => '400px',
-                        'description' => __('Map height', 'persian-framework')
+                        'description' => esc_html__('Map height', 'persian-framework')
                     ),
                     'zoom' => array(
                         'default' => '14',
-                        'description' => __('Map zoom level', 'persian-framework')
+                        'description' => esc_html__('Map zoom level', 'persian-framework')
                     )
                 )
             ),
             'pf_gallery' => array(
                 'callback' => array($this, 'shortcode_gallery'),
-                'description' => __('Display a gallery', 'persian-framework'),
+                'description' => esc_html__('Display a gallery', 'persian-framework'),
                 'attributes' => array(
                     'key' => array(
                         'required' => true,
-                        'description' => __('Gallery option key', 'persian-framework')
+                        'description' => esc_html__('Gallery option key', 'persian-framework')
                     ),
                     'columns' => array(
                         'default' => '3',
-                        'description' => __('Number of columns', 'persian-framework')
+                        'description' => esc_html__('Number of columns', 'persian-framework')
                     ),
                     'size' => array(
                         'default' => 'medium',
-                        'description' => __('Image size: thumbnail, medium, large, full', 'persian-framework')
+                        'description' => esc_html__('Image size: thumbnail, medium, large, full', 'persian-framework')
                     ),
                     'link' => array(
                         'default' => 'file',
-                        'description' => __('Link to: file, attachment, none', 'persian-framework')
+                        'description' => esc_html__('Link to: file, attachment, none', 'persian-framework')
                     )
                 )
             ),
             'pf_image' => array(
                 'callback' => array($this, 'shortcode_image'),
-                'description' => __('Display an image', 'persian-framework'),
+                'description' => esc_html__('Display an image', 'persian-framework'),
                 'attributes' => array(
                     'key' => array(
                         'required' => true,
-                        'description' => __('Image option key', 'persian-framework')
+                        'description' => esc_html__('Image option key', 'persian-framework')
                     ),
                     'size' => array(
                         'default' => 'medium',
-                        'description' => __('Image size', 'persian-framework')
+                        'description' => esc_html__('Image size', 'persian-framework')
                     ),
                     'class' => array(
                         'default' => '',
-                        'description' => __('CSS class', 'persian-framework')
+                        'description' => esc_html__('CSS class', 'persian-framework')
                     )
                 )
             ),
             'pf_color' => array(
                 'callback' => array($this, 'shortcode_color'),
-                'description' => __('Display a color value with style', 'persian-framework'),
+                'description' => esc_html__('Display a color value with style', 'persian-framework'),
                 'attributes' => array(
                     'key' => array(
                         'required' => true,
-                        'description' => __('Color option key', 'persian-framework')
+                        'description' => esc_html__('Color option key', 'persian-framework')
                     ),
                     'type' => array(
                         'default' => 'text',
-                        'description' => __('Output type: text, background, color, box', 'persian-framework')
+                        'description' => esc_html__('Output type: text, background, color, box', 'persian-framework')
                     )
                 )
             )
@@ -222,7 +222,6 @@ class PersianFramework_Shortcode {
      * Process shortcodes in content
      */
     public function process_shortcodes_in_content($content) {
-        // Process shortcodes in specific formats
         $content = preg_replace_callback(
             '/\[pf_option\s+([^\]]+)\]/',
             array($this, 'process_option_shortcode'),
@@ -486,7 +485,6 @@ class PersianFramework_Shortcode {
             return '';
         }
 
-        // If it's an array with id
         if (is_array($image) && isset($image['id'])) {
             $img = wp_get_attachment_image($image['id'], $atts['size'], false, array('class' => $atts['class']));
             if ($img) {
@@ -497,7 +495,6 @@ class PersianFramework_Shortcode {
             }
         }
 
-        // If it's just a URL
         if (is_string($image) && filter_var($image, FILTER_VALIDATE_URL)) {
             return '<img src="' . esc_url($image) . '" class="' . esc_attr($atts['class']) . '" alt="">';
         }

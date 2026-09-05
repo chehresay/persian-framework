@@ -3,7 +3,7 @@
  * Plugin Name: Persian Framework
  * Plugin URI: https://parswp.ir/persian-framework
  * Description: Advanced WordPress Options Framework with 40+ professional fields
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Parswp.ir
  * Author URI: https://parswp.ir
  * License: GPL v2 or later
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 // ========================================
 // Constants
 // ========================================
-define('PERSIAN_FRAMEWORK_VERSION', '1.0.0');
+define('PERSIAN_FRAMEWORK_VERSION', '1.0.1');
 define('PERSIAN_FRAMEWORK_FILE', __FILE__);
 define('PERSIAN_FRAMEWORK_PATH', plugin_dir_path(__FILE__));
 define('PERSIAN_FRAMEWORK_URL', plugin_dir_url(__FILE__));

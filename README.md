@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Persian Framework](https://img.shields.io/badge/version-1.0.0-blue)
+![Persian Framework](https://img.shields.io/badge/version-1.0.1-blue)
 ![WordPress](https://img.shields.io/badge/WordPress-5.0+-green)
 ![PHP](https://img.shields.io/badge/PHP-7.4+-purple)
 ![License](https://img.shields.io/badge/license-GPLv2-yellow)
@@ -265,6 +265,81 @@ $framework->add_section([
         ],
     ],
 ]);
+```
+
+## 🎯 Metabox Usage
+
+Persian Framework also supports adding custom metaboxes for posts, pages, products, and any custom post types.
+
+### Adding a Metabox for Products (WooCommerce)
+
+```php
+// Initialize metabox class
+if (class_exists('PersianFramework_Metabox')) {
+    $metabox = PersianFramework_Metabox::get_instance();
+
+    // Register metabox for products
+    $metabox->register_metabox(
+        'product_custom_options',
+        'Product Special Settings',
+        array('product'),  // Post type: product, post, page, or custom
+        'normal',          // Context: normal, side, advanced
+        'high',            // Priority: high, default, low
+        array(
+            array(
+                'id' => 'product_badge',
+                'type' => 'select',
+                'label' => 'Product Badge',
+                'options' => array(
+                    'none' => 'No Badge',
+                    'new' => 'New',
+                    'sale' => 'Sale',
+                    'best' => 'Best Seller',
+                    'limited' => 'Limited Edition',
+                ),
+                'default' => 'none',
+                'description' => 'Display a special badge on the product.',
+            ),
+            array(
+                'id' => 'product_video',
+                'type' => 'url',
+                'label' => 'Product Video URL',
+                'placeholder' => 'https://www.youtube.com/watch?v=...',
+                'description' => 'Add a video URL for product introduction.',
+            ),
+            array(
+                'id' => 'product_extra_desc',
+                'type' => 'wp-editor',
+                'label' => 'Extra Description',
+                'rows' => 6,
+                'description' => 'Additional description shown below the price.',
+            ),
+            array(
+                'id' => 'product_show_slider',
+                'type' => 'switch',
+                'label' => 'Show in Slider',
+                'default' => false,
+                'on' => 'Show',
+                'off' => 'Hide',
+                'description' => 'Show this product in the homepage slider.',
+            ),
+            array(
+                'id' => 'product_custom_color',
+                'type' => 'color',
+                'label' => 'Custom Color',
+                'default' => '#6366f1',
+                'description' => 'Custom color for this product.',
+            ),
+            array(
+                'id' => 'product_gallery',
+                'type' => 'gallery',
+                'label' => 'Additional Gallery',
+                'max' => 6,
+                'description' => 'Add extra images for this product.',
+            ),
+        )
+    );
+}
 ```
 
 

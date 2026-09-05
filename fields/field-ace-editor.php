@@ -26,7 +26,7 @@ class PersianFramework_Field_AceEditor {
         $value = $this->value !== null ? $this->value : (isset($this->field['default']) ? $this->field['default'] : '');
 
         // Ace Editor settings
-        $mode = isset($this->field['mode']) ? $this->field['mode'] : 'html'; // html, css, javascript, php, json, etc.
+        $mode = isset($this->field['mode']) ? $this->field['mode'] : 'html';
         $theme = isset($this->field['theme']) ? $this->field['theme'] : 'monokai';
         $height = isset($this->field['height']) ? $this->field['height'] : '300px';
         $font_size = isset($this->field['font_size']) ? $this->field['font_size'] : 14;
@@ -73,28 +73,27 @@ class PersianFramework_Field_AceEditor {
     }
 
     private function enqueue_scripts($id, $mode, $theme, $font_size, $show_gutter, $readonly, $wrap) {
-        static $enqueued = false;
+        static $pf_ace_enqueued = false;
 
-        if (!$enqueued) {
-            // Enqueue Ace Editor from CDN
+        if (!$pf_ace_enqueued) {
+            // ✅ Enqueue Ace Editor from LOCAL
             wp_enqueue_script(
-                'ace-editor',
+                    'pf-ace-editor',
                     PERSIAN_FRAMEWORK_URL . 'vendor/ace-editor/ace.min.js',
-                array(),
-                '1.4.14',
-                true
+                    array(),
+                    PERSIAN_FRAMEWORK_VERSION,
+                    true
             );
 
-            // Enqueue Ace Extensions (for auto-completion, etc.)
             wp_enqueue_script(
-                'ace-ext-language_tools',
+                    'pf-ace-ext-language_tools',
                     PERSIAN_FRAMEWORK_URL . 'vendor/ace-editor/ext-language_tools.min.js',
-                array('ace-editor'),
-                '1.4.14',
-                true
+                    array('pf-ace-editor'),
+                    PERSIAN_FRAMEWORK_VERSION,
+                    true
             );
 
-            $enqueued = true;
+            $pf_ace_enqueued = true;
         }
 
         ?>
@@ -155,8 +154,8 @@ class PersianFramework_Field_AceEditor {
                 'use strict';
 
                 function initAceEditor() {
-                    var editorId = 'ace-editor-<?php echo esc_js($id); ?>';
-                    var textareaId = '<?php echo esc_js($id); ?>';
+                    var editorId = 'ace-editor-<?php echo esc_attr($id); ?>';
+                    var textareaId = '<?php echo esc_attr($id); ?>';
                     var $textarea = $('#' + textareaId);
 
                     if (typeof ace === 'undefined') {
@@ -167,42 +166,35 @@ class PersianFramework_Field_AceEditor {
                     if (document.getElementById(editorId)) {
                         var editor = ace.edit(editorId);
 
-                        // Set options
-                        editor.setTheme('ace/theme/<?php echo esc_js($theme); ?>');
-                        editor.session.setMode('ace/mode/<?php echo esc_js($mode); ?>');
+                        editor.setTheme('ace/theme/<?php echo esc_attr($theme); ?>');
+                        editor.session.setMode('ace/mode/<?php echo esc_attr($mode); ?>');
                         editor.setFontSize(<?php echo intval($font_size); ?>);
                         editor.setReadOnly(<?php echo $readonly ? 'true' : 'false'; ?>);
                         editor.setShowPrintMargin(false);
                         editor.setDisplayIndentGuides(true);
 
-                        // Gutter
                         <?php if (!$show_gutter): ?>
                         editor.renderer.setShowGutter(false);
                         <?php endif; ?>
 
-                        // Wrap
                         <?php if ($wrap): ?>
                         editor.session.setUseWrapMode(true);
                         <?php endif; ?>
 
-                        // Auto-completion
                         editor.setOptions({
                             enableBasicAutocompletion: true,
                             enableLiveAutocompletion: true,
                             enableSnippets: true
                         });
 
-                        // Set initial value
                         var initialValue = $textarea.val();
                         editor.setValue(initialValue, -1);
 
-                        // Update textarea on change
                         editor.session.on('change', function() {
                             var value = editor.getValue();
                             $textarea.val(value).trigger('change');
                         });
 
-                        // Update cursor position
                         editor.on('changeSelection', function() {
                             var pos = editor.getCursorPosition();
                             var row = pos.row + 1;
@@ -210,28 +202,22 @@ class PersianFramework_Field_AceEditor {
                             $('.pf-ace-status-cursor').text('Ln: ' + row + ' | Col: ' + col);
                         });
 
-                        // Resize editor on window resize
                         $(window).on('resize', function() {
                             editor.resize();
                         });
 
-                        // Store reference
-                        $(document).data('ace-editor-' + textareaId, editor);
+                        $(document).data('pf-ace-editor-' + textareaId, editor);
                     }
                 }
 
-                // Initialize on document ready
                 $(document).ready(function() {
-                    // Wait for Ace to load
                     if (typeof ace !== 'undefined') {
                         initAceEditor();
                     } else {
-                        // Check again after a delay
                         setTimeout(initAceEditor, 500);
                     }
                 });
 
-                // Handle dynamic fields (repeater, etc.)
                 $(document).on('pf-repeater-add', function() {
                     setTimeout(initAceEditor, 500);
                 });

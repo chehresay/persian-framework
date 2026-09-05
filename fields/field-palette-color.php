@@ -28,61 +28,59 @@ class PersianFramework_Field_PaletteColor {
         $cols = isset($this->field['cols']) ? intval($this->field['cols']) : 3;
         $required = isset($this->field['required']) && $this->field['required'] ? 'required' : '';
 
-        // Default palettes if none provided
         if (empty($palettes)) {
             $palettes = array(
-                'default' => array(
-                    '#6366f1',
-                    '#8b5cf6',
-                    '#a78bfa',
-                    '#c4b5fd',
-                ),
-                'green' => array(
-                    '#059669',
-                    '#10b981',
-                    '#34d399',
-                    '#6ee7b7',
-                ),
-                'red' => array(
-                    '#dc2626',
-                    '#ef4444',
-                    '#f87171',
-                    '#fca5a5',
-                ),
-                'orange' => array(
-                    '#d97706',
-                    '#f59e0b',
-                    '#fbbf24',
-                    '#fcd34d',
-                ),
-                'blue' => array(
-                    '#2563eb',
-                    '#3b82f6',
-                    '#60a5fa',
-                    '#93c5fd',
-                ),
-                'pink' => array(
-                    '#db2777',
-                    '#ec4899',
-                    '#f472b6',
-                    '#f9a8d4',
-                ),
-                'gray' => array(
-                    '#4b5563',
-                    '#6b7280',
-                    '#9ca3af',
-                    '#d1d5db',
-                ),
-                'dark' => array(
-                    '#1e293b',
-                    '#334155',
-                    '#475569',
-                    '#64748b',
-                ),
+                    'default' => array(
+                            '#6366f1',
+                            '#8b5cf6',
+                            '#a78bfa',
+                            '#c4b5fd',
+                    ),
+                    'green' => array(
+                            '#059669',
+                            '#10b981',
+                            '#34d399',
+                            '#6ee7b7',
+                    ),
+                    'red' => array(
+                            '#dc2626',
+                            '#ef4444',
+                            '#f87171',
+                            '#fca5a5',
+                    ),
+                    'orange' => array(
+                            '#d97706',
+                            '#f59e0b',
+                            '#fbbf24',
+                            '#fcd34d',
+                    ),
+                    'blue' => array(
+                            '#2563eb',
+                            '#3b82f6',
+                            '#60a5fa',
+                            '#93c5fd',
+                    ),
+                    'pink' => array(
+                            '#db2777',
+                            '#ec4899',
+                            '#f472b6',
+                            '#f9a8d4',
+                    ),
+                    'gray' => array(
+                            '#4b5563',
+                            '#6b7280',
+                            '#9ca3af',
+                            '#d1d5db',
+                    ),
+                    'dark' => array(
+                            '#1e293b',
+                            '#334155',
+                            '#475569',
+                            '#64748b',
+                    ),
             );
         }
 
-        // Get palette colors for preview
         $selected_colors = isset($palettes[$value]) ? $palettes[$value] : array();
 
         ?>
@@ -110,8 +108,8 @@ class PersianFramework_Field_PaletteColor {
                             <input type="radio"
                                    name="<?php echo esc_attr($name); ?>"
                                    value="<?php echo esc_attr($key); ?>"
-                                <?php checked($value, $key); ?>
-                                <?php echo $required; ?> />
+                                    <?php checked($value, $key); ?>
+                                    <?php echo wp_kses_data($required); ?> />
 
                             <div class="pf-palette-preview">
                                 <?php foreach ($colors as $index => $color): ?>
@@ -132,7 +130,7 @@ class PersianFramework_Field_PaletteColor {
 
                 <?php if (!empty($selected_colors)): ?>
                     <div class="pf-palette-selected-preview">
-                        <strong><?php _e('Selected Palette:', 'persian-framework'); ?></strong>
+                        <strong><?php esc_html_e('Selected Palette:', 'persian-framework'); ?></strong>
                         <span class="pf-palette-selected-name"><?php echo esc_html(ucfirst(str_replace('_', ' ', $value))); ?></span>
                         <div class="pf-palette-selected-colors">
                             <?php foreach ($selected_colors as $color): ?>
@@ -153,14 +151,11 @@ class PersianFramework_Field_PaletteColor {
     }
 
     private function enqueue_scripts() {
-        static $enqueued = false;
+        static $pf_palette_enqueued = false;
 
-        if (!$enqueued) {
+        if (!$pf_palette_enqueued) {
             ?>
             <style>
-                /* ============================================================
-                   Palette Color Field
-                   ============================================================ */
                 .pf-palette-container {
                     margin-top: 8px;
                 }
@@ -296,7 +291,6 @@ class PersianFramework_Field_PaletteColor {
                     color: #818cf8;
                 }
 
-                /* Selected palette preview */
                 .pf-palette-selected-preview {
                     display: flex;
                     align-items: center;
@@ -336,7 +330,6 @@ class PersianFramework_Field_PaletteColor {
                     border-color: #334155;
                 }
 
-                /* Responsive */
                 .pf-palette-grid {
                     --pf-palette-cols: <?php echo intval($this->field['cols'] ?? 4); ?>;
                 }
@@ -379,18 +372,13 @@ class PersianFramework_Field_PaletteColor {
                 (function($) {
                     'use strict';
 
-                    // Handle palette selection
                     $(document).on('change', '.pf-palette-item input[type="radio"]', function() {
                         var $item = $(this).closest('.pf-palette-item');
                         var $container = $item.closest('.pf-palette-grid');
 
-                        // Remove selected class from all items
                         $container.find('.pf-palette-item').removeClass('selected');
-
-                        // Add selected class to the clicked item
                         $item.addClass('selected');
 
-                        // Update selected preview
                         var $parentContainer = $container.closest('.pf-palette-container');
                         var paletteKey = $item.data('palette');
                         var paletteLabel = $item.find('.pf-palette-label').text();
@@ -400,7 +388,6 @@ class PersianFramework_Field_PaletteColor {
                             paletteColors.push($(this).css('background-color'));
                         });
 
-                        // Update preview
                         var $preview = $parentContainer.find('.pf-palette-selected-preview');
                         if ($preview.length) {
                             $preview.find('.pf-palette-selected-name').text(paletteLabel);
@@ -410,9 +397,8 @@ class PersianFramework_Field_PaletteColor {
                                 $colorsContainer.append('<span class="pf-palette-swatch" style="background-color: ' + color + ';"></span>');
                             });
                         } else {
-                            // Create preview if not exists
                             var previewHtml = '<div class="pf-palette-selected-preview">' +
-                                '<strong><?php _e('Selected Palette:', 'persian-framework'); ?></strong>' +
+                                '<strong><?php esc_html_e('Selected Palette:', 'persian-framework'); ?></strong>' +
                                 '<span class="pf-palette-selected-name">' + paletteLabel + '</span>' +
                                 '<div class="pf-palette-selected-colors">';
                             paletteColors.forEach(function(color) {
@@ -422,24 +408,16 @@ class PersianFramework_Field_PaletteColor {
                             $parentContainer.append(previewHtml);
                         }
 
-                        // Trigger event
                         $container.trigger('pf-palette-select', [paletteKey]);
                         $(document).trigger('pf-palette-updated', [paletteKey]);
                     });
 
-                    // Initialize selected state
                     $(document).ready(function() {
                         $('.pf-palette-grid').each(function() {
                             var $container = $(this);
                             var $checked = $container.find('input[type="radio"]:checked');
                             if ($checked.length) {
                                 $checked.closest('.pf-palette-item').addClass('selected');
-                            } else {
-                                // If no checked item, select the first one if default is set
-                                var $first = $container.find('.pf-palette-item').first();
-                                if ($first.length) {
-                                    // Don't auto-select, let the default value handle it
-                                }
                             }
                         });
                     });
@@ -447,7 +425,18 @@ class PersianFramework_Field_PaletteColor {
                 })(jQuery);
             </script>
             <?php
-            $enqueued = true;
+            $pf_palette_enqueued = true;
         }
+    }
+
+    public function sanitize($value) {
+        $palettes = isset($this->field['palettes']) ? array_keys($this->field['palettes']) : array();
+        $value = wp_unslash($value);
+
+        if (in_array($value, $palettes, true)) {
+            return sanitize_text_field($value);
+        }
+
+        return isset($this->field['default']) ? $this->field['default'] : '';
     }
 }

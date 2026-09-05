@@ -41,63 +41,70 @@ class PersianFramework_Admin {
         ?>
         <div class="pf-framework-container">
 
-            <!-- ============================================================ -->
-            <!-- Unsaved Changes Notification Bar -->
-            <!-- ============================================================ -->
             <div id="pf_notification_bar" style="display:none;">
                 <div class="pf-save-warn notice-yellow">
                     <span class="dashicons dashicons-warning"></span>
-                    <strong><?php _e('Settings have changed, you should save them!', 'persian-framework'); ?></strong>
+                    <strong><?php esc_html_e('Settings have changed, you should save them!', 'persian-framework'); ?></strong>
                     <button type="button" class="pf-btn pf-btn-success pfAjaxSaveBtn pf-save-now-btn"
                             data-instance="<?php echo esc_attr($instance_id); ?>"
                             data-optname="<?php echo esc_attr($opt_name); ?>">
                         <i class="dashicons dashicons-yes"></i>
-                        <span class="pfSaveText"><?php _e('Save Settings', 'persian-framework'); ?></span>
+                        <span class="pfSaveText"><?php esc_html_e('Save Settings', 'persian-framework'); ?></span>
                     </button>
                     <button type="button" class="pf-btn pf-btn-secondary pf-dismiss-warn">
                         <span class="dashicons dashicons-no-alt"></span>
                     </button>
                 </div>
                 <div class="pf-field-errors notice-red" style="display:none;">
-                    <strong><span class="dashicons dashicons-dismiss"></span> <?php _e('Error(s) found!', 'persian-framework'); ?></strong>
+                    <strong><span class="dashicons dashicons-dismiss"></span> <?php esc_html_e('Error(s) found!', 'persian-framework'); ?></strong>
                 </div>
                 <div class="pf-field-warnings notice-yellow" style="display:none;">
-                    <strong><span class="dashicons dashicons-warning"></span> <?php _e('Warning(s) found!', 'persian-framework'); ?></strong>
+                    <strong><span class="dashicons dashicons-warning"></span> <?php esc_html_e('Warning(s) found!', 'persian-framework'); ?></strong>
                 </div>
             </div>
 
             <header class="pf-header">
                 <div class="pf-header-brand">
                     <div class="pf-brand-icon">
-                        <img src="<?php echo PERSIAN_FRAMEWORK_URL;?>/assets/images/logo.svg" width="50px">
+                        <img src="<?php echo esc_url(PERSIAN_FRAMEWORK_URL); ?>assets/images/logo.svg" width="50px">
                     </div>
                     <div>
-                        <div class="pf-brand-title"><?php echo esc_html($config['display_name'] ?? _e('Persian Framework', 'persian-framework')); ?></div>
-                        <div class="pf-brand-subtitle">v<?php echo esc_html($config['display_version'] ?? PERSIAN_FRAMEWORK_VERSION); ?> | <?php _e('Advanced Options Framework', 'persian-framework'); ?></div>
+                        <div class="pf-brand-title">
+                            <?php
+                            if (isset($config['display_name'])) {
+                                echo esc_html($config['display_name']);
+                            } else {
+                                esc_html_e('Persian Framework', 'persian-framework');
+                            }
+                            ?>
+                        </div>
+                        <div class="pf-brand-subtitle">
+                            v<?php echo esc_html($config['display_version'] ?? PERSIAN_FRAMEWORK_VERSION); ?>
+                            | <?php esc_html_e('Advanced Options Framework', 'persian-framework'); ?>
+                        </div>
                     </div>
                 </div>
                 <div class="pf-header-actions">
                     <div class="pf-search">
                         <span class="dashicons dashicons-search"></span>
-                        <input type="search" class="pf-settings-search" placeholder="<?php echo esc_attr__('Search settings…', 'persian-framework'); ?>">
+                        <input type="search" class="pf-settings-search" placeholder="<?php esc_attr_e('Search settings…', 'persian-framework'); ?>">
                     </div>
 
                     <button type="button" class="pf-btn pf-btn-secondary" id="pfThemeToggle">
-                        <i class="dashicons dashicons-admin-appearance"></i> <?php _e('Dark Mode', 'persian-framework'); ?>
+                        <i class="dashicons dashicons-admin-appearance"></i> <?php esc_html_e('Dark Mode', 'persian-framework'); ?>
                     </button>
 
-                    <!-- Reset All Button -->
                     <button type="button" class="pf-btn pf-btn-danger pfResetBtn"
                             data-optname="<?php echo esc_attr($opt_name); ?>"
                             data-instance="<?php echo esc_attr($instance_id); ?>">
-                        <i class="dashicons dashicons-image-rotate"></i> <?php _e('Reset All', 'persian-framework'); ?>
+                        <i class="dashicons dashicons-image-rotate"></i> <?php esc_html_e('Reset All', 'persian-framework'); ?>
                     </button>
 
                     <button type="button" class="pf-btn pf-btn-success pfAjaxSaveBtn"
                             data-instance="<?php echo esc_attr($instance_id); ?>"
                             data-optname="<?php echo esc_attr($opt_name); ?>">
                         <i class="dashicons dashicons-yes"></i>
-                        <span class="pfSaveText"><?php _e('Save Settings', 'persian-framework'); ?></span>
+                        <span class="pfSaveText"><?php esc_html_e('Save Settings', 'persian-framework'); ?></span>
                         <span class="pf-spinner pfSaveSpinner" style="display:none;">
                             <span class="dashicons dashicons-update spin"></span>
                         </span>
@@ -123,12 +130,17 @@ class PersianFramework_Admin {
 
                     <button class="pf-sidebar-tab" data-tab="import-export">
                         <i class="dashicons dashicons-upload"></i>
-                        <span><?php _e('Import / Export', 'persian-framework'); ?></span>
+                        <span><?php esc_html_e('Import / Export', 'persian-framework'); ?></span>
                     </button>
 
                     <button class="pf-sidebar-tab" data-tab="backup">
                         <i class="dashicons dashicons-backup"></i>
-                        <span><?php _e('Backup', 'persian-framework'); ?></span>
+                        <span><?php esc_html_e('Backup', 'persian-framework'); ?></span>
+                    </button>
+
+                    <button class="pf-sidebar-tab" data-tab="donate">
+                        <i class="dashicons dashicons-heart"></i>
+                        <span><?php esc_html_e('Donate', 'persian-framework'); ?></span>
                     </button>
                 </nav>
 
@@ -142,9 +154,6 @@ class PersianFramework_Admin {
                         <?php foreach ($sections as $index => $section): ?>
                             <div class="pf-tab-content <?php echo $index === 0 ? 'active' : ''; ?>" id="pfTab-<?php echo esc_attr($section['id']); ?>">
 
-                                <!-- ============================================================ -->
-                                <!-- Section Header with Reset Section Button -->
-                                <!-- ============================================================ -->
                                 <div class="pf-section-header">
                                     <div>
                                         <h2><?php echo esc_html($section['title']); ?></h2>
@@ -159,7 +168,7 @@ class PersianFramework_Admin {
                                                 data-instance="<?php echo esc_attr($instance_id); ?>"
                                                 title="<?php esc_attr_e('Reset this section to default values', 'persian-framework'); ?>">
                                             <i class="dashicons dashicons-image-rotate"></i>
-                                            <?php _e('Reset Section', 'persian-framework'); ?>
+                                            <?php esc_html_e('Reset Section', 'persian-framework'); ?>
                                         </button>
                                     </div>
                                 </div>
@@ -182,46 +191,88 @@ class PersianFramework_Admin {
                         <?php endforeach; ?>
 
                         <div class="pf-tab-content" id="pfTab-import-export">
-                            <h2><?php _e('Import / Export', 'persian-framework'); ?></h2>
-                            <p class="pf-tab-description"><?php _e('Import or export your settings as JSON file.', 'persian-framework'); ?></p>
+                            <h2><?php esc_html_e('Import / Export', 'persian-framework'); ?></h2>
+                            <p class="pf-tab-description"><?php esc_html_e('Import or export your settings as JSON file.', 'persian-framework'); ?></p>
                             <div class="pf-import-export-grid">
                                 <div class="pf-ie-box">
-                                    <h3><?php _e('Export Settings', 'persian-framework'); ?></h3>
-                                    <p><?php _e('Download your current settings as a JSON file.', 'persian-framework'); ?></p>
+                                    <h3><?php esc_html_e('Export Settings', 'persian-framework'); ?></h3>
+                                    <p><?php esc_html_e('Download your current settings as a JSON file.', 'persian-framework'); ?></p>
                                     <button type="button" class="pf-btn pf-btn-secondary pfExportBtn" data-optname="<?php echo esc_attr($opt_name); ?>">
-                                        <i class="dashicons dashicons-download"></i> <?php _e('Export JSON', 'persian-framework'); ?>
+                                        <i class="dashicons dashicons-download"></i> <?php esc_html_e('Export JSON', 'persian-framework'); ?>
                                     </button>
                                 </div>
                                 <div class="pf-ie-box">
-                                    <h3><?php _e('Import Settings', 'persian-framework'); ?></h3>
-                                    <p><?php _e('Upload a JSON file to import settings.', 'persian-framework'); ?></p>
+                                    <h3><?php esc_html_e('Import Settings', 'persian-framework'); ?></h3>
+                                    <p><?php esc_html_e('Upload a JSON file to import settings.', 'persian-framework'); ?></p>
                                     <input type="file" class="pfImportFile" accept=".json" style="display:block;margin-bottom:10px;">
                                     <button type="button" class="pf-btn pf-btn-primary pfImportBtn" data-optname="<?php echo esc_attr($opt_name); ?>" data-instance="<?php echo esc_attr($instance_id); ?>">
-                                        <i class="dashicons dashicons-upload"></i> <?php _e('Import', 'persian-framework'); ?>
+                                        <i class="dashicons dashicons-upload"></i> <?php esc_html_e('Import', 'persian-framework'); ?>
                                     </button>
                                 </div>
                                 <div class="pf-ie-box pf-ie-danger">
-                                    <h3><?php _e('Reset All Settings', 'persian-framework'); ?></h3>
-                                    <p><?php _e('⚠️ This will delete ALL current settings.', 'persian-framework'); ?></p>
+                                    <h3><?php esc_html_e('Reset All Settings', 'persian-framework'); ?></h3>
+                                    <p><?php esc_html_e('⚠️ This will delete all current settings.', 'persian-framework'); ?></p>
                                     <button type="button" class="pf-btn pf-btn-danger pfResetBtn" data-optname="<?php echo esc_attr($opt_name); ?>" data-instance="<?php echo esc_attr($instance_id); ?>">
-                                        <i class="dashicons dashicons-trash"></i> <?php _e('Reset All', 'persian-framework'); ?>
+                                        <i class="dashicons dashicons-trash"></i> <?php esc_html_e('Reset All', 'persian-framework'); ?>
                                     </button>
                                 </div>
                             </div>
                         </div>
 
                         <div class="pf-tab-content" id="pfTab-backup">
-                            <h2><?php _e('Backup', 'persian-framework'); ?></h2>
-                            <p class="pf-tab-description"><?php _e('Create and manage backups of your settings.', 'persian-framework'); ?></p>
+                            <h2><?php esc_html_e('Backup', 'persian-framework'); ?></h2>
+                            <p class="pf-tab-description"><?php esc_html_e('Create and manage backups of your settings.', 'persian-framework'); ?></p>
                             <div class="pf-backup-actions">
                                 <button type="button" class="pf-btn pf-btn-primary pfCreateBackupBtn" data-optname="<?php echo esc_attr($opt_name); ?>" data-instance="<?php echo esc_attr($instance_id); ?>">
-                                    <i class="dashicons dashicons-backup"></i> <?php _e('Create Backup', 'persian-framework'); ?>
+                                    <i class="dashicons dashicons-backup"></i> <?php esc_html_e('Create Backup', 'persian-framework'); ?>
                                 </button>
                             </div>
                             <div id="pfBackupList">
                                 <p style="color:#94a3b8;text-align:center;padding:40px 0;">
-                                    <?php _e('No backups found.', 'persian-framework'); ?>
+                                    <?php esc_html_e('No backups found.', 'persian-framework'); ?>
                                 </p>
+                            </div>
+                        </div>
+
+
+                        <div class="pf-tab-content" id="pfTab-donate">
+                            <h2><?php esc_html_e('Support Persian Framework', 'persian-framework'); ?></h2>
+                            <p class="pf-tab-description">
+                                <?php esc_html_e('If you find this framework useful, please consider supporting its development.', 'persian-framework'); ?>
+                            </p>
+
+                            <div class="pf-donate-grid">
+                                <div class="pf-donate-box">
+                                    <h3><?php esc_html_e('Cryptocurrency', 'persian-framework'); ?></h3>
+
+                                    <div class="pf-donate-item">
+                                        <strong>Bitcoin (BTC)</strong>
+                                        <code>bc1q0r3gzt5xtlglerst36vh6567023thpv5huthrl</code>
+                                        <button class="pf-btn pf-btn-secondary pf-copy-btn" data-copy="bc1q0r3gzt5xtlglerst36vh6567023thpv5huthrl">
+                                            <span class="dashicons dashicons-clipboard"></span>
+                                            <?php esc_html_e('Copy', 'persian-framework'); ?>
+                                        </button>
+                                    </div>
+
+                                    <div class="pf-donate-item">
+                                        <strong>Ethereum (ETH)</strong>
+                                        <code>0xd77935cb0f1b03054720de9cb94c3d7df12b9d0e</code>
+                                        <button class="pf-btn pf-btn-secondary pf-copy-btn" data-copy="0xd77935cb0f1b03054720de9cb94c3d7df12b9d0e">
+                                            <span class="dashicons dashicons-clipboard"></span>
+                                            <?php esc_html_e('Copy', 'persian-framework'); ?>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="pf-donate-box">
+                                    <h3><?php esc_html_e('Other Ways to Support', 'persian-framework'); ?></h3>
+                                    <ul>
+                                        <li>⭐ <?php esc_html_e('Star the project on GitHub', 'persian-framework'); ?></li>
+                                        <li>🐛 <?php esc_html_e('Report bugs and suggest features', 'persian-framework'); ?></li>
+                                        <li>📝 <?php esc_html_e('Write documentation or tutorials', 'persian-framework'); ?></li>
+                                        <li>🔀 <?php esc_html_e('Contribute code via pull requests', 'persian-framework'); ?></li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
 
@@ -230,7 +281,7 @@ class PersianFramework_Admin {
                                     data-optname="<?php echo esc_attr($opt_name); ?>"
                                     data-instance="<?php echo esc_attr($instance_id); ?>">
                                 <i class="dashicons dashicons-yes"></i>
-                                <span class="pfSaveText"><?php _e('Save Settings', 'persian-framework'); ?></span>
+                                <span class="pfSaveText"><?php esc_html_e('Save Settings', 'persian-framework'); ?></span>
                                 <span class="pf-spinner pfSaveSpinner" style="display:none;">
                                     <span class="dashicons dashicons-update spin"></span>
                                 </span>
@@ -244,6 +295,9 @@ class PersianFramework_Admin {
                         <span class="pf-notification-text"></span>
                     </div>
                 </div>
+
+
+
             </div>
         </div>
 
@@ -251,48 +305,36 @@ class PersianFramework_Admin {
         <?php
     }
 
-    /**
-     * AJAX handler for resetting a single section
-     * FIXED: Properly gets framework instance via get_instance() method
-     */
     public function ajax_reset_section() {
-        // Verify nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pf_ajax_nonce')) {
-            wp_send_json_error(array('message' => __('Invalid nonce!', 'persian-framework')));
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'pf_ajax_nonce')) {
+            wp_send_json_error(array('message' => esc_html__('Invalid nonce!', 'persian-framework')));
         }
 
-        // Check permissions
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(array('message' => __('Permission denied!', 'persian-framework')));
+            wp_send_json_error(array('message' => esc_html__('Permission denied!', 'persian-framework')));
         }
 
-        // Get parameters
-        $opt_name = isset($_POST['opt_name']) ? sanitize_text_field($_POST['opt_name']) : 'persian_framework_options';
-        $section_id = isset($_POST['section_id']) ? sanitize_text_field($_POST['section_id']) : '';
-        $instance_id = isset($_POST['instance_id']) ? sanitize_text_field($_POST['instance_id']) : 'default';
+        $opt_name = isset($_POST['opt_name']) ? sanitize_text_field(wp_unslash($_POST['opt_name'])) : 'persian_framework_options';
+        $section_id = isset($_POST['section_id']) ? sanitize_text_field(wp_unslash($_POST['section_id'])) : '';
+        $instance_id = isset($_POST['instance_id']) ? sanitize_text_field(wp_unslash($_POST['instance_id'])) : 'default';
 
         if (empty($section_id)) {
-            wp_send_json_error(array('message' => __('Section ID is required!', 'persian-framework')));
+            wp_send_json_error(array('message' => esc_html__('Section ID is required!', 'persian-framework')));
         }
 
-        // ✅ CRITICAL FIX: Get the framework instance using the proper method
         $framework = null;
 
-        // Method 1: Try to get instance from PersianFramework class
         if (class_exists('PersianFramework')) {
             try {
                 $framework = PersianFramework::get_instance($instance_id);
-
-                // If config is empty, load it
                 if (empty($framework->get_config())) {
                     $framework->load_config();
                 }
             } catch (Exception $e) {
-                // Fallback to method 2
+                // Fallback
             }
         }
 
-        // Method 2: Fallback to global variable
         if ($framework === null) {
             global $persian_framework;
             if (isset($persian_framework)) {
@@ -300,7 +342,6 @@ class PersianFramework_Admin {
             }
         }
 
-        // Method 3: If we have the framework from render_page, use it
         if ($framework === null && $this->framework !== null) {
             $framework = $this->framework;
         }
@@ -310,27 +351,22 @@ class PersianFramework_Admin {
         if ($framework !== null) {
             $sections = $framework->get_sections();
 
-            // Find the target section
             foreach ($sections as $section) {
                 if ($section['id'] === $section_id && isset($section['fields'])) {
                     foreach ($section['fields'] as $field) {
                         if (isset($field['id'])) {
                             $field_id = $field['id'];
 
-                            // Check if this is a repeater field
                             if (isset($field['type']) && $field['type'] === 'repeater') {
-                                // For repeater fields, get default from 'default' key
                                 if (isset($field['default']) && is_array($field['default'])) {
                                     $defaults[$field_id] = $field['default'];
                                 } else {
                                     $defaults[$field_id] = array();
                                 }
                             } else {
-                                // For regular fields
                                 if (isset($field['default'])) {
                                     $defaults[$field_id] = $field['default'];
                                 } else {
-                                    // If no default, remove the field from options
                                     $defaults[$field_id] = null;
                                 }
                             }
@@ -341,7 +377,6 @@ class PersianFramework_Admin {
             }
         }
 
-        // If still no defaults found, try defaults file
         if (empty($defaults)) {
             $defaults_file = PERSIAN_FRAMEWORK_CONFIG . 'defaults.php';
             if (file_exists($defaults_file)) {
@@ -352,13 +387,10 @@ class PersianFramework_Admin {
             }
         }
 
-        // Get current options
         $current_options = get_option($opt_name, array());
 
-        // Apply defaults to current options
         foreach ($defaults as $field_id => $default_value) {
             if ($default_value === null) {
-                // Remove the field if no default
                 if (isset($current_options[$field_id])) {
                     unset($current_options[$field_id]);
                 }
@@ -370,7 +402,11 @@ class PersianFramework_Admin {
         update_option($opt_name, $current_options);
 
         wp_send_json_success(array(
-                'message' => sprintf(__('Section "%s" has been reset to defaults!', 'persian-framework'), $section_id),
+                'message' => sprintf(
+                /* translators: %s: Section ID */
+                        esc_html__('Section "%s" has been reset to defaults!', 'persian-framework'),
+                        $section_id
+                ),
                 'section_id' => $section_id
         ));
     }
@@ -378,9 +414,6 @@ class PersianFramework_Admin {
     private function enqueue_styles_and_scripts() {
         ?>
         <style>
-            /* ============================================================
-               Section Header with Reset Button
-               ============================================================ */
             .pf-section-header {
                 display: flex;
                 justify-content: space-between;
@@ -447,7 +480,6 @@ class PersianFramework_Admin {
                 border-color: #6366f1;
             }
 
-            /* Spinner animation */
             @keyframes pfSpin {
                 from { transform: rotate(0deg); }
                 to { transform: rotate(360deg); }
@@ -458,7 +490,6 @@ class PersianFramework_Admin {
                 animation: pfSpin 1s linear infinite;
             }
 
-            /* Unsaved Changes Notification Bar */
             #pf_notification_bar {
                 margin-bottom: 20px;
                 border-radius: 12px;
@@ -663,7 +694,6 @@ class PersianFramework_Admin {
                 font-style: italic;
             }
 
-            /* Dark Mode */
             body.dark-mode .pf-section-wrapper {
                 border-bottom-color: #334155;
             }
@@ -683,17 +713,12 @@ class PersianFramework_Admin {
             body.dark-mode .pf-section-desc {
                 color: #64748b;
             }
-
         </style>
 
         <script>
-
             (function($) {
                 'use strict';
 
-                // ============================================================
-                // 1. Track unsaved changes
-                // ============================================================
                 var pf_has_changes = false;
                 var pf_initial_state = {};
 
@@ -755,9 +780,6 @@ class PersianFramework_Admin {
                     return pfCheckChanges();
                 };
 
-                // ============================================================
-                // 2. Event listeners for changes
-                // ============================================================
                 $(document).on('change input', '#pfSettingsForm input, #pfSettingsForm select, #pfSettingsForm textarea', function() {
                     var name = $(this).attr('name');
                     if (name && (name.indexOf('pf_ajax_nonce') !== -1 || name.indexOf('opt_name') !== -1 || name.indexOf('instance_id') !== -1 || name.indexOf('tab') !== -1)) {
@@ -774,23 +796,14 @@ class PersianFramework_Admin {
                     pfCheckChanges();
                 });
 
-                // ============================================================
-                // 3. Dismiss notification
-                // ============================================================
                 $(document).on('click', '.pf-dismiss-warn', function() {
                     $('#pf_notification_bar').hide();
                 });
 
-                // ============================================================
-                // 4. Save Now button in notification bar
-                // ============================================================
                 $(document).on('click', '.pf-save-now-btn', function() {
                     $('.pfAjaxSaveBtn').click();
                 });
 
-                // ============================================================
-                // 5. Override AJAX save success to reset change tracking
-                // ============================================================
                 $(document).ajaxSuccess(function(event, xhr, settings) {
                     if (settings.data && settings.data.indexOf('pf_ajax_save') !== -1) {
                         try {
@@ -804,9 +817,6 @@ class PersianFramework_Admin {
                     }
                 });
 
-                // ============================================================
-                // 6. Initial setup
-                // ============================================================
                 $(document).ready(function() {
                     setTimeout(function() {
                         pfCaptureInitialState();
@@ -815,9 +825,6 @@ class PersianFramework_Admin {
                     }, 500);
                 });
 
-                // ============================================================
-                // 7. Search settings
-                // ============================================================
                 $(document).on('input', '.pf-settings-search', function () {
                     var term = $(this).val().toLowerCase().trim();
                     $('.pf-field-wrapper').each(function () {
@@ -831,9 +838,6 @@ class PersianFramework_Admin {
                     });
                 });
 
-                // ============================================================
-                // 8. Tab switching
-                // ============================================================
                 $('.pf-sidebar-tab').on('click', function() {
                     var tabId = $(this).data('tab');
                     $('.pf-sidebar-tab').removeClass('active');
@@ -864,9 +868,6 @@ class PersianFramework_Admin {
                     }
                 }
 
-                // ============================================================
-                // 9. Dark Mode
-                // ============================================================
                 $('#pfThemeToggle').on('click', function() {
                     $('body').toggleClass('dark-mode');
                     var icon = $(this).find('.dashicons');
@@ -879,9 +880,6 @@ class PersianFramework_Admin {
                     }
                 });
 
-                // ============================================================
-                // 10. Browser back/forward
-                // ============================================================
                 window.addEventListener('popstate', function() {
                     var urlParams = new URLSearchParams(window.location.search);
                     var tabParam = urlParams.get('tab');
@@ -897,17 +895,11 @@ class PersianFramework_Admin {
                     }
                 });
 
-                // ============================================================
-                // 11. Export
-                // ============================================================
                 $('.pfExportBtn').on('click', function() {
                     var optName = $(this).data('optname');
-                    window.location.href = '<?php echo admin_url('admin-post.php?action=pf_export'); ?>&opt_name=' + optName;
+                    window.location.href = '<?php echo esc_url(admin_url('admin-post.php?action=pf_export')); ?>&opt_name=' + optName;
                 });
 
-                // ============================================================
-                // 12. Import
-                // ============================================================
                 $('.pfImportBtn').on('click', function() {
                     var $btn = $(this);
                     var optName = $btn.data('optname');
@@ -916,7 +908,7 @@ class PersianFramework_Admin {
                     var file = $file[0].files[0];
 
                     if (!file) {
-                        alert('Please select a file first!');
+                        alert('<?php esc_html_e('Please select a file first!', 'persian-framework'); ?>');
                         return;
                     }
 
@@ -932,35 +924,32 @@ class PersianFramework_Admin {
                                     data: data,
                                     opt_name: optName,
                                     instance_id: instanceId,
-                                    nonce: '<?php echo wp_create_nonce('pf_ajax_nonce'); ?>'
+                                    nonce: '<?php echo esc_js(wp_create_nonce('pf_ajax_nonce')); ?>'
                                 },
                                 success: function(response) {
                                     if (response.success) {
-                                        alert('Import successful! Page will reload.');
+                                        alert('<?php esc_html_e('Import successful! Page will reload.', 'persian-framework'); ?>');
                                         location.reload();
                                     } else {
-                                        alert('Import failed: ' + response.data.message);
+                                        alert('<?php esc_html_e('Import failed: ', 'persian-framework'); ?>' + response.data.message);
                                     }
                                 }
                             });
                         } catch(e) {
-                            alert('Invalid JSON file!');
+                            alert('<?php esc_html_e('Invalid JSON file!', 'persian-framework'); ?>');
                         }
                     };
                     reader.readAsText(file);
                 });
 
-                // ============================================================
-                // 13. Reset All
-                // ============================================================
                 $('.pfResetBtn').on('click', function() {
                     var $btn = $(this);
                     var optName = $btn.data('optname');
                     var instanceId = $btn.data('instance');
 
-                    if (confirm('<?php _e('Are you sure you want to reset ALL settings? This cannot be undone!', 'persian-framework'); ?>')) {
+                    if (confirm('<?php esc_html_e('Are you sure you want to reset all settings? This cannot be undone!', 'persian-framework'); ?>')) {
                         $btn.prop('disabled', true);
-                        $btn.html('<span class="dashicons dashicons-update spin"></span> <?php _e('Resetting...', 'persian-framework'); ?>');
+                        $btn.html('<span class="dashicons dashicons-update spin"></span> <?php esc_html_e('Resetting...', 'persian-framework'); ?>');
 
                         $.ajax({
                             url: ajaxurl,
@@ -969,25 +958,22 @@ class PersianFramework_Admin {
                                 action: 'pf_reset_options',
                                 opt_name: optName,
                                 instance_id: instanceId,
-                                nonce: '<?php echo wp_create_nonce('pf_ajax_nonce'); ?>'
+                                nonce: '<?php echo esc_js(wp_create_nonce('pf_ajax_nonce')); ?>'
                             },
                             success: function(response) {
                                 if (response.success) {
-                                    alert('<?php _e('Settings reset to default! Page will reload.', 'persian-framework'); ?>');
+                                    alert('<?php esc_html_e('Settings reset to default! Page will reload.', 'persian-framework'); ?>');
                                     location.reload();
                                 } else {
-                                    alert('Reset failed: ' + response.data.message);
+                                    alert('<?php esc_html_e('Reset failed: ', 'persian-framework'); ?>' + response.data.message);
                                     $btn.prop('disabled', false);
-                                    $btn.html('<i class="dashicons dashicons-image-rotate"></i> <?php _e('Reset All', 'persian-framework'); ?>');
+                                    $btn.html('<i class="dashicons dashicons-image-rotate"></i> <?php esc_html_e('Reset All', 'persian-framework'); ?>');
                                 }
                             }
                         });
                     }
                 });
 
-                // ============================================================
-                // 14. Reset Section
-                // ============================================================
                 $(document).on('click', '.pfResetSectionBtn', function() {
                     var $btn = $(this);
                     var sectionId = $btn.data('section');
@@ -995,10 +981,10 @@ class PersianFramework_Admin {
                     var instanceId = $btn.data('instance');
                     var sectionTitle = $btn.closest('.pf-section-header').find('h2').text() || sectionId;
 
-                    if (confirm('<?php _e('Are you sure you want to reset the "', 'persian-framework'); ?>' + sectionTitle + '" <?php _e('section to default values? This cannot be undone!', 'persian-framework'); ?>')) {
+                    if (confirm('<?php esc_html_e('Are you sure you want to reset the "', 'persian-framework'); ?>' + sectionTitle + '" <?php esc_html_e('section to default values? This cannot be undone!', 'persian-framework'); ?>')) {
 
                         $btn.prop('disabled', true);
-                        $btn.html('<span class="dashicons dashicons-update spin"></span> <?php _e('Resetting...', 'persian-framework'); ?>');
+                        $btn.html('<span class="dashicons dashicons-update spin"></span> <?php esc_html_e('Resetting...', 'persian-framework'); ?>');
 
                         $.ajax({
                             url: ajaxurl,
@@ -1008,32 +994,29 @@ class PersianFramework_Admin {
                                 section_id: sectionId,
                                 opt_name: optName,
                                 instance_id: instanceId,
-                                nonce: '<?php echo wp_create_nonce('pf_ajax_nonce'); ?>'
+                                nonce: '<?php echo esc_js(wp_create_nonce('pf_ajax_nonce')); ?>'
                             },
                             success: function(response) {
                                 if (response.success) {
-                                    showNotification(response.data.message || '<?php _e('Section reset successfully!', 'persian-framework'); ?>');
+                                    showNotification(response.data.message || '<?php esc_html_e('Section reset successfully!', 'persian-framework'); ?>');
                                     setTimeout(function() {
                                         location.reload();
                                     }, 1000);
                                 } else {
-                                    showNotification(response.data.message || '<?php _e('Error resetting section!', 'persian-framework'); ?>', true);
+                                    showNotification(response.data.message || '<?php esc_html_e('Error resetting section!', 'persian-framework'); ?>', true);
                                     $btn.prop('disabled', false);
-                                    $btn.html('<i class="dashicons dashicons-image-rotate"></i> <?php _e('Reset Section', 'persian-framework'); ?>');
+                                    $btn.html('<i class="dashicons dashicons-image-rotate"></i> <?php esc_html_e('Reset Section', 'persian-framework'); ?>');
                                 }
                             },
                             error: function() {
-                                showNotification('<?php _e('Connection error! Please try again.', 'persian-framework'); ?>', true);
+                                showNotification('<?php esc_html_e('Connection error! Please try again.', 'persian-framework'); ?>', true);
                                 $btn.prop('disabled', false);
-                                $btn.html('<i class="dashicons dashicons-image-rotate"></i> <?php _e('Reset Section', 'persian-framework'); ?>');
+                                $btn.html('<i class="dashicons dashicons-image-rotate"></i> <?php esc_html_e('Reset Section', 'persian-framework'); ?>');
                             }
                         });
                     }
                 });
 
-                // ============================================================
-                // 15. AJAX Save Settings
-                // ============================================================
                 $('.pfAjaxSaveBtn').on('click', function() {
                     var $btn = $(this);
                     var $form = $('#pfSettingsForm');
@@ -1049,411 +1032,25 @@ class PersianFramework_Admin {
                     }
 
                     $btn.prop('disabled', true);
-                    $btn.find('.pfSaveText').text('<?php _e('Saving...', 'persian-framework'); ?>');
+                    $btn.find('.pfSaveText').text('<?php esc_html_e('Saving...', 'persian-framework'); ?>');
                     $btn.find('.pfSaveSpinner').show();
 
-
-
-                    var formArray = $form.serializeArray();
-                    //console.log(formArray);
-
-                    var optionsData = {};
-                    var mediaData = {};
-                    var galleryData = {};
-                    var repeaterData = {};
-                    var sortableData = {};
-                    var sorterData = {};
-
-                    // Build lists of field IDs
-                    var sorterFieldIds = [];
-                    $('.pf-sorter-container').each(function() {
-                        var fieldId = $(this).data('field');
-                        if (fieldId) {
-                            sorterFieldIds.push(fieldId);
-                        }
-                    });
-
-                    var mediaFieldIds = [];
-                    $('.pf-media-container').each(function() {
-                        var $idInput = $(this).find('.pf-media-id');
-                        if ($idInput.length) {
-                            var name = $idInput.attr('name');
-                            if (name) {
-                                var parts = name.match(/[^\[\]]+/g);
-                                if (parts && parts.length >= 2) {
-                                    if (parts.length === 3) {
-                                        mediaFieldIds.push(parts[1]);
-                                    } else if (parts.length >= 4) {
-                                        mediaFieldIds.push(parts[3]);
-                                    }
-                                }
-                            }
-                        }
-                    });
-
-                    var galleryFieldIds = [];
-                    $('.pf-gallery-container').each(function() {
-                        var $inputs = $(this).find('.pf-gallery-list input[type="hidden"]');
-                        if ($inputs.length) {
-                            var name = $inputs.first().attr('name');
-                            if (name) {
-                                var match = name.match(/\[([^\]]+)\]/);
-                                if (match) {
-                                    galleryFieldIds.push(match[1]);
-                                }
-                            }
-                        }
-                    });
-
-                    var repeaterFieldIds = [];
-                    $('.pf-repeater-container').each(function() {
-                        var $container = $(this);
-                        var $item = $container.find('.pf-repeater-item').first();
-                        if ($item.length) {
-                            var $input = $item.find('input, textarea, select').first();
-                            if ($input.length) {
-                                var name = $input.attr('name');
-                                if (name) {
-                                    var match = name.match(/^[^\[]+\[([^\]]+)\]/);
-                                    if (match) {
-                                        repeaterFieldIds.push(match[1]);
-                                    }
-                                }
-                            }
-                        }
-                    });
-
-                    var multiTextFieldIds = [];
-                    $('.pf-multi-text-items').each(function() {
-                        var $input = $(this).find('.pf-multi-text-input').first();
-                        if ($input.length) {
-                            var name = $input.attr('name');
-                            if (name) {
-                                var match = name.match(/\[([^\]]+)\]/);
-                                if (match) {
-                                    multiTextFieldIds.push(match[1]);
-                                }
-                            }
-                        }
-                    });
-
-                    function parseFieldName(name, optName) {
-                        if (!name.startsWith(optName + '[')) {
-                            return null;
-                        }
-
-                        var parts = name.match(/[^\[\]]+/g);
-                        if (!parts || parts.length < 1) {
-                            return null;
-                        }
-
-                        if (parts[0] !== optName) {
-                            return null;
-                        }
-
-                        parts = parts.slice(1);
-                        return parts;
-                    }
-
-                    formArray.forEach(function(item) {
-                        var name = item.name;
-                        var value = item.value;
-
-                        if (name === 'pf_ajax_nonce' || name === 'opt_name' || name === 'instance_id' || name === 'tab') {
-                            return;
-                        }
-
-                        var parts = parseFieldName(name, optName);
-                        if (!parts || parts.length === 0) {
-                            return;
-                        }
-
-                        var lastPart = parts[parts.length - 1];
-
-                        // Check if this is a media field
-                        if (lastPart === 'id' || lastPart === 'url') {
-                            var fieldType = lastPart;
-                            var mediaParts = parts.slice(0, -1);
-
-                            if (mediaParts.length === 1) {
-                                var mediaId = mediaParts[0];
-                                if (!mediaData[mediaId]) {
-                                    mediaData[mediaId] = {};
-                                }
-                                mediaData[mediaId][fieldType] = value;
-                                return;
-                            } else if (mediaParts.length === 3) {
-                                var repId = mediaParts[0];
-                                var idx = parseInt(mediaParts[1]);
-                                var subField = mediaParts[2];
-
-                                if (!mediaData[repId]) {
-                                    mediaData[repId] = [];
-                                }
-                                if (!mediaData[repId][idx]) {
-                                    mediaData[repId][idx] = {};
-                                }
-                                if (!mediaData[repId][idx][subField]) {
-                                    mediaData[repId][idx][subField] = {};
-                                }
-                                mediaData[repId][idx][subField][fieldType] = value;
-                                return;
-                            } else {
-                                var fieldId = parts[0];
-                                var path = parts.slice(0, -1);
-                                var key = path.join('_');
-
-                                if (!mediaData[key]) {
-                                    mediaData[key] = {};
-                                }
-                                mediaData[key][fieldType] = value;
-                                return;
-                            }
-                        }
-
-                        // Multi-text field
-                        if (parts.length === 2 && !isNaN(parts[1])) {
-                            var fieldId = parts[0];
-                            var index = parseInt(parts[1]);
-                            if (!optionsData[fieldId]) {
-                                optionsData[fieldId] = [];
-                            }
-                            optionsData[fieldId][index] = value;
-                            return;
-                        }
-
-                        // Gallery field
-                        if (parts.length === 2 && parts[1] === '') {
-                            var galleryId = parts[0];
-                            if (!galleryData[galleryId]) {
-                                galleryData[galleryId] = [];
-                            }
-                            galleryData[galleryId].push(parseInt(value));
-                            return;
-                        }
-
-                        // Repeater field
-                        if (parts.length === 3 && !isNaN(parts[1])) {
-                            var repId = parts[0];
-                            var idx = parseInt(parts[1]);
-                            var subField = parts[2];
-
-                            if (!repeaterData[repId]) {
-                                repeaterData[repId] = [];
-                            }
-                            if (!repeaterData[repId][idx]) {
-                                repeaterData[repId][idx] = {};
-                            }
-                            repeaterData[repId][idx][subField] = value;
-                            return;
-                        }
-
-                        // Sorter field
-                        var isSorterField = false;
-                        var matchedSorterId = null;
-                        var matchedColumn = null;
-                        var matchedKey = null;
-
-                        for (var i = 0; i < sorterFieldIds.length; i++) {
-                            var sorterId = sorterFieldIds[i];
-                            if (parts.length >= 3 && parts[0] === sorterId) {
-                                isSorterField = true;
-                                matchedSorterId = sorterId;
-                                matchedColumn = parts[1];
-                                matchedKey = parts[2];
-                                break;
-                            }
-                        }
-
-                        if (isSorterField && matchedSorterId) {
-                            if (!sorterData[matchedSorterId]) {
-                                sorterData[matchedSorterId] = {};
-                            }
-                            if (!sorterData[matchedSorterId][matchedColumn]) {
-                                sorterData[matchedSorterId][matchedColumn] = {};
-                            }
-                            sorterData[matchedSorterId][matchedColumn][matchedKey] = value;
-                            return;
-                        }
-
-                        // Regular field
-                        if (parts.length === 1) {
-                            var fieldId = parts[0];
-                            if (sorterFieldIds.indexOf(fieldId) === -1 &&
-                                mediaFieldIds.indexOf(fieldId) === -1 &&
-                                galleryFieldIds.indexOf(fieldId) === -1 &&
-                                repeaterFieldIds.indexOf(fieldId) === -1 &&
-                                multiTextFieldIds.indexOf(fieldId) === -1) {
-                                optionsData[fieldId] = value;
-                            }
-                            return;
-                        }
-
-                        // Fallback: Store as nested array
-                        if (parts.length > 1) {
-                            var fieldId = parts[0];
-                            if (sorterFieldIds.indexOf(fieldId) === -1 &&
-                                mediaFieldIds.indexOf(fieldId) === -1 &&
-                                galleryFieldIds.indexOf(fieldId) === -1 &&
-                                repeaterFieldIds.indexOf(fieldId) === -1 &&
-                                multiTextFieldIds.indexOf(fieldId) === -1) {
-                                var current = optionsData;
-                                for (var i = 0; i < parts.length; i++) {
-                                    var key = parts[i];
-                                    if (i === parts.length - 1) {
-                                        current[key] = value;
-                                    } else {
-                                        if (!current[key] || typeof current[key] !== 'object') {
-                                            current[key] = {};
-                                        }
-                                        current = current[key];
-                                    }
-                                }
-                            }
-                        }
-                    });
-
-                    // Handle unchecked checkboxes
-                    $form.find('input[type="checkbox"]:not(:checked)').each(function() {
-                        var name = $(this).attr('name');
-                        if (!name) return;
-
-                        var parts = parseFieldName(name, optName);
-                        if (!parts || parts.length !== 1) return;
-
-                        var fieldId = parts[0];
-                        if (sorterFieldIds.indexOf(fieldId) === -1 &&
-                            mediaFieldIds.indexOf(fieldId) === -1 &&
-                            galleryFieldIds.indexOf(fieldId) === -1 &&
-                            repeaterFieldIds.indexOf(fieldId) === -1 &&
-                            multiTextFieldIds.indexOf(fieldId) === -1 &&
-                            !optionsData.hasOwnProperty(fieldId)) {
-                            optionsData[fieldId] = '0';
-                        }
-                    });
-
-                    // Filter out empty values from multi-text fields
-                    for (var key in optionsData) {
-                        if (optionsData.hasOwnProperty(key) && Array.isArray(optionsData[key])) {
-                            optionsData[key] = optionsData[key].filter(function(item) {
-                                return item !== '' && item !== null && item !== undefined;
-                            });
-                            if (optionsData[key].length === 0) {
-                                delete optionsData[key];
-                            }
-                        }
-                    }
-
-                    // Merge REPEATER data
-                    for (var repeaterId in repeaterData) {
-                        if (!repeaterData.hasOwnProperty(repeaterId)) {
-                            continue;
-                        }
-
-                        if (!optionsData[repeaterId]) {
-                            optionsData[repeaterId] = [];
-                        }
-
-                        for (var idx in repeaterData[repeaterId]) {
-                            if (!repeaterData[repeaterId].hasOwnProperty(idx)) {
-                                continue;
-                            }
-
-                            if (!optionsData[repeaterId][idx]) {
-                                optionsData[repeaterId][idx] = {};
-                            }
-
-                            for (var subField in repeaterData[repeaterId][idx]) {
-                                if (repeaterData[repeaterId][idx].hasOwnProperty(subField)) {
-                                    optionsData[repeaterId][idx][subField] = repeaterData[repeaterId][idx][subField];
+                    if (typeof tinyMCE !== 'undefined') {
+                        var editors = tinyMCE.editors;
+                        for (var editorId in editors) {
+                            if (editors.hasOwnProperty(editorId)) {
+                                var editor = editors[editorId];
+                                if (editor && editor.id) {
+                                    editor.save();
                                 }
                             }
                         }
                     }
-
-                    // Merge MEDIA data
-                    for (var mediaId in mediaData) {
-                        if (!mediaData.hasOwnProperty(mediaId)) {
-                            continue;
-                        }
-
-                        if (Array.isArray(mediaData[mediaId])) {
-                            if (!optionsData[mediaId]) {
-                                optionsData[mediaId] = [];
-                            }
-
-                            for (var idx in mediaData[mediaId]) {
-                                if (!mediaData[mediaId].hasOwnProperty(idx)) {
-                                    continue;
-                                }
-
-                                if (!optionsData[mediaId][idx]) {
-                                    optionsData[mediaId][idx] = {};
-                                }
-
-                                for (var subfield in mediaData[mediaId][idx]) {
-                                    if (mediaData[mediaId][idx].hasOwnProperty(subfield)) {
-                                        optionsData[mediaId][idx][subfield] = mediaData[mediaId][idx][subfield];
-                                    }
-                                }
-                            }
-                        } else {
-                            optionsData[mediaId] = mediaData[mediaId];
-                        }
-                    }
-
-                    // Merge GALLERY data
-                    for (var galleryId in galleryData) {
-                        if (galleryData.hasOwnProperty(galleryId)) {
-                            optionsData[galleryId] = galleryData[galleryId];
-                        }
-                    }
-
-                    // Merge SORTER data
-                    for (var sorterId in sorterData) {
-                        if (sorterData.hasOwnProperty(sorterId)) {
-                            optionsData[sorterId] = sorterData[sorterId];
-                        }
-                    }
-
-                    // Merge SORTABLE data
-                    $('.pf-sortable-container').each(function() {
-                        var $container = $(this);
-                        var fieldId = $container.data('field');
-                        var items = {};
-
-                        $container.find('.pf-sortable-item').each(function() {
-                            var $item = $(this);
-                            var key = $item.data('key');
-                            var label = $item.find('.pf-sortable-label').text().trim();
-                            if (key) {
-                                items[key] = label;
-                            }
-                        });
-
-                        if (Object.keys(items).length > 0) {
-                            var filteredSortable = {};
-                            for (var key in items) {
-                                if (items[key] !== '' && items[key] !== null && items[key] !== undefined) {
-                                    filteredSortable[key] = items[key];
-                                }
-                            }
-                            if (Object.keys(filteredSortable).length > 0) {
-                                optionsData[fieldId] = filteredSortable;
-                            }
-                        }
-                    });
-
-                    // ============================================================
-                    // UNIVERSAL SOLUTION - Works with any opt_name and all field types
-                    // ============================================================
 
                     var $form = $('#pfSettingsForm');
                     var optName = $form.find('input[name="opt_name"]').val() || 'persian_framework_options';
                     var formData = $form.serializeArray();
                     var optionsData = {};
-
-                    console.log('Processing with opt_name:', optName);
 
                     formData.forEach(function(item) {
                         var name = item.name;
@@ -1505,20 +1102,54 @@ class PersianFramework_Admin {
                         }
                     });
 
+
+                    // ============================================================
+                    // FIX: Handle unchecked checkboxes
+                    // ============================================================
                     $form.find('input[type="checkbox"]:not(:checked)').each(function() {
                         var name = $(this).attr('name');
                         if (!name || !name.startsWith(optName + '[')) return;
 
                         var key = name.substring(optName.length + 1, name.length - 1);
 
+                        // Skip array checkboxes (they already have empty state)
                         if (key.endsWith('[]')) return;
 
+                        // For single checkboxes, set to '0' if not checked
                         if (!optionsData.hasOwnProperty(key)) {
                             optionsData[key] = '0';
                         }
                     });
-                    console.log('Final Options Data:', optionsData);
 
+                    // ============================================================
+                    // FIX: Ensure multi-select values are arrays
+                    // ============================================================
+                    $form.find('select[multiple]').each(function() {
+                        var $select = $(this);
+                        var name = $select.attr('name');
+                        if (!name || !name.startsWith(optName + '[')) return;
+
+                        var key = name.substring(optName.length + 1, name.length - 1);
+                        // Remove trailing []
+                        var cleanKey = key.endsWith('[]') ? key.slice(0, -2) : key;
+
+                        // Get selected values
+                        var selectedValues = $select.val() || [];
+                        if (!Array.isArray(selectedValues)) {
+                            selectedValues = [selectedValues];
+                        }
+
+                        // Filter out empty values
+                        selectedValues = selectedValues.filter(function(v) {
+                            return v !== '' && v !== null && v !== undefined;
+                        });
+
+                        optionsData[cleanKey] = selectedValues;
+                    });
+
+                    console.log('formData:', formData);
+                    console.log('Processing with opt_name:', optName);
+                    console.log('Final Options Data:', optionsData);
 
                     var data = {
                         action: 'pf_ajax_save',
@@ -1535,30 +1166,27 @@ class PersianFramework_Admin {
                         dataType: 'json',
                         success: function(response) {
                             if (response.success) {
-                                showNotification(response.data.message || '<?php _e('Settings saved successfully!', 'persian-framework'); ?>');
-                                $btn.find('.pfSaveText').text('<?php _e('Saved!', 'persian-framework'); ?>');
+                                showNotification(response.data.message || '<?php esc_html_e('Settings saved successfully!', 'persian-framework'); ?>');
+                                $btn.find('.pfSaveText').text('<?php esc_html_e('Saved!', 'persian-framework'); ?>');
                             } else {
-                                showNotification(response.data.message || '<?php _e('Error saving settings!', 'persian-framework'); ?>', true);
-                                $btn.find('.pfSaveText').text('<?php _e('Error!', 'persian-framework'); ?>');
+                                showNotification(response.data.message || '<?php esc_html_e('Error saving settings!', 'persian-framework'); ?>', true);
+                                $btn.find('.pfSaveText').text('<?php esc_html_e('Error!', 'persian-framework'); ?>');
                             }
                             setTimeout(function() {
                                 $btn.prop('disabled', false);
-                                $btn.find('.pfSaveText').text('<?php _e('Save Settings', 'persian-framework'); ?>');
+                                $btn.find('.pfSaveText').text('<?php esc_html_e('Save Settings', 'persian-framework'); ?>');
                                 $btn.find('.pfSaveSpinner').hide();
                             }, 500);
                         },
                         error: function(xhr, status, error) {
-                            showNotification('<?php _e('Connection error! Please try again.', 'persian-framework'); ?>', true);
+                            showNotification('<?php esc_html_e('Connection error! Please try again.', 'persian-framework'); ?>', true);
                             $btn.prop('disabled', false);
-                            $btn.find('.pfSaveText').text('<?php _e('Save Settings', 'persian-framework'); ?>');
+                            $btn.find('.pfSaveText').text('<?php esc_html_e('Save Settings', 'persian-framework'); ?>');
                             $btn.find('.pfSaveSpinner').hide();
                         }
                     });
                 });
 
-                // ============================================================
-                // 16. Notification
-                // ============================================================
                 function showNotification(message, isError) {
                     var $notification = $('#pfNotification');
                     var icon = $notification.find('.pf-notification-icon');
@@ -1580,6 +1208,18 @@ class PersianFramework_Admin {
                     $notification.data('timer', timer);
                 }
 
+                $(document).on('click', '.pf-copy-btn', function() {
+                    var text = $(this).data('copy');
+                    navigator.clipboard.writeText(text).then(function() {
+                        var $btn = $(this);
+                        var originalText = $btn.html();
+                        $btn.html('<span class="dashicons dashicons-yes"></span> Copied!');
+                        setTimeout(function() {
+                            $btn.html(originalText);
+                        }, 2000);
+                    }.bind(this));
+                });
+
                 console.log('Persian Framework UI loaded!');
             })(jQuery);
         </script>
@@ -1587,16 +1227,16 @@ class PersianFramework_Admin {
     }
 
     public function ajax_save_options() {
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pf_ajax_nonce')) {
-            wp_send_json_error(array('message' => __('Invalid nonce!', 'persian-framework')));
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'pf_ajax_nonce')) {
+            wp_send_json_error(array('message' => esc_html__('Invalid nonce!', 'persian-framework')));
         }
 
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(array('message' => __('Permission denied!', 'persian-framework')));
+            wp_send_json_error(array('message' => esc_html__('Permission denied!', 'persian-framework')));
         }
 
-        $opt_name = isset($_POST['opt_name']) ? sanitize_text_field($_POST['opt_name']) : 'persian_framework_options';
-        $options = isset($_POST['options']) ? $_POST['options'] : array();
+        $opt_name = isset($_POST['opt_name']) ? sanitize_text_field(wp_unslash($_POST['opt_name'])) : 'persian_framework_options';
+        $options = isset($_POST['options']) ? wp_unslash($_POST['options']) : array();
 
         foreach ($options as $key => $value) {
             $options[$key] = $this->sanitize_field_value($value, $key);
@@ -1605,17 +1245,57 @@ class PersianFramework_Admin {
         update_option($opt_name, $options);
 
         wp_send_json_success(array(
-                'message' => __('Settings saved successfully!', 'persian-framework'),
+                'message' => esc_html__('Settings saved successfully!', 'persian-framework'),
                 'options' => $options
         ));
     }
 
-    /**
-     * Sanitize field value based on its type
-     */
     private function sanitize_field_value($value, $field_key) {
+        $wp_editor_fields = array('wp_editor', 'editor', 'wysiwyg', 'content');
+
+        $is_wp_editor = false;
+        foreach ($wp_editor_fields as $field) {
+            if (strpos($field_key, $field) !== false) {
+                $is_wp_editor = true;
+                break;
+            }
+        }
+
+        if ($is_wp_editor && is_string($value)) {
+            return wp_kses_post($value);
+        }
+
+        // ============================================================
+        // FIX: Check for array-type fields FIRST
+        // ============================================================
+        $array_fields = array('multi_select', 'multi-select', 'checkbox', 'multi_text', 'multi-text', 'checkbox_multiple', 'multiple');
+        $is_array_field = false;
+        foreach ($array_fields as $field_type) {
+            if (strpos($field_key, $field_type) !== false) {
+                $is_array_field = true;
+                break;
+            }
+        }
+
+        // If it's an array-type field, always return array
+        if ($is_array_field) {
+            if (is_array($value)) {
+                return array_map('sanitize_text_field', $value);
+            }
+            if (is_string($value) && $value !== '') {
+                if (strpos($value, ',') !== false) {
+                    return array_map('sanitize_text_field', explode(',', $value));
+                }
+                return array(sanitize_text_field($value));
+            }
+            // Empty or null -> return empty array
+            return array();
+        }
+
+        // ============================================================
+        // Handle regular arrays (repeater, gallery, etc.)
+        // ============================================================
         if (is_array($value)) {
-            // Media field
             if (isset($value['id']) && isset($value['url'])) {
                 $media_id = absint($value['id']);
                 $media_url = esc_url_raw($value['url']);
@@ -1633,7 +1313,6 @@ class PersianFramework_Admin {
                 );
             }
 
-            // Check if it's a repeater with media fields inside
             $is_repeater_with_media = false;
             if (!empty($value)) {
                 foreach ($value as $k => $v) {
@@ -1668,7 +1347,6 @@ class PersianFramework_Admin {
                 return $sanitized;
             }
 
-            // Gallery field
             if (!empty($value) && isset($value[0]) && is_numeric($value[0])) {
                 $sanitized = array();
                 foreach ($value as $item) {
@@ -1681,7 +1359,6 @@ class PersianFramework_Admin {
                 return $sanitized;
             }
 
-            // Sortable field
             $is_sortable = false;
             if (!empty($value) && !isset($value['enabled']) && !isset($value['disabled']) && !isset($value['id'])) {
                 $is_sortable = true;
@@ -1709,7 +1386,6 @@ class PersianFramework_Admin {
                 return $sanitized;
             }
 
-            // Multi-text field
             $is_multi_text = true;
             if (!empty($value)) {
                 foreach ($value as $v) {
@@ -1733,12 +1409,10 @@ class PersianFramework_Admin {
                 return array_values($sanitized);
             }
 
-            // Sorter field
             if (isset($value['enabled']) || isset($value['disabled'])) {
                 return $this->sanitize_sorter_array($value);
             }
 
-            // Repeater field (without media)
             $is_repeater = false;
             if (!empty($value)) {
                 foreach ($value as $k => $v) {
@@ -1766,7 +1440,6 @@ class PersianFramework_Admin {
                 return $sanitized;
             }
 
-            // Nested arrays
             $sanitized = array();
             foreach ($value as $k => $v) {
                 $sanitized[sanitize_text_field($k)] = $this->sanitize_field_value($v, $field_key);
@@ -1793,19 +1466,19 @@ class PersianFramework_Admin {
     }
 
     public function ajax_import() {
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pf_ajax_nonce')) {
-            wp_send_json_error(array('message' => __('Invalid nonce!', 'persian-framework')));
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'pf_ajax_nonce')) {
+            wp_send_json_error(array('message' => esc_html__('Invalid nonce!', 'persian-framework')));
         }
 
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(array('message' => __('Permission denied!', 'persian-framework')));
+            wp_send_json_error(array('message' => esc_html__('Permission denied!', 'persian-framework')));
         }
 
-        $data = isset($_POST['data']) ? $_POST['data'] : array();
-        $opt_name = isset($_POST['opt_name']) ? sanitize_text_field($_POST['opt_name']) : 'persian_framework_options';
+        $data = isset($_POST['data']) ? map_deep(wp_unslash($_POST['data']), 'sanitize_text_field') : array();
+        $opt_name = isset($_POST['opt_name']) ? sanitize_text_field(wp_unslash($_POST['opt_name'])) : 'persian_framework_options';
 
         if (!isset($data['options']) || !is_array($data['options'])) {
-            wp_send_json_error(array('message' => __('Invalid data format!', 'persian-framework')));
+            wp_send_json_error(array('message' => esc_html__('Invalid data format!', 'persian-framework')));
         }
 
         $options = $data['options'];
@@ -1816,20 +1489,20 @@ class PersianFramework_Admin {
         update_option($opt_name, $options);
 
         wp_send_json_success(array(
-                'message' => __('Import successful!', 'persian-framework')
+                'message' => esc_html__('Import successful!', 'persian-framework')
         ));
     }
 
     public function ajax_reset_options() {
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pf_ajax_nonce')) {
-            wp_send_json_error(array('message' => __('Invalid nonce!', 'persian-framework')));
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'pf_ajax_nonce')) {
+            wp_send_json_error(array('message' => esc_html__('Invalid nonce!', 'persian-framework')));
         }
 
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(array('message' => __('Permission denied!', 'persian-framework')));
+            wp_send_json_error(array('message' => esc_html__('Permission denied!', 'persian-framework')));
         }
 
-        $opt_name = isset($_POST['opt_name']) ? sanitize_text_field($_POST['opt_name']) : 'persian_framework_options';
+        $opt_name = isset($_POST['opt_name']) ? sanitize_text_field(wp_unslash($_POST['opt_name'])) : 'persian_framework_options';
 
         $defaults_file = PERSIAN_FRAMEWORK_CONFIG . 'defaults.php';
         $defaults = array();
@@ -1840,24 +1513,24 @@ class PersianFramework_Admin {
         update_option($opt_name, $defaults);
 
         wp_send_json_success(array(
-                'message' => __('Settings reset to default!', 'persian-framework')
+                'message' => esc_html__('Settings reset to default!', 'persian-framework')
         ));
     }
 
     public function save_options() {
-        if (!isset($_POST['pf_nonce']) || !wp_verify_nonce($_POST['pf_nonce'], 'pf_save_options')) {
-            wp_die('Invalid nonce!');
+        if (!isset($_POST['pf_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['pf_nonce'])), 'pf_save_options')) {
+            wp_die(esc_html__('Invalid nonce!', 'persian-framework'));
         }
 
         if (!current_user_can('manage_options')) {
-            wp_die('Permission denied!');
+            wp_die(esc_html__('Permission denied!', 'persian-framework'));
         }
 
-        $opt_name = isset($_POST['opt_name']) ? sanitize_text_field($_POST['opt_name']) : 'persian_framework_options';
-        $options = isset($_POST[$opt_name]) ? $_POST[$opt_name] : array();
+        $opt_name = isset($_POST['opt_name']) ? sanitize_text_field(wp_unslash($_POST['opt_name'])) : 'persian_framework_options';
+        $options = isset($_POST[$opt_name]) ? wp_unslash($_POST[$opt_name]) : array();
 
         if (isset($_POST['sections_order']) && is_array($_POST['sections_order'])) {
-            $options['sections_order'] = $_POST['sections_order'];
+            $options['sections_order'] = map_deep(wp_unslash($_POST['sections_order']), 'sanitize_text_field');
         }
 
         foreach ($options as $key => $value) {
@@ -1866,10 +1539,10 @@ class PersianFramework_Admin {
 
         update_option($opt_name, $options);
 
-        $tab = isset($_POST['tab']) ? sanitize_text_field($_POST['tab']) : '';
+        $tab = isset($_POST['tab']) ? sanitize_text_field(wp_unslash($_POST['tab'])) : '';
 
-        wp_redirect(add_query_arg(array(
-                'page' => isset($_GET['page']) ? sanitize_text_field($_GET['page']) : 'persian-framework',
+        wp_safe_redirect(add_query_arg(array(
+                'page' => isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : 'persian-framework',
                 'tab' => $tab,
                 'saved' => 'true'
         ), admin_url('admin.php')));
@@ -1880,23 +1553,20 @@ class PersianFramework_Admin {
         if (isset($_GET['saved']) && $_GET['saved'] === 'true') {
             ?>
             <div class="notice notice-success is-dismissible" style="margin: 20px 20px 0 0;">
-                <p><?php _e('Settings saved successfully!', 'persian-framework'); ?></p>
+                <p><?php esc_html_e('Settings saved successfully!', 'persian-framework'); ?></p>
             </div>
             <?php
         }
     }
 
     public function enqueue_assets($hook) {
-        // ✅ Try multiple ways to get menu_slug
         $menu_slug = '';
 
-        // Way 1: From $this->framework
         if ($this->framework) {
             $config = $this->framework->get_config();
             $menu_slug = isset($config['menu_slug']) ? $config['menu_slug'] : '';
         }
 
-        // Way 2: From global variable
         if (empty($menu_slug)) {
             global $persian_framework;
             if (isset($persian_framework)) {
@@ -1905,7 +1575,6 @@ class PersianFramework_Admin {
             }
         }
 
-        // Way 3: From static property (if you add it)
         if (empty($menu_slug) && class_exists('PersianFramework')) {
             if (method_exists('PersianFramework', 'get_current_config')) {
                 $config = PersianFramework::get_current_config();
@@ -1913,12 +1582,10 @@ class PersianFramework_Admin {
             }
         }
 
-        // Way 4: Detect from screen ID
         if (empty($menu_slug)) {
             $screen = get_current_screen();
             if ($screen) {
                 $screen_id = $screen->id;
-                // Remove prefix to get menu_slug
                 $prefixes = array('toplevel_page_', 'admin_page_', 'appearance_page_', 'settings_page_', 'tools_page_');
                 foreach ($prefixes as $prefix) {
                     if (strpos($screen_id, $prefix) === 0) {
@@ -1932,25 +1599,20 @@ class PersianFramework_Admin {
         $screen = get_current_screen();
         $is_pf_page = false;
 
-        // Auto-detect framework page using menu_slug
         if (!empty($menu_slug)) {
-            // Check screen ID
             if ($screen && strpos($screen->id, $menu_slug) !== false) {
                 $is_pf_page = true;
             }
 
-            // Check hook
             if (!$is_pf_page && strpos($hook, $menu_slug) !== false) {
                 $is_pf_page = true;
             }
 
-            // Check GET parameter
             if (!$is_pf_page && isset($_GET['page']) && $_GET['page'] === $menu_slug) {
                 $is_pf_page = true;
             }
         }
 
-        // Fallback for backward compatibility
         if (!$is_pf_page) {
             if ($screen && (strpos($screen->id, 'persian-framework') !== false ||
                             strpos($screen->id, 'theme-settings') !== false)) {
@@ -1967,7 +1629,6 @@ class PersianFramework_Admin {
             return;
         }
 
-        // Enqueue assets...
         $sortable_js = PERSIAN_FRAMEWORK_URL . 'vendor/sortablejs/Sortable.min.js';
         if (file_exists(PERSIAN_FRAMEWORK_PATH . 'vendor/sortablejs/Sortable.min.js')) {
             wp_enqueue_script('sortablejs', $sortable_js, array(), '1.15.0', true);

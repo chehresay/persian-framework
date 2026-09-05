@@ -26,7 +26,6 @@ class PersianFramework_Field_Text {
         $placeholder = isset($this->field['placeholder']) ? $this->field['placeholder'] : '';
         $dir = isset($this->field['dir']) ? $this->field['dir'] : 'rtl';
 
-        // required can be a normal boolean or a conditional array.
         $required = isset($this->field['required']) ? $this->field['required'] : false;
         $is_html_required = ($required === true || $required === 1 || $required === '1') ? 'required' : '';
 
@@ -36,7 +35,7 @@ class PersianFramework_Field_Text {
         }
         ?>
 
-        <div class="pf-field-wrapper pf-field-text" <?php echo $required_attributes; ?>>
+        <div class="pf-field-wrapper pf-field-text" <?php echo wp_kses_data($required_attributes); ?>>
             <?php if (isset($this->field['title'])): ?>
                 <label for="<?php echo esc_attr($id); ?>" class="pf-field-label">
                     <?php echo esc_html($this->field['title']); ?>
@@ -53,7 +52,7 @@ class PersianFramework_Field_Text {
                    dir="<?php echo esc_attr($dir); ?>"
                    placeholder="<?php echo esc_attr($placeholder); ?>"
                    class="pf-field-input"
-                    <?php echo $is_html_required; ?> />
+                    <?php echo wp_kses_data($is_html_required); ?> />
 
             <?php if (isset($this->field['desc'])): ?>
                 <p class="pf-field-desc"><?php echo esc_html($this->field['desc']); ?></p>
@@ -61,5 +60,10 @@ class PersianFramework_Field_Text {
         </div>
 
         <?php
+    }
+
+    public function sanitize($value) {
+        $value = wp_unslash($value);
+        return sanitize_text_field($value);
     }
 }

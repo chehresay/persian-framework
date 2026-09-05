@@ -21,7 +21,7 @@ class PersianFramework_Field_Slides {
     }
 
     /**
-     * ✅ Normalize value to always be an array
+     * Normalize value to always be an array
      */
     private function normalize_value($value) {
         if (is_null($value)) {
@@ -62,7 +62,7 @@ class PersianFramework_Field_Slides {
         $id = isset($this->field['id']) ? $this->field['id'] : '';
         $name = isset($this->field['name']) ? $this->field['name'] : $id;
 
-        // ✅ Normalize value to always be an array
+        // Normalize value to always be an array
         $value = $this->normalize_value($this->value);
 
         // Placeholders
@@ -79,7 +79,7 @@ class PersianFramework_Field_Slides {
         $sortable = isset($this->field['sortable']) ? $this->field['sortable'] : true;
         $collapsible = isset($this->field['collapsible']) ? $this->field['collapsible'] : true;
 
-        // ✅ Ensure we have at least minimum items
+        // Ensure we have at least minimum items
         if (empty($value) && $min_items > 0) {
             $value = array_fill(0, $min_items, array());
         }
@@ -98,7 +98,12 @@ class PersianFramework_Field_Slides {
                         <span class="pf-subtitle"><?php echo esc_html($this->field['subtitle']); ?></span>
                     <?php endif; ?>
                     <?php if ($max_items > 0): ?>
-                        <span class="pf-slides-max-label"><?php printf(__('(Max: %d)', 'persian-framework'), $max_items); ?></span>
+                        <span class="pf-slides-max-label">
+                            <?php
+                            /* translators: %d: maximum number of slides allowed */
+                            printf( esc_html__( '(Max: %d)', 'persian-framework' ), esc_html( $max_items ) );
+                            ?>
+                        </span>
                     <?php endif; ?>
                 </label>
             <?php endif; ?>
@@ -128,7 +133,8 @@ class PersianFramework_Field_Slides {
                                     if (!empty($slide_title)) {
                                         echo esc_html($slide_title);
                                     } else {
-                                        printf(__('Slide %d', 'persian-framework'), $index + 1);
+                                        /* translators: %d: slide number */
+                                        printf( esc_html__( 'Slide %d', 'persian-framework' ), esc_html( $index + 1 ) );
                                     }
                                     ?>
                                 </span>
@@ -145,7 +151,7 @@ class PersianFramework_Field_Slides {
                                 <!-- Title -->
                                 <div class="pf-slides-field">
                                     <label class="pf-slides-field-label">
-                                        <?php _e('Title', 'persian-framework'); ?>
+                                        <?php esc_html_e('Title', 'persian-framework'); ?>
                                     </label>
                                     <input type="text"
                                            name="<?php echo esc_attr($name); ?>[<?php echo esc_attr($index); ?>][title]"
@@ -157,7 +163,7 @@ class PersianFramework_Field_Slides {
                                 <!-- Description -->
                                 <div class="pf-slides-field">
                                     <label class="pf-slides-field-label">
-                                        <?php _e('Description', 'persian-framework'); ?>
+                                        <?php esc_html_e('Description', 'persian-framework'); ?>
                                     </label>
                                     <textarea name="<?php echo esc_attr($name); ?>[<?php echo esc_attr($index); ?>][description]"
                                               placeholder="<?php echo esc_attr($desc_placeholder); ?>"
@@ -168,7 +174,7 @@ class PersianFramework_Field_Slides {
                                 <!-- URL -->
                                 <div class="pf-slides-field">
                                     <label class="pf-slides-field-label">
-                                        <?php _e('URL', 'persian-framework'); ?>
+                                        <?php esc_html_e('URL', 'persian-framework'); ?>
                                     </label>
                                     <input type="url"
                                            name="<?php echo esc_attr($name); ?>[<?php echo esc_attr($index); ?>][url]"
@@ -180,7 +186,7 @@ class PersianFramework_Field_Slides {
                                 <!-- Image -->
                                 <div class="pf-slides-field pf-slides-image-field">
                                     <label class="pf-slides-field-label">
-                                        <?php _e('Image', 'persian-framework'); ?>
+                                        <?php esc_html_e('Image', 'persian-framework'); ?>
                                     </label>
                                     <div class="pf-slides-image-control">
                                         <input type="hidden"
@@ -196,7 +202,7 @@ class PersianFramework_Field_Slides {
                                                     <img src="<?php echo esc_url($image_url); ?>" alt="" />
                                                 <?php else: ?>
                                                     <span class="dashicons dashicons-format-image"></span>
-                                                    <span class="pf-slides-image-placeholder"><?php _e('No image', 'persian-framework'); ?></span>
+                                                    <span class="pf-slides-image-placeholder"><?php esc_html_e('No image', 'persian-framework'); ?></span>
                                                 <?php endif; ?>
                                             <?php else: ?>
                                                 <span class="dashicons dashicons-format-image"></span>
@@ -206,11 +212,11 @@ class PersianFramework_Field_Slides {
                                         <div class="pf-slides-image-actions">
                                             <button type="button" class="pf-btn pf-btn-secondary pf-slides-image-choose">
                                                 <span class="dashicons dashicons-edit"></span>
-                                                <?php _e('Choose', 'persian-framework'); ?>
+                                                <?php esc_html_e('Choose', 'persian-framework'); ?>
                                             </button>
                                             <button type="button" class="pf-btn pf-btn-danger pf-slides-image-remove" <?php echo empty($slide_image) ? 'style="display:none;"' : ''; ?>>
                                                 <span class="dashicons dashicons-no-alt"></span>
-                                                <?php _e('Remove', 'persian-framework'); ?>
+                                                <?php esc_html_e('Remove', 'persian-framework'); ?>
                                             </button>
                                         </div>
                                     </div>
@@ -226,7 +232,7 @@ class PersianFramework_Field_Slides {
                                                name="<?php echo esc_attr($name); ?>[<?php echo esc_attr($index); ?>][target]"
                                                value="_blank"
                                                 <?php checked($slide_target, '_blank'); ?> />
-                                        <?php _e('Open in new window', 'persian-framework'); ?>
+                                        <?php esc_html_e('Open in new window', 'persian-framework'); ?>
                                     </label>
                                 </div>
 
@@ -240,7 +246,7 @@ class PersianFramework_Field_Slides {
                                                name="<?php echo esc_attr($name); ?>[<?php echo esc_attr($index); ?>][rel]"
                                                value="nofollow"
                                                 <?php checked($slide_rel, 'nofollow'); ?> />
-                                        <?php _e('Add rel="nofollow"', 'persian-framework'); ?>
+                                        <?php esc_html_e('Add rel="nofollow"', 'persian-framework'); ?>
                                     </label>
                                 </div>
                             </div>
@@ -259,7 +265,7 @@ class PersianFramework_Field_Slides {
                     <?php if (!empty($value) && count($value) > $min_items): ?>
                         <button type="button" class="pf-btn pf-btn-danger pf-slides-clear">
                             <span class="dashicons dashicons-trash"></span>
-                            <?php _e('Clear All', 'persian-framework'); ?>
+                            <?php esc_html_e('Clear All', 'persian-framework'); ?>
                         </button>
                     <?php endif; ?>
                 </div>
@@ -271,7 +277,7 @@ class PersianFramework_Field_Slides {
         </div>
 
         <?php
-        // ✅ Pass the count properly
+        // Pass the count properly
         $item_count = is_array($value) ? count($value) : 0;
         $this->enqueue_scripts($id, $sortable, $collapsible, $item_count);
     }
@@ -606,7 +612,7 @@ class PersianFramework_Field_Slides {
                 var collapsibleEnabled = <?php echo $collapsible ? 'true' : 'false'; ?>;
                 var $container = $('#slides-<?php echo esc_js($id); ?>');
 
-                // ✅ Use the passed item count
+                // Use the passed item count
                 var itemCounter = <?php echo intval($item_count); ?>;
 
                 // Generate HTML for a single slide item
@@ -620,44 +626,44 @@ class PersianFramework_Field_Slides {
                     if (sortableEnabled) {
                         html += '<span class="pf-slides-handle dashicons dashicons-move"></span>';
                     }
-                    html += '<span class="pf-slides-item-title"><?php _e('Slide', 'persian-framework'); ?> ' + (index + 1) + '</span>';
+                    html += '<span class="pf-slides-item-title"><?php echo esc_js( esc_html__( 'Slide', 'persian-framework' ) ); ?> ' + (index + 1) + '</span>';
                     if (collapsibleEnabled) {
                         html += '<button type="button" class="pf-slides-toggle"><span class="dashicons dashicons-arrow-down-alt2"></span></button>';
                     }
-                    html += '<button type="button" class="pf-slides-remove" aria-label="<?php esc_attr_e('Remove', 'persian-framework'); ?>"><span class="dashicons dashicons-no-alt"></span></button>';
+                    html += '<button type="button" class="pf-slides-remove" aria-label="<?php echo esc_js( esc_html__( 'Remove', 'persian-framework' ) ); ?>"><span class="dashicons dashicons-no-alt"></span></button>';
                     html += '</div>';
                     html += '<div class="pf-slides-item-body">';
 
                     // Title
                     html += '<div class="pf-slides-field">';
-                    html += '<label class="pf-slides-field-label"><?php _e('Title', 'persian-framework'); ?></label>';
+                    html += '<label class="pf-slides-field-label"><?php echo esc_js( esc_html__( 'Title', 'persian-framework' ) ); ?></label>';
                     html += '<input type="text" name="' + fieldName + '[' + index + '][title]" value="" placeholder="' + titlePlaceholder + '" class="pf-slides-title pf-field-input">';
                     html += '</div>';
 
                     // Description
                     html += '<div class="pf-slides-field">';
-                    html += '<label class="pf-slides-field-label"><?php _e('Description', 'persian-framework'); ?></label>';
+                    html += '<label class="pf-slides-field-label"><?php echo esc_js( esc_html__( 'Description', 'persian-framework' ) ); ?></label>';
                     html += '<textarea name="' + fieldName + '[' + index + '][description]" placeholder="' + descPlaceholder + '" class="pf-slides-desc pf-field-input pf-textarea-input" rows="3"></textarea>';
                     html += '</div>';
 
                     // URL
                     html += '<div class="pf-slides-field">';
-                    html += '<label class="pf-slides-field-label"><?php _e('URL', 'persian-framework'); ?></label>';
+                    html += '<label class="pf-slides-field-label"><?php echo esc_js( esc_html__( 'URL', 'persian-framework' ) ); ?></label>';
                     html += '<input type="url" name="' + fieldName + '[' + index + '][url]" value="" placeholder="' + urlPlaceholder + '" class="pf-slides-url pf-field-input">';
                     html += '</div>';
 
                     // Image
                     html += '<div class="pf-slides-field pf-slides-image-field">';
-                    html += '<label class="pf-slides-field-label"><?php _e('Image', 'persian-framework'); ?></label>';
+                    html += '<label class="pf-slides-field-label"><?php echo esc_js( esc_html__( 'Image', 'persian-framework' ) ); ?></label>';
                     html += '<div class="pf-slides-image-control">';
                     html += '<input type="hidden" name="' + fieldName + '[' + index + '][image]" value="" class="pf-slides-image-id">';
                     html += '<div class="pf-slides-image-preview">';
                     html += '<span class="dashicons dashicons-format-image"></span>';
-                    html += '<span class="pf-slides-image-placeholder"><?php _e('Select Image', 'persian-framework'); ?></span>';
+                    html += '<span class="pf-slides-image-placeholder"><?php echo esc_js( esc_html__( 'Select Image', 'persian-framework' ) ); ?></span>';
                     html += '</div>';
                     html += '<div class="pf-slides-image-actions">';
-                    html += '<button type="button" class="pf-btn pf-btn-secondary pf-slides-image-choose"><span class="dashicons dashicons-edit"></span> <?php _e('Choose', 'persian-framework'); ?></button>';
-                    html += '<button type="button" class="pf-btn pf-btn-danger pf-slides-image-remove" style="display:none;"><span class="dashicons dashicons-no-alt"></span> <?php _e('Remove', 'persian-framework'); ?></button>';
+                    html += '<button type="button" class="pf-btn pf-btn-secondary pf-slides-image-choose"><span class="dashicons dashicons-edit"></span> <?php echo esc_js( esc_html__( 'Choose', 'persian-framework' ) ); ?></button>';
+                    html += '<button type="button" class="pf-btn pf-btn-danger pf-slides-image-remove" style="display:none;"><span class="dashicons dashicons-no-alt"></span> <?php echo esc_js( esc_html__( 'Remove', 'persian-framework' ) ); ?></button>';
                     html += '</div></div></div>';
 
                     // Target
@@ -665,7 +671,7 @@ class PersianFramework_Field_Slides {
                     html += '<label class="pf-slides-field-label pf-slides-checkbox-label">';
                     html += '<input type="hidden" name="' + fieldName + '[' + index + '][target]" value="0">';
                     html += '<input type="checkbox" name="' + fieldName + '[' + index + '][target]" value="_blank">';
-                    html += '<?php _e('Open in new window', 'persian-framework'); ?>';
+                    html += '<?php echo esc_js( esc_html__( 'Open in new window', 'persian-framework' ) ); ?>';
                     html += '</label></div>';
 
                     // Rel
@@ -673,7 +679,7 @@ class PersianFramework_Field_Slides {
                     html += '<label class="pf-slides-field-label pf-slides-checkbox-label">';
                     html += '<input type="hidden" name="' + fieldName + '[' + index + '][rel]" value="0">';
                     html += '<input type="checkbox" name="' + fieldName + '[' + index + '][rel]" value="nofollow">';
-                    html += '<?php _e('Add rel="nofollow"', 'persian-framework'); ?>';
+                    html += '<?php echo esc_js( esc_html__( 'Add rel="nofollow"', 'persian-framework' ) ); ?>';
                     html += '</label></div>';
 
                     html += '</div></div>';
@@ -683,7 +689,7 @@ class PersianFramework_Field_Slides {
                 // Add new slide
                 $('.pf-slides-add').on('click', function() {
                     if (maxItems > 0 && $container.find('.pf-slides-item').length >= maxItems) {
-                        alert('<?php esc_js(__('Maximum number of slides reached.', 'persian-framework')); ?>');
+                        alert('<?php echo esc_js( esc_html__( 'Maximum number of slides reached.', 'persian-framework' ) ); ?>');
                         return;
                     }
 
@@ -712,11 +718,11 @@ class PersianFramework_Field_Slides {
                     var count = $container.find('.pf-slides-item').length;
 
                     if (count <= minItems) {
-                        alert('<?php esc_js(__('Minimum number of slides required.', 'persian-framework')); ?>');
+                        alert('<?php echo esc_js( esc_html__( 'Minimum number of slides required.', 'persian-framework' ) ); ?>');
                         return;
                     }
 
-                    if (confirm('<?php esc_js(__('Remove this slide?', 'persian-framework')); ?>')) {
+                    if (confirm('<?php echo esc_js( esc_html__( 'Remove this slide?', 'persian-framework' ) ); ?>')) {
                         $item.fadeOut(300, function() {
                             $item.remove();
                             updateItemIndexes();
@@ -736,11 +742,11 @@ class PersianFramework_Field_Slides {
                 $(document).on('click', '.pf-slides-clear', function() {
                     var count = $container.find('.pf-slides-item').length;
                     if (count <= minItems) {
-                        alert('<?php esc_js(__('Minimum number of slides required.', 'persian-framework')); ?>');
+                        alert('<?php echo esc_js( esc_html__( 'Minimum number of slides required.', 'persian-framework' ) ); ?>');
                         return;
                     }
 
-                    if (confirm('<?php esc_js(__('Remove all slides?', 'persian-framework')); ?>')) {
+                    if (confirm('<?php echo esc_js( esc_html__( 'Remove all slides?', 'persian-framework' ) ); ?>')) {
                         $container.find('.pf-slides-item').fadeOut(300, function() {
                             $container.empty();
                             for (var i = 0; i < minItems; i++) {
@@ -802,10 +808,10 @@ class PersianFramework_Field_Slides {
                         var $title = $item.find('.pf-slides-item-title');
                         var $titleInput = $item.find('.pf-slides-title');
                         if ($titleInput.length) {
-                            var value = $titleInput.val() || '<?php _e('Slide', 'persian-framework'); ?> ' + (index + 1);
+                            var value = $titleInput.val() || '<?php echo esc_js( esc_html__( 'Slide', 'persian-framework' ) ); ?> ' + (index + 1);
                             $title.text(value);
                         } else {
-                            $title.text('<?php _e('Slide', 'persian-framework'); ?> ' + (index + 1));
+                            $title.text('<?php echo esc_js( esc_html__( 'Slide', 'persian-framework' ) ); ?> ' + (index + 1));
                         }
                     });
                 }
@@ -814,7 +820,7 @@ class PersianFramework_Field_Slides {
                 $(document).on('input', '.pf-slides-title', function() {
                     var $item = $(this).closest('.pf-slides-item');
                     var $title = $item.find('.pf-slides-item-title');
-                    var value = $(this).val() || '<?php _e('Slide', 'persian-framework'); ?> ' + ($item.data('index') + 1);
+                    var value = $(this).val() || '<?php echo esc_js( esc_html__( 'Slide', 'persian-framework' ) ); ?> ' + ($item.data('index') + 1);
                     $title.text(value);
                 });
 
@@ -864,7 +870,7 @@ class PersianFramework_Field_Slides {
                     $idInput.val('');
                     $preview.html(
                         '<span class="dashicons dashicons-format-image"></span>' +
-                        '<span class="pf-slides-image-placeholder"><?php _e('Select Image', 'persian-framework'); ?></span>'
+                        '<span class="pf-slides-image-placeholder"><?php echo esc_js( esc_html__( 'Select Image', 'persian-framework' ) ); ?></span>'
                     );
                     $(this).hide();
 

@@ -24,37 +24,34 @@ class PersianFramework_Field_Border {
         $id = isset($this->field['id']) ? $this->field['id'] : '';
         $name = isset($this->field['name']) ? $this->field['name'] : $id;
 
-        // Default values
         $defaults = array(
-            'top' => 0,
-            'right' => 0,
-            'bottom' => 0,
-            'left' => 0,
-            'style' => 'solid',
-            'color' => '#000000',
-            'radius' => 0,
-            'unit' => 'px'
+                'top' => 0,
+                'right' => 0,
+                'bottom' => 0,
+                'left' => 0,
+                'style' => 'solid',
+                'color' => '#000000',
+                'radius' => 0,
+                'unit' => 'px'
         );
 
         $value = wp_parse_args(
-            is_array($this->value) ? $this->value : array(),
-            $defaults
+                is_array($this->value) ? $this->value : array(),
+                $defaults
         );
 
-        // Border styles
         $styles = array(
-            'none' => __('None', 'persian-framework'),
-            'solid' => __('Solid', 'persian-framework'),
-            'dashed' => __('Dashed', 'persian-framework'),
-            'dotted' => __('Dotted', 'persian-framework'),
-            'double' => __('Double', 'persian-framework'),
-            'groove' => __('Groove', 'persian-framework'),
-            'ridge' => __('Ridge', 'persian-framework'),
-            'inset' => __('Inset', 'persian-framework'),
-            'outset' => __('Outset', 'persian-framework')
+                'none' => esc_html__('None', 'persian-framework'),
+                'solid' => esc_html__('Solid', 'persian-framework'),
+                'dashed' => esc_html__('Dashed', 'persian-framework'),
+                'dotted' => esc_html__('Dotted', 'persian-framework'),
+                'double' => esc_html__('Double', 'persian-framework'),
+                'groove' => esc_html__('Groove', 'persian-framework'),
+                'ridge' => esc_html__('Ridge', 'persian-framework'),
+                'inset' => esc_html__('Inset', 'persian-framework'),
+                'outset' => esc_html__('Outset', 'persian-framework')
         );
 
-        // Units
         $units = array('px', 'em', 'rem', '%');
 
         ?>
@@ -71,13 +68,13 @@ class PersianFramework_Field_Border {
             <div class="pf-border-container">
                 <!-- Width fields -->
                 <div class="pf-border-row">
-                    <span class="pf-border-row-label"><?php _e('Width', 'persian-framework'); ?></span>
+                    <span class="pf-border-row-label"><?php esc_html_e('Width', 'persian-framework'); ?></span>
                     <?php
                     $sides = array(
-                        'top' => __('Top', 'persian-framework'),
-                        'right' => __('Right', 'persian-framework'),
-                        'bottom' => __('Bottom', 'persian-framework'),
-                        'left' => __('Left', 'persian-framework')
+                            'top' => esc_html__('Top', 'persian-framework'),
+                            'right' => esc_html__('Right', 'persian-framework'),
+                            'bottom' => esc_html__('Bottom', 'persian-framework'),
+                            'left' => esc_html__('Left', 'persian-framework')
                     );
                     foreach ($sides as $key => $label):
                         ?>
@@ -96,7 +93,7 @@ class PersianFramework_Field_Border {
                 <!-- Style & Color -->
                 <div class="pf-border-row pf-border-style-row">
                     <label class="pf-border-label">
-                        <span class="pf-border-label-text"><?php _e('Style', 'persian-framework'); ?></span>
+                        <span class="pf-border-label-text"><?php esc_html_e('Style', 'persian-framework'); ?></span>
                         <select name="<?php echo esc_attr($name); ?>[style]" class="pf-border-select">
                             <?php foreach ($styles as $key => $label): ?>
                                 <option value="<?php echo esc_attr($key); ?>" <?php selected($value['style'], $key); ?>>
@@ -107,7 +104,7 @@ class PersianFramework_Field_Border {
                     </label>
 
                     <label class="pf-border-label pf-border-color-label">
-                        <span class="pf-border-label-text"><?php _e('Color', 'persian-framework'); ?></span>
+                        <span class="pf-border-label-text"><?php esc_html_e('Color', 'persian-framework'); ?></span>
                         <input type="color"
                                name="<?php echo esc_attr($name); ?>[color]"
                                value="<?php echo esc_attr($value['color']); ?>"
@@ -122,7 +119,7 @@ class PersianFramework_Field_Border {
                 <!-- Radius & Unit -->
                 <div class="pf-border-row">
                     <label class="pf-border-label">
-                        <span class="pf-border-label-text"><?php _e('Border Radius', 'persian-framework'); ?></span>
+                        <span class="pf-border-label-text"><?php esc_html_e('Border Radius', 'persian-framework'); ?></span>
                         <input type="number"
                                min="0"
                                step="any"
@@ -132,7 +129,7 @@ class PersianFramework_Field_Border {
                     </label>
 
                     <label class="pf-border-label">
-                        <span class="pf-border-label-text"><?php _e('Unit', 'persian-framework'); ?></span>
+                        <span class="pf-border-label-text"><?php esc_html_e('Unit', 'persian-framework'); ?></span>
                         <select name="<?php echo esc_attr($name); ?>[unit]" class="pf-border-select">
                             <?php foreach ($units as $unit): ?>
                                 <option value="<?php echo esc_attr($unit); ?>" <?php selected($value['unit'], $unit); ?>>
@@ -145,13 +142,13 @@ class PersianFramework_Field_Border {
 
                 <!-- Preview -->
                 <div class="pf-border-preview" style="
-                    border-top: <?php echo esc_attr($value['top'] . $value['unit'] . ' ' . $value['style'] . ' ' . $value['color']); ?>;
-                    border-right: <?php echo esc_attr($value['right'] . $value['unit'] . ' ' . $value['style'] . ' ' . $value['color']); ?>;
-                    border-bottom: <?php echo esc_attr($value['bottom'] . $value['unit'] . ' ' . $value['style'] . ' ' . $value['color']); ?>;
-                    border-left: <?php echo esc_attr($value['left'] . $value['unit'] . ' ' . $value['style'] . ' ' . $value['color']); ?>;
-                    border-radius: <?php echo esc_attr($value['radius'] . $value['unit']); ?>;
-                    ">
-                    <span><?php _e('Preview', 'persian-framework'); ?></span>
+                        border-top: <?php echo esc_attr($value['top'] . $value['unit'] . ' ' . $value['style'] . ' ' . $value['color']); ?>;
+                        border-right: <?php echo esc_attr($value['right'] . $value['unit'] . ' ' . $value['style'] . ' ' . $value['color']); ?>;
+                        border-bottom: <?php echo esc_attr($value['bottom'] . $value['unit'] . ' ' . $value['style'] . ' ' . $value['color']); ?>;
+                        border-left: <?php echo esc_attr($value['left'] . $value['unit'] . ' ' . $value['style'] . ' ' . $value['color']); ?>;
+                        border-radius: <?php echo esc_attr($value['radius'] . $value['unit']); ?>;
+                        ">
+                    <span><?php esc_html_e('Preview', 'persian-framework'); ?></span>
                 </div>
             </div>
 
@@ -165,9 +162,9 @@ class PersianFramework_Field_Border {
     }
 
     private function enqueue_scripts() {
-        static $enqueued = false;
+        static $pf_border_enqueued = false;
 
-        if (!$enqueued) {
+        if (!$pf_border_enqueued) {
             ?>
             <style>
                 .pf-border-container {
@@ -324,7 +321,6 @@ class PersianFramework_Field_Border {
                 (function($) {
                     'use strict';
 
-                    // Sync color picker with hex input
                     $(document).on('input', '.pf-border-color-picker', function() {
                         var $wrapper = $(this).closest('.pf-border-color-label');
                         var $hex = $wrapper.find('.pf-border-color-hex');
@@ -342,7 +338,6 @@ class PersianFramework_Field_Border {
                         }
                     });
 
-                    // Update border preview on any change
                     $(document).on('change input', '.pf-border-container input, .pf-border-container select', function() {
                         updateBorderPreview($(this));
                     });
@@ -374,7 +369,42 @@ class PersianFramework_Field_Border {
                 })(jQuery);
             </script>
             <?php
-            $enqueued = true;
+            $pf_border_enqueued = true;
         }
+    }
+
+    public function sanitize($value) {
+        if (!is_array($value)) {
+            return array();
+        }
+
+        $sanitized = array();
+
+        $sides = array('top', 'right', 'bottom', 'left');
+        foreach ($sides as $side) {
+            if (isset($value[$side])) {
+                $sanitized[$side] = floatval($value[$side]);
+            }
+        }
+
+        if (isset($value['style'])) {
+            $allowed_styles = array('none', 'solid', 'dashed', 'dotted', 'double', 'groove', 'ridge', 'inset', 'outset');
+            $sanitized['style'] = in_array($value['style'], $allowed_styles) ? $value['style'] : 'solid';
+        }
+
+        if (isset($value['color'])) {
+            $sanitized['color'] = sanitize_hex_color($value['color']);
+        }
+
+        if (isset($value['radius'])) {
+            $sanitized['radius'] = floatval($value['radius']);
+        }
+
+        if (isset($value['unit'])) {
+            $allowed_units = array('px', 'em', 'rem', '%');
+            $sanitized['unit'] = in_array($value['unit'], $allowed_units) ? $value['unit'] : 'px';
+        }
+
+        return $sanitized;
     }
 }

@@ -65,7 +65,6 @@ class PersianFramework_Metabox {
         if (isset($this->metaboxes[$metabox_id]['sections'][$section_id])) {
             $this->metaboxes[$metabox_id]['sections'][$section_id]['fields'][] = $field;
         } else {
-            // If no section, add to main fields
             if (isset($this->metaboxes[$metabox_id])) {
                 $this->metaboxes[$metabox_id]['fields'][] = $field;
             }
@@ -99,7 +98,6 @@ class PersianFramework_Metabox {
 
         echo '<div class="pf-metabox-container">';
 
-        // Render sections
         if (isset($metabox['sections']) && !empty($metabox['sections'])) {
             echo '<div class="pf-metabox-sections">';
             $first = true;
@@ -113,7 +111,6 @@ class PersianFramework_Metabox {
             echo '</div>';
         }
 
-        // Render fields (if no sections)
         if (isset($metabox['fields']) && !empty($metabox['fields'])) {
             $this->render_fields($metabox['fields'], $post->ID, $metabox['id']);
         }
@@ -136,7 +133,6 @@ class PersianFramework_Metabox {
 
             echo '<div class="pf-metabox-field pf-field-type-' . esc_attr($field['type']) . '">';
 
-            // Label
             if (isset($field['label'])) {
                 echo '<label for="' . esc_attr($field_id) . '" class="pf-metabox-field-label">';
                 echo esc_html($field['label']);
@@ -146,7 +142,6 @@ class PersianFramework_Metabox {
                 echo '</label>';
             }
 
-            // Field
             $field['name'] = $field_id;
             $field['id'] = $field_id;
 
@@ -154,7 +149,6 @@ class PersianFramework_Metabox {
                 echo PersianFramework_Fields::render_field($field, $value);
             }
 
-            // Description
             if (isset($field['description'])) {
                 echo '<p class="pf-metabox-field-desc">' . esc_html($field['description']) . '</p>';
             }
@@ -168,34 +162,28 @@ class PersianFramework_Metabox {
      * Save metabox fields
      */
     public function save_meta_boxes($post_id, $post) {
-        // Check if autosave
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
             return;
         }
 
-        // Check user permissions
         if (!current_user_can('edit_post', $post_id)) {
             return;
         }
 
         foreach ($this->metaboxes as $metabox_id => $metabox) {
-            // Verify nonce
             $nonce_name = 'pf_metabox_nonce_' . $metabox_id;
-            if (!isset($_POST[$nonce_name]) || !wp_verify_nonce($_POST[$nonce_name], $nonce_name)) {
+            if (!isset($_POST[$nonce_name]) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST[$nonce_name])), $nonce_name)) {
                 continue;
             }
 
-            // Check if this post type is supported
             if (!in_array($post->post_type, $metabox['post_types'])) {
                 continue;
             }
 
-            // Save fields
             if (isset($metabox['fields'])) {
                 $this->save_fields($metabox['fields'], $post_id, $metabox_id);
             }
 
-            // Save fields in sections
             if (isset($metabox['sections'])) {
                 foreach ($metabox['sections'] as $section) {
                     if (isset($section['fields'])) {
@@ -214,14 +202,10 @@ class PersianFramework_Metabox {
             $field_id = $metabox_id . '_' . $field['id'];
 
             if (isset($_POST[$field_id])) {
-                $value = $_POST[$field_id];
-
-                // Sanitize based on field type
+                $value = wp_unslash($_POST[$field_id]);
                 $value = $this->sanitize_field_value($value, $field);
-
                 update_post_meta($post_id, $field_id, $value);
             } else {
-                // For checkboxes, delete if not checked
                 if ($field['type'] === 'checkbox') {
                     delete_post_meta($post_id, $field_id);
                 }
@@ -269,7 +253,7 @@ class PersianFramework_Metabox {
         }
 
         wp_enqueue_style('pf-metabox', PERSIAN_FRAMEWORK_ASSETS . 'css/metabox.css', array(), PERSIAN_FRAMEWORK_VERSION);
-        wp_enqueue_script('pf-metabox', PERSIAN_FRAMEWORK_ASSETS . 'js/metabox.js', array('jquery'), PERSIAN_FRAMEWORK_VERSION, true);
+        //wp_enqueue_script('pf-metabox', PERSIAN_FRAMEWORK_ASSETS . 'js/metabox.js', array('jquery'), PERSIAN_FRAMEWORK_VERSION, true);
     }
 
     /**
@@ -288,14 +272,12 @@ class PersianFramework_Metabox {
         if (isset($this->metaboxes[$metabox_id])) {
             $metabox = $this->metaboxes[$metabox_id];
 
-            // Get from main fields
             if (isset($metabox['fields'])) {
                 foreach ($metabox['fields'] as $field) {
                     $fields[$field['id']] = get_post_meta($post_id, $metabox_id . '_' . $field['id'], true);
                 }
             }
 
-            // Get from sections
             if (isset($metabox['sections'])) {
                 foreach ($metabox['sections'] as $section) {
                     if (isset($section['fields'])) {
@@ -310,7 +292,9 @@ class PersianFramework_Metabox {
     }
 }
 
-// Helper functions
+/**
+ * Helper functions
+ */
 function pf_metabox_get($post_id, $metabox_id, $field_id, $default = null) {
     return PersianFramework_Metabox::get_instance()->get_field($post_id, $metabox_id, $field_id, $default);
 }

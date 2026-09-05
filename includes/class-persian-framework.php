@@ -11,16 +11,14 @@ if (!defined('ABSPATH')) {
 
 class PersianFramework {
 
-    // ✅ Store multiple instances
     private static $instances = array();
 
-    // ✅ Each instance has its own properties
     private $config = array();
     private $sections = array();
     private $loaded = false;
     private $instance_id = '';
 
-    const VERSION = '3.0.0';
+    const VERSION = PERSIAN_FRAMEWORK_VERSION;
     const OPTION_NAME = 'persian_framework_options';
     const THEME_OPTION = 'persian_framework_theme';
 
@@ -58,9 +56,6 @@ class PersianFramework {
     }
 
     private function define_constants() {
-        if (!defined('PERSIAN_FRAMEWORK_VERSION')) {
-            define('PERSIAN_FRAMEWORK_VERSION', self::VERSION);
-        }
         if (!defined('PERSIAN_FRAMEWORK_PATH')) {
             define('PERSIAN_FRAMEWORK_PATH', plugin_dir_path(dirname(__FILE__)));
         }
@@ -89,17 +84,18 @@ class PersianFramework {
 
     private function load_dependencies() {
         $files = array(
-            'class-framework-loader.php',
-            'class-framework-admin.php',
-            'class-framework-fields.php',
-            'class-framework-sanitize.php',
-            'class-framework-ajax.php',
-            'class-framework-export-import.php',
-            'class-framework-theme.php',
-            'class-framework-translations.php',
-            'class-framework-api.php',
-            'class-framework-demo.php',
-            'class-framework-required.php',
+                'class-framework-loader.php',
+                'class-framework-admin.php',
+                'class-framework-fields.php',
+                'class-framework-sanitize.php',
+                'class-framework-ajax.php',
+                'class-framework-export-import.php',
+                'class-framework-theme.php',
+                'class-framework-translations.php',
+                'class-framework-api.php',
+                'class-framework-demo.php',
+                'class-framework-required.php',
+                'class-framework-metabox.php',
         );
 
         foreach ($files as $file) {
@@ -140,6 +136,9 @@ class PersianFramework {
         if (class_exists('PersianFramework_Required')) {
             PersianFramework_Required::enqueue_scripts();
         }
+        if (class_exists('PersianFramework_Metabox')) {
+            PersianFramework_Metabox::get_instance();
+        }
     }
 
     public function load_textdomain() {
@@ -163,7 +162,6 @@ class PersianFramework {
             return;
         }
 
-        // Only load default config if this is the default instance and config is empty
         if ($this->instance_id === 'default' && empty($this->config) && empty($this->sections)) {
             $sections_file = PERSIAN_FRAMEWORK_CONFIG . 'sections.php';
             if (file_exists($sections_file)) {
@@ -188,22 +186,21 @@ class PersianFramework {
      */
     public function set_args($args) {
         $this->config = wp_parse_args($args, array(
-            'opt_name' => 'persian_framework_options_' . $this->instance_id,
-            'display_name' => 'Persian Framework',
-            'display_version' => self::VERSION,
-            'menu_title' => 'Settings',
-            'page_title' => 'Settings',
-            'menu_slug' => 'persian-framework-' . $this->instance_id,
-            'menu_icon' => 'dashicons-admin-generic',
-            'menu_position' => null,
-            'capability' => 'manage_options',
-            'show_import_export' => true,
-            'show_backup' => true,
-            'dev_mode' => false,
-            'global_variable' => null,
+                'opt_name' => 'persian_framework_options_' . $this->instance_id,
+                'display_name' => 'Persian Framework',
+                'display_version' => self::VERSION,
+                'menu_title' => 'Settings',
+                'page_title' => 'Settings',
+                'menu_slug' => 'persian-framework-' . $this->instance_id,
+                'menu_icon' => 'dashicons-admin-generic',
+                'menu_position' => null,
+                'capability' => 'manage_options',
+                'show_import_export' => true,
+                'show_backup' => true,
+                'dev_mode' => false,
+                'global_variable' => null,
         ));
 
-        // Initialize global variable if configured
         $this->setup_global_variable();
     }
 
@@ -217,10 +214,8 @@ class PersianFramework {
             return;
         }
 
-        // Load options into global variable
         $GLOBALS[$global_var] = $this->get_all_options();
 
-        // Auto-sync global variable on option updates
         add_action('update_option_' . $this->get_opt_name(), function($old_value, $new_value) use ($global_var) {
             $GLOBALS[$global_var] = $new_value;
         }, 10, 2);
@@ -232,12 +227,10 @@ class PersianFramework {
     public function get_global_option($key, $default = null) {
         $global_var = $this->config['global_variable'];
 
-        // Try global variable first
         if (!empty($global_var) && isset($GLOBALS[$global_var]) && is_array($GLOBALS[$global_var])) {
             return isset($GLOBALS[$global_var][$key]) ? $GLOBALS[$global_var][$key] : $default;
         }
 
-        // Fallback to database
         return $this->get_option($key, $default);
     }
 
@@ -250,7 +243,6 @@ class PersianFramework {
         $options[$key] = $value;
         $result = update_option($opt_name, $options);
 
-        // Update global variable if saved
         if ($result) {
             $global_var = $this->config['global_variable'];
             if (!empty($global_var) && is_string($global_var)) {
@@ -266,10 +258,10 @@ class PersianFramework {
      */
     public function add_section($section) {
         $this->sections[] = wp_parse_args($section, array(
-            'id' => '',
-            'title' => '',
-            'icon' => '',
-            'fields' => array(),
+                'id' => '',
+                'title' => '',
+                'icon' => '',
+                'fields' => array(),
         ));
     }
 
@@ -321,49 +313,43 @@ class PersianFramework {
             return;
         }
 
-        // ✅ Check if this is the main framework instance and demo is not active
         $is_main_instance = ($this->instance_id === 'persian-framework' || $this->instance_id === 'default');
         $is_demo_active = get_option('persian_framework_demo_active', false);
 
-        // ✅ If demo is not active, hide the main menu
         if ($is_main_instance && !$is_demo_active) {
-            // Still register but with 'none' capability to hide it
             add_menu_page(
-                $config['page_title'] ?? 'Persian Framework',
-                $config['menu_title'] ?? 'Persian Framework',
-                'manage_options', // Still need capability for direct access
-                $config['menu_slug'] ?? 'persian-framework',
-                array($this, 'render_admin_page'),
-                $config['menu_icon'] ?? 'dashicons-admin-generic',
-                $config['menu_position'] ?? 59
+                    $config['page_title'] ?? 'Persian Framework',
+                    $config['menu_title'] ?? 'Persian Framework',
+                    'manage_options',
+                    $config['menu_slug'] ?? 'persian-framework',
+                    array($this, 'render_admin_page'),
+                    $config['menu_icon'] ?? 'dashicons-admin-generic',
+                    $config['menu_position'] ?? 59
             );
 
-            // ✅ Hide the menu by removing it from the global menu array
             add_action('admin_menu', array($this, 'hide_menu'), 999);
             return;
         }
 
-        // Normal registration when demo is active
         add_menu_page(
-            $config['page_title'] ?? 'Persian Framework',
-            $config['menu_title'] ?? 'Persian Framework',
-            $config['capability'] ?? 'manage_options',
-            $config['menu_slug'] ?? 'persian-framework',
-            array($this, 'render_admin_page'),
-            $config['menu_icon'] ?? 'dashicons-admin-generic',
-            $config['menu_position'] ?? 59
+                $config['page_title'] ?? 'Persian Framework',
+                $config['menu_title'] ?? 'Persian Framework',
+                $config['capability'] ?? 'manage_options',
+                $config['menu_slug'] ?? 'persian-framework',
+                array($this, 'render_admin_page'),
+                $config['menu_icon'] ?? 'dashicons-admin-generic',
+                $config['menu_position'] ?? 59
         );
     }
 
     /**
-     * ✅ Hide the main menu from admin sidebar
+     * Hide the main menu from admin sidebar
      */
     public function hide_menu() {
         global $menu, $submenu;
 
         $menu_slug = $this->config['menu_slug'] ?? 'persian-framework';
 
-        // Remove from main menu
         foreach ($menu as $key => $item) {
             if (isset($item[2]) && $item[2] === $menu_slug) {
                 unset($menu[$key]);
@@ -371,7 +357,6 @@ class PersianFramework {
             }
         }
 
-        // Remove from submenu as well
         foreach ($submenu as $parent => $items) {
             foreach ($items as $key => $item) {
                 if (isset($item[2]) && $item[2] === $menu_slug) {
@@ -383,19 +368,17 @@ class PersianFramework {
     }
 
     /**
-     * ✅ Override render_admin_page to show activation notice if not active
+     * Override render_admin_page to show activation notice if not active
      */
     public function render_admin_page() {
         $is_demo_active = get_option('persian_framework_demo_active', false);
         $is_main_instance = ($this->instance_id === 'persian-framework' || $this->instance_id === 'default');
 
-        // ✅ If demo is not active, show activation notice instead of the settings page
         if ($is_main_instance && !$is_demo_active) {
             $this->render_activation_notice();
             return;
         }
 
-        // Normal rendering when demo is active
         if (class_exists('PersianFramework_Admin')) {
             $admin = PersianFramework_Admin::get_instance();
             $admin->render_page($this);
@@ -403,7 +386,7 @@ class PersianFramework {
     }
 
     /**
-     * ✅ Render activation notice when demo is not active
+     * Render activation notice when demo is not active
      */
     private function render_activation_notice() {
         ?>
@@ -430,11 +413,11 @@ class PersianFramework {
                 </div>
 
                 <h1 style="font-size:28px;font-weight:700;color:#1a2332;margin:0 0 12px;">
-                    <?php _e('Welcome to Persian Framework!', 'persian-framework'); ?>
+                    <?php esc_html_e('Welcome to Persian Framework!', 'persian-framework'); ?>
                 </h1>
 
                 <p style="font-size:16px;color:#4a5568;line-height:1.6;max-width:500px;margin:0 auto 30px;">
-                    <?php _e('Activate the demo to explore all 40+ professional field types and see the framework in action.', 'persian-framework'); ?>
+                    <?php esc_html_e('Activate the demo to explore all 40+ professional field types and see the framework in action.', 'persian-framework'); ?>
                 </p>
 
                 <div style="
@@ -446,17 +429,17 @@ class PersianFramework {
                 text-align:left;
                 max-width:500px;
             ">
-                    <strong style="display:block;margin-bottom:8px;"><?php _e('Demo Features:', 'persian-framework'); ?></strong>
+                    <strong style="display:block;margin-bottom:8px;"><?php esc_html_e('Demo Features:', 'persian-framework'); ?></strong>
                     <ul style="margin:0;padding-left:20px;list-style:disc;color:#4a5568;">
-                        <li><?php _e('40+ professional field types', 'persian-framework'); ?></li>
-                        <li><?php _e('Live preview examples', 'persian-framework'); ?></li>
-                        <li><?php _e('Repeater and sorter demos', 'persian-framework'); ?></li>
-                        <li><?php _e('Media, gallery, and image fields', 'persian-framework'); ?></li>
-                        <li><?php _e('Typography and color controls', 'persian-framework'); ?></li>
+                        <li><?php esc_html_e('40+ professional field types', 'persian-framework'); ?></li>
+                        <li><?php esc_html_e('Live preview examples', 'persian-framework'); ?></li>
+                        <li><?php esc_html_e('Repeater and sorter demos', 'persian-framework'); ?></li>
+                        <li><?php esc_html_e('Media, gallery, and image fields', 'persian-framework'); ?></li>
+                        <li><?php esc_html_e('Typography and color controls', 'persian-framework'); ?></li>
                     </ul>
                 </div>
 
-                <a href="<?php echo admin_url('options-general.php?page=persian-framework-demo'); ?>"
+                <a href="<?php echo esc_url(admin_url('options-general.php?page=persian-framework-demo')); ?>"
                    class="button button-primary button-hero"
                    style="
                    background: #6366f1;
@@ -467,11 +450,11 @@ class PersianFramework {
                    line-height: 2.5;
                ">
                     <span class="dashicons dashicons-yes" style="font-size:18px;width:18px;height:18px;vertical-align:middle;margin-top:-2px;"></span>
-                    <?php _e('Activate Demo', 'persian-framework'); ?>
+                    <?php esc_html_e('Activate Demo', 'persian-framework'); ?>
                 </a>
 
                 <p style="margin-top:20px;font-size:13px;color:#94a3b8;">
-                    <?php _e('Demo activation will create a separate menu item with complete field examples.', 'persian-framework'); ?>
+                    <?php esc_html_e('Demo activation will create a separate menu item with complete field examples.', 'persian-framework'); ?>
                 </p>
             </div>
         </div>

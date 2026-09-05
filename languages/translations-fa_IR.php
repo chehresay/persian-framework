@@ -716,4 +716,142 @@ return array(
     'Demo Inactive' => 'دمو غیرفعال است',
     'Resetting...' => 'در حال ریست کردن ...',
 
+
+
+// Reset Section
+    'Reset Section' => 'بازنشانی بخش',
+    'Reset this section to default values' => 'بازنشانی این بخش به مقادیر پیش‌فرض',
+    'Are you sure you want to reset the "' => 'آیا مطمئن هستید که می‌خواهید بخش "',
+    'section to default values? This cannot be undone!' => '" را به مقادیر پیش‌فرض بازنشانی کنید؟ این کار قابل بازگشت نیست!',
+    'Section "%s" has been reset to defaults!' => 'بخش "%s" به مقادیر پیش‌فرض بازنشانی شد!',
+    'Section reset successfully!' => 'بخش با موفقیت بازنشانی شد!',
+    'Error resetting section!' => 'خطا در بازنشانی بخش!',
+    'Section ID is required!' => 'شناسه بخش الزامی است!',
+
+// Donate
+    'Donate' => 'حمایت',
+    'Support Persian Framework' => 'حمایت از پرشین فریم‌ورک',
+    'If you find this framework useful, please consider supporting its development.' => 'اگر این فریم‌ورک را مفید می‌دانید، لطفاً حمایت از توسعه آن را در نظر بگیرید.',
+    'Cryptocurrency' => 'ارز دیجیتال',
+    'Bitcoin (BTC)' => 'بیت‌کوین (BTC)',
+    'Ethereum (ETH)' => 'اتریوم (ETH)',
+    'Other Ways to Support' => 'راه‌های دیگر برای حمایت',
+    'Star the project on GitHub' => 'به پروژه در گیت‌هاب ستاره دهید',
+    'Report bugs and suggest features' => 'گزارش باگ‌ها و پیشنهاد ویژگی‌ها',
+    'Write documentation or tutorials' => 'نوشتن مستندات یا آموزش‌ها',
+    'Contribute code via pull requests' => 'مشارکت کد از طریق درخواست‌',
+
+// Copy button
+    'Copy' => 'کپی',
+    'Copied!' => 'کپی شد!',
+
+// Import/Export
+    'Import successful!' => 'واردات با موفقیت انجام شد!',
+    'Import successful! Page will reload.' => 'واردات با موفقیت انجام شد! صفحه دوباره بارگذاری خواهد شد.',
+    'Export successful!' => 'خروجی با موفقیت انجام شد!',
+    'Invalid data format!' => 'فرمت داده نامعتبر!',
+    'Import failed: ' => 'واردات ناموفق: ',
+    'Please select a file first!' => 'لطفاً ابتدا یک فایل انتخاب کنید!',
+    'Invalid JSON file!' => 'فایل JSON نامعتبر!',
+    'Invalid file type. Please upload a JSON file.' => 'نوع فایل نامعتبر. لطفاً یک فایل JSON آپلود کنید.',
+    'Export' => 'خروجی',
+
+// Backup
+    'No backups available.' => 'هیچ پشتیبان‌گیری موجود نیست.',
+    'Backup created successfully!' => 'پشتیبان با موفقیت ایجاد شد!',
+    'Backup restored successfully!' => 'پشتیبان با موفقیت بازیابی شد!',
+    'Backup deleted successfully!' => 'پشتیبان با موفقیت حذف شد!',
+    'Restore' => 'بازیابی',
+    'Delete' => 'حذف',
+    'Delete this backup?' => 'این پشتیبان حذف شود؟',
+    'Restore this backup? This will overwrite all current settings.' => 'این پشتیبان بازیابی شود؟ این کار همه تنظیمات فعلی را بازنویسی می‌کند.',
+    'Available Backups' => 'پشتیبان‌های موجود',
+    'Failed to create backup.' => 'ایجاد پشتیبان ناموفق بود.',
+    'Failed to restore backup.' => 'بازیابی پشتیبان ناموفق بود.',
+    'Failed to delete backup.' => 'حذف پشتیبان ناموفق بود.',
+    'Backup created: ' => 'پشتیبان ایجاد شد: ',
+    'Restore backup' => 'بازیابی پشتیبان',
+    'Delete backup' => 'حذف پشتیبان',
+    'Backup Date' => 'تاریخ پشتیبان',
+
+// General
+    'Settings have changed, you should save them!' => 'تنظیمات تغییر کرده‌اند، باید آن‌ها را ذخیره کنید!',
+    'Save Now' => 'همین حالا ذخیره کن',
+    'Error(s) found!' => 'خطا(هایی) یافت شد!',
+    'Warning(s) found!' => 'هشدار(هایی) یافت شد!',
+    'You have unsaved changes. Are you sure you want to leave?' => 'تغییرات ذخیره‌نشده‌ای دارید. آیا مطمئن هستید که می‌خواهید خارج شوید؟',
+    'Refresh' => 'بارگذاری مجدد',
+    'Refresh page' => 'بارگذاری مجدد صفحه',
+
+// Search
+    'Search settings…' => 'جستجو در تنظیمات…',
+
+// Reset
+    'Settings reset to default! Page will reload.' => 'تنظیمات به حالت پیش‌فرض برگشت! صفحه دوباره بارگذاری خواهد شد.',
+    'Settings reset to default!' => 'تنظیمات به حالت پیش‌فرض بازنشانی شد!',
+    'Reset failed: ' => 'بازنشانی ناموفق: ',
+    'Are you sure you want to reset all settings? This cannot be undone!' => 'آیا مطمئن هستید که می‌خواهید همه تنظیمات را بازنشانی کنید؟ این کار قابل بازگشت نیست!',
+
+// Sortable
+    'Remove Item' => 'حذف آیتم',
+    'Item with this key already exists.' => 'آیتمی با این کلید وجود دارد.',
+    'No items. Add new items below.' => 'هیچ آیتمی وجود ندارد. آیتم‌های جدید را در زیر اضافه کنید.',
+    'Please enter both key and label.' => 'لطفاً کلید و برچسب را وارد کنید.',
+
+// Repeater
+    'Item' => 'آیتم',
+    'Remove this item?' => 'این آیتم حذف شود؟',
+    'Minimum number of items required.' => 'حداقل تعداد آیتم‌ها لازم است.',
+    'Maximum number of items reached.' => 'حداکثر تعداد آیتم‌ها رسیده است.',
+    'Remove all items?' => 'همه آیتم‌ها حذف شوند؟',
+    'Remove all items' => 'حذف همه آیتم‌ها',
+    'Collapse All' => 'جمع کردن همه',
+    'Expand All' => 'باز کردن همه',
+
+// Media
+    'No media selected' => 'هیچ رسانه‌ای انتخاب نشده است',
+    'No images selected. Click "Add Images" to select.' => 'هیچ تصویری انتخاب نشده است. برای انتخاب روی "افزودن تصاویر" کلیک کنید.',
+    'Choose' => 'انتخاب',
+    'Remove' => 'حذف',
+    'Remove all images?' => 'همه تصاویر حذف شوند؟',
+    'Clear All' => 'حذف همه',
+    'Add Images' => 'افزودن تصاویر',
+    'Select Image' => 'انتخاب تصویر',
+    'Select Media' => 'انتخاب رسانه',
+    'Select Images' => 'انتخاب تصاویر',
+    'Add to Gallery' => 'افزودن به گالری',
+    'Maximum gallery items reached.' => 'حداکثر تعداد آیتم‌های گالری رسیده است.',
+    'Upload' => 'آپلود',
+    'Media URL' => 'آدرس رسانه',
+
+// Multi Select
+    'Multi Select Field' => 'فیلد انتخاب چندگانه',
+    'Select multiple options' => 'انتخاب چند گزینه',
+    'Multi-select with search, tags, and max limit.' => 'انتخاب چندگانه با جستجو، برچسب‌ها و محدودیت حداکثر.',
+    'Select options' => 'انتخاب گزینه‌ها',
+    'Search...' => 'جستجو...',
+    'Maximum selection limit reached.' => 'حداکثر تعداد انتخاب رسیده است.',
+    '(Max: %d)' => '(حداکثر: %d)',
+
+// Slides
+    'Maximum number of slides reached.' => 'حداکثر تعداد اسلایدها رسیده است.',
+    'Minimum number of slides required.' => 'حداقل تعداد اسلایدها لازم است.',
+    'Remove this slide?' => 'این اسلاید حذف شود؟',
+    'Remove all slides?' => 'همه اسلایدها حذف شوند؟',
+
+// Multi-Text
+    'Add More' => 'افزودن بیشتر',
+    'Enter text...' => 'متن را وارد کنید...',
+
+// Demo
+    'Persian Framework Demo Activated!' => 'دموی پرشین فریم‌ورک فعال شد!',
+    'You can now access the framework from the admin menu.' => 'اکنون می‌توانید از منوی مدیریت به فریم‌ورک دسترسی داشته باشید.',
+    'View Framework' => 'مشاهده فریم‌ورک',
+
+// Status Messages
+    'Loading...' => 'در حال بارگذاری...',
+    'No results found.' => 'نتیجه‌ای یافت نشد.',
+    'Choose an option' => 'یک گزینه انتخاب کنید',
+    'Select...' => 'انتخاب کنید...',
+
 );

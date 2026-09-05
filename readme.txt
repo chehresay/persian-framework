@@ -1,10 +1,10 @@
 === Persian Framework ===
 Contributors: parswp
 Donate link: https://parswp.ir
-Tags: options, framework, settings, admin, fields, customization, developer
+Tags: options, framework, admin, fields, developer
 Requires at least: 5.0
-Tested up to: 7.0.2
-Stable tag: 1.0.0
+Tested up to: 6.7
+Stable tag: 1.0.1
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
