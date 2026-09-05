@@ -165,12 +165,6 @@
 
 ---
 
-## 🖥️ Screenshots
-
-> *Screenshots will be added soon...*
-
----
-
 ## 📋 Requirements
 
 ### Minimum Requirements
