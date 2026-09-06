@@ -413,6 +413,8 @@ GNU General Public License for more details.
 - 📧 Email: [chehresay@gmail.com](mailto:chehresay@gmail.com)
 - 🐙 GitHub: [@chehresay](https://github.com/chehresay)
 - 🔗 LinkedIn: [chehresay](https://linkedin.com/in/chehresay)
+- 📱 Telegram: [@chehresay](https://t.me/chehresay)
+- 💬 WhatsApp: [+989117040969](https://wa.me/989117040969)
 
 ---
 
