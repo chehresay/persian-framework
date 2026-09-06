@@ -203,21 +203,12 @@ class PersianFramework_Field_FontAwesomePicker {
 
         if (!$enqueued) {
             // Enqueue Font Awesome
-            if ($version === '6') {
-                wp_enqueue_style(
-                    'font-awesome-6',
-                        PERSIAN_FRAMEWORK_URL . 'vendor/font-awesome/css/all.min.css',
-                    array(),
-                    '6.4.2'
-                );
-            } else {
-                wp_enqueue_style(
-                    'font-awesome-5',
-                    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css',
-                    array(),
-                    '5.15.4'
-                );
-            }
+            wp_enqueue_style(
+                'font-awesome-6',
+                PERSIAN_FRAMEWORK_URL . 'vendor/font-awesome/css/all.min.css',
+                array(),
+                '6.4.2'
+            );
 
             $enqueued = true;
         }

@@ -25,15 +25,15 @@ class PersianFramework_Field_Map {
         $name = isset($this->field['name']) ? $this->field['name'] : $id;
 
         $defaults = array(
-            'lat' => isset($this->field['default_lat']) ? $this->field['default_lat'] : 35.6892,
-            'lng' => isset($this->field['default_lng']) ? $this->field['default_lng'] : 51.3890,
-            'address' => '',
-            'zoom' => 12
+                'lat' => isset($this->field['default_lat']) ? $this->field['default_lat'] : 35.6892,
+                'lng' => isset($this->field['default_lng']) ? $this->field['default_lng'] : 51.3890,
+                'address' => '',
+                'zoom' => 12
         );
 
         $value = wp_parse_args(
-            is_array($this->value) ? $this->value : array(),
-            $defaults
+                is_array($this->value) ? $this->value : array(),
+                $defaults
         );
 
         $height = isset($this->field['height']) ? $this->field['height'] : 300;
@@ -53,7 +53,7 @@ class PersianFramework_Field_Map {
                 <div class="pf-map-fields">
                     <div class="pf-map-row">
                         <label class="pf-map-label">
-                            <span class="pf-map-label-text"><?php _e('Latitude', 'persian-framework'); ?></span>
+                            <span class="pf-map-label-text"><?php esc_html_e('Latitude', 'persian-framework'); ?></span>
                             <input type="number"
                                    step="any"
                                    min="-90"
@@ -64,7 +64,7 @@ class PersianFramework_Field_Map {
                         </label>
 
                         <label class="pf-map-label">
-                            <span class="pf-map-label-text"><?php _e('Longitude', 'persian-framework'); ?></span>
+                            <span class="pf-map-label-text"><?php esc_html_e('Longitude', 'persian-framework'); ?></span>
                             <input type="number"
                                    step="any"
                                    min="-180"
@@ -75,7 +75,7 @@ class PersianFramework_Field_Map {
                         </label>
 
                         <label class="pf-map-label">
-                            <span class="pf-map-label-text"><?php _e('Zoom', 'persian-framework'); ?></span>
+                            <span class="pf-map-label-text"><?php esc_html_e('Zoom', 'persian-framework'); ?></span>
                             <input type="number"
                                    min="1"
                                    max="22"
@@ -87,7 +87,7 @@ class PersianFramework_Field_Map {
 
                     <div class="pf-map-row">
                         <label class="pf-map-label pf-map-address-label">
-                            <span class="pf-map-label-text"><?php _e('Address', 'persian-framework'); ?></span>
+                            <span class="pf-map-label-text"><?php esc_html_e('Address', 'persian-framework'); ?></span>
                             <input type="text"
                                    name="<?php echo esc_attr($name); ?>[address]"
                                    value="<?php echo esc_attr($value['address']); ?>"
@@ -104,7 +104,7 @@ class PersianFramework_Field_Map {
                     <div id="<?php echo esc_attr($id); ?>_map" class="pf-map-iframe"></div>
                     <div class="pf-map-loading">
                         <span class="dashicons dashicons-update spin"></span>
-                        <?php _e('Loading map...', 'persian-framework'); ?>
+                        <?php esc_html_e('Loading map...', 'persian-framework'); ?>
                     </div>
                 </div>
 
@@ -114,18 +114,18 @@ class PersianFramework_Field_Map {
                        rel="noopener"
                        class="pf-btn pf-btn-secondary pf-map-open">
                         <span class="dashicons dashicons-location"></span>
-                        <?php _e('Open in OSM', 'persian-framework'); ?>
+                        <?php esc_html_e('Open in OSM', 'persian-framework'); ?>
                     </a>
                     <a href="https://www.google.com/maps?q=<?php echo esc_attr($value['lat']); ?>,<?php echo esc_attr($value['lng']); ?>"
                        target="_blank"
                        rel="noopener"
                        class="pf-btn pf-btn-secondary pf-map-open">
                         <span class="dashicons dashicons-location-alt"></span>
-                        <?php _e('Open in Google Maps', 'persian-framework'); ?>
+                        <?php esc_html_e('Open in Google Maps', 'persian-framework'); ?>
                     </a>
                     <button type="button" class="pf-btn pf-btn-secondary pf-map-current">
                         <span class="dashicons dashicons-location"></span>
-                        <?php _e('My Location', 'persian-framework'); ?>
+                        <?php esc_html_e('My Location', 'persian-framework'); ?>
                     </button>
                 </div>
             </div>
@@ -140,27 +140,25 @@ class PersianFramework_Field_Map {
     }
 
     private function enqueue_scripts($id, $value) {
-        static $enqueued = false;
+        static $pf_map_enqueued = false;
 
-        if (!$enqueued) {
-            // Leaflet CSS
+        if (!$pf_map_enqueued) {
             wp_enqueue_style(
-                'leaflet-css',
+                    'leaflet-css',
                     PERSIAN_FRAMEWORK_URL . 'vendor/leaflet/leaflet.min.css',
-                array(),
-                '1.9.4'
+                    array(),
+                    '1.9.4'
             );
 
-            // Leaflet JS
             wp_enqueue_script(
-                'leaflet-js',
+                    'leaflet-js',
                     PERSIAN_FRAMEWORK_URL . 'vendor/leaflet/leaflet.min.js',
-                array('jquery'),
-                '1.9.4',
-                true
+                    array('jquery'),
+                    '1.9.4',
+                    true
             );
 
-            $enqueued = true;
+            $pf_map_enqueued = true;
         }
 
         ?>
@@ -370,7 +368,6 @@ class PersianFramework_Field_Map {
                     mapInitialized = true;
                     $('.pf-map-loading').hide();
 
-                    // Update marker position from fields
                     $(document).on('change input', '.pf-map-lat, .pf-map-lng', function() {
                         var newLat = parseFloat($('.pf-map-lat').val()) || 0;
                         var newLng = parseFloat($('.pf-map-lng').val()) || 0;
@@ -387,15 +384,13 @@ class PersianFramework_Field_Map {
                     $('.pf-map-lat, .pf-map-lng').trigger('change');
                 }
 
-                // Geocode address
                 $(document).on('click', '.pf-map-geocode', function() {
                     var address = $('.pf-map-address').val();
                     if (!address) {
-                        alert('<?php esc_js(__('Please enter an address.', 'persian-framework')); ?>');
+                        alert('<?php esc_html_e('Please enter an address.', 'persian-framework'); ?>');
                         return;
                     }
 
-                    // Use Nominatim API
                     var url = 'https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(address);
 
                     $.ajax({
@@ -412,16 +407,15 @@ class PersianFramework_Field_Map {
                                 }
                                 $('.pf-map-address').val(result.display_name);
                             } else {
-                                alert('<?php esc_js(__('Address not found.', 'persian-framework')); ?>');
+                                alert('<?php esc_html_e('Address not found.', 'persian-framework'); ?>');
                             }
                         },
                         error: function() {
-                            alert('<?php esc_js(__('Geocoding service unavailable.', 'persian-framework')); ?>');
+                            alert('<?php esc_html_e('Geocoding service unavailable.', 'persian-framework'); ?>');
                         }
                     });
                 });
 
-                // Get current location
                 $(document).on('click', '.pf-map-current', function() {
                     if (navigator.geolocation) {
                         navigator.geolocation.getCurrentPosition(function(pos) {
@@ -432,19 +426,17 @@ class PersianFramework_Field_Map {
                                 map.setView([lat, lng], 16);
                             }
                         }, function() {
-                            alert('<?php esc_js(__('Unable to get your location.', 'persian-framework')); ?>');
+                            alert('<?php esc_html_e('Unable to get your location.', 'persian-framework'); ?>');
                         });
                     } else {
-                        alert('<?php esc_js(__('Geolocation is not supported by your browser.', 'persian-framework')); ?>');
+                        alert('<?php esc_html_e('Geolocation is not supported by your browser.', 'persian-framework'); ?>');
                     }
                 });
 
-                // Initialize map
                 $(document).ready(function() {
                     setTimeout(initMap, 300);
                 });
 
-                // Re-initialize on tab switch
                 $(document).on('pf-tab-switch', function() {
                     setTimeout(function() {
                         if (mapInitialized) {
@@ -456,5 +448,42 @@ class PersianFramework_Field_Map {
             })(jQuery);
         </script>
         <?php
+    }
+
+    public function sanitize($value) {
+        if (!is_array($value)) {
+            return array(
+                    'lat' => 35.6892,
+                    'lng' => 51.3890,
+                    'address' => '',
+                    'zoom' => 12
+            );
+        }
+
+        $sanitized = array();
+
+        if (isset($value['lat'])) {
+            $sanitized['lat'] = floatval($value['lat']);
+        }
+
+        if (isset($value['lng'])) {
+            $sanitized['lng'] = floatval($value['lng']);
+        }
+
+        if (isset($value['address'])) {
+            $sanitized['address'] = sanitize_text_field($value['address']);
+        }
+
+        if (isset($value['zoom'])) {
+            $sanitized['zoom'] = intval($value['zoom']);
+            if ($sanitized['zoom'] < 1) {
+                $sanitized['zoom'] = 1;
+            }
+            if ($sanitized['zoom'] > 22) {
+                $sanitized['zoom'] = 22;
+            }
+        }
+
+        return $sanitized;
     }
 }

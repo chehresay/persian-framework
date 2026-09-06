@@ -33,7 +33,7 @@ class PersianFramework_Field_Time {
         // Format value for time input (HH:MM)
         if (!empty($value) && strpos($value, ':') === false) {
             // Convert timestamp to time
-            $value = date('H:i', intval($value));
+            $value = gmdate('H:i', intval($value));
         }
 
         ?>
@@ -59,7 +59,7 @@ class PersianFramework_Field_Time {
                    step="<?php echo esc_attr($step); ?>"
                 <?php echo $min ? 'min="' . esc_attr($min) . '"' : ''; ?>
                 <?php echo $max ? 'max="' . esc_attr($max) . '"' : ''; ?>
-                <?php echo $required; ?> />
+                <?php echo wp_kses_data($required); ?> />
 
             <?php if (isset($this->field['desc'])): ?>
                 <p class="pf-field-desc"><?php echo esc_html($this->field['desc']); ?></p>

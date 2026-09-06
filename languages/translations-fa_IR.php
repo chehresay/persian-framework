@@ -34,6 +34,7 @@ return array(
     'Error(s) found!' => 'خطا(هایی) یافت شد!',
     'Warning(s) found!' => 'هشدار(هایی) یافت شد!',
     'You have unsaved changes. Are you sure you want to leave?' => 'تغییرات ذخیره‌نشده‌ای دارید. آیا مطمئن هستید که می‌خواهید خارج شوید؟',
+    'Thank you for using Persian Framework! Your support means the world to me. ❤️' => 'از شما که از پرشین فریم‌ورک استفاده می‌کنید، صمیمانه سپاسگزارم. حمایت‌های شما برای من بسیار ارزشمند است. ❤️',
 
     // ============================================================
     // Import / Export

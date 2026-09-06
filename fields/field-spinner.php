@@ -64,7 +64,7 @@ class PersianFramework_Field_Spinner {
                            step="<?php echo esc_attr($step); ?>"
                            placeholder="<?php echo esc_attr($placeholder); ?>"
                            class="pf-spinner-input"
-                            <?php echo $required; ?> />
+                            <?php echo wp_kses_data($required); ?> />
                     <button type="button" class="pf-spinner-btn pf-spinner-plus" data-step="<?php echo esc_attr($step); ?>">
                         <span class="dashicons dashicons-plus-alt2"></span>
                     </button>

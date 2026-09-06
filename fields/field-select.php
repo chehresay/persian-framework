@@ -24,7 +24,7 @@ class PersianFramework_Field_Select {
         $name = isset($this->field['name']) ? $this->field['name'] : $id;
         $value = $this->value !== null ? $this->value : (isset($this->field['default']) ? $this->field['default'] : '');
         $options = isset($this->field['options']) ? $this->field['options'] : array();
-        $placeholder = isset($this->field['placeholder']) ? $this->field['placeholder'] : __('Select an option', 'persian-framework');
+        $placeholder = isset($this->field['placeholder']) ? $this->field['placeholder'] : esc_html__('Select an option', 'persian-framework');
         $multiple = isset($this->field['multiple']) && $this->field['multiple'] ? 'multiple' : '';
 
         $data_type = isset($this->field['data']) ? $this->field['data'] : '';
@@ -44,14 +44,13 @@ class PersianFramework_Field_Select {
             $options = array();
         }
 
-        // FIX: Handle required attribute properly
+        // Handle required attribute properly
         $required = isset($this->field['required']) ? $this->field['required'] : false;
         $required_attributes = '';
         $required_html = '';
 
         if (is_array($required) && class_exists('PersianFramework_Required')) {
             $required_attributes = PersianFramework_Required::get_attributes($required);
-            // If get_attributes returns an array, convert it to string
             if (is_array($required_attributes)) {
                 $required_html = implode(' ', array_map(function($key, $value) {
                     return $key . '="' . esc_attr($value) . '"';
@@ -65,7 +64,7 @@ class PersianFramework_Field_Select {
             $required_html = 'required';
         }
 
-        // FIX: Ensure value is properly handled for multiple select
+        // Ensure value is properly handled for multiple select
         if ($multiple) {
             if (!is_array($value)) {
                 $value = !empty($value) ? array($value) : array();
@@ -77,7 +76,7 @@ class PersianFramework_Field_Select {
         }
         ?>
 
-        <div class="pf-field-wrapper pf-field-select" <?php echo $required_attributes; ?>>
+        <div class="pf-field-wrapper pf-field-select" <?php echo wp_kses_data($required_attributes); ?>>
             <?php if (isset($this->field['title'])): ?>
                 <label for="<?php echo esc_attr($id); ?>" class="pf-field-label">
                     <?php echo esc_html($this->field['title']); ?>
@@ -90,8 +89,8 @@ class PersianFramework_Field_Select {
             <select id="<?php echo esc_attr($id); ?>"
                     name="<?php echo esc_attr($name); ?><?php echo $multiple ? '[]' : ''; ?>"
                     class="pf-field-input"
-                    <?php echo $required_html; ?>
-                    <?php echo $multiple; ?>>
+                    <?php echo wp_kses_data($required_html); ?>
+                    <?php echo wp_kses_data($multiple); ?>>
 
                 <?php if (!$multiple): ?>
                     <option value=""><?php echo esc_html($placeholder); ?></option>
@@ -207,5 +206,25 @@ class PersianFramework_Field_Select {
         }
 
         return $options;
+    }
+
+    public function sanitize($value) {
+        $options = isset($this->field['options']) ? array_keys($this->field['options']) : array();
+        $multiple = isset($this->field['multiple']) && $this->field['multiple'];
+
+        if ($multiple) {
+            $value = (array) $value;
+            $sanitized = array();
+            foreach ($value as $item) {
+                $item = sanitize_text_field($item);
+                if (in_array($item, $options, true)) {
+                    $sanitized[] = $item;
+                }
+            }
+            return $sanitized;
+        }
+
+        $value = sanitize_text_field($value);
+        return in_array($value, $options, true) ? $value : '';
     }
 }

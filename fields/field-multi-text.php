@@ -326,7 +326,7 @@ class PersianFramework_Field_MultiText {
                     var $container = $('#multi-text-<?php echo esc_js($id); ?>');
 
                     // Use the count from PHP
-                    var itemCounter = <?php echo max(count($this->value), 0); ?>;
+                    var itemCounter = <?php echo intval(max(count($this->value), 0)); ?>;
 
                     // Validation functions
                     var validators = {

@@ -104,7 +104,8 @@ class PersianFramework_Widget extends WP_Widget {
             $field['id'] = $field['id'];
 
             if (class_exists('PersianFramework_Fields')) {
-                echo PersianFramework_Fields::render_field($field, $value);
+                $field_html = PersianFramework_Fields::render_field($field, $value);
+                echo wp_kses_post($field_html);
             }
 
             if (isset($field['description'])) {
@@ -159,7 +160,8 @@ class PersianFramework_Widget_Instance extends WP_Widget {
         echo wp_kses_post($args['before_widget']);
 
         if (!empty($instance['title'])) {
-            echo wp_kses_post($args['before_title']) . apply_filters('widget_title', $instance['title']) . wp_kses_post($args['after_title']);
+            $title = apply_filters('widget_title', $instance['title']);
+            echo wp_kses_post($args['before_title']) . esc_html($title) . wp_kses_post($args['after_title']);
         }
 
         $fields = $this->widget_config['fields'] ?? array();

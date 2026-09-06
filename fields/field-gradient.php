@@ -25,28 +25,28 @@ class PersianFramework_Field_Gradient {
         $name = isset($this->field['name']) ? $this->field['name'] : $id;
 
         $defaults = array(
-            'type' => 'linear',
-            'from' => '#6366f1',
-            'to' => '#8b5cf6',
-            'angle' => 135,
-            'position' => 'center-center'
+                'type' => 'linear',
+                'from' => '#6366f1',
+                'to' => '#8b5cf6',
+                'angle' => 135,
+                'position' => 'center-center'
         );
 
         $value = wp_parse_args(
-            is_array($this->value) ? $this->value : array(),
-            $defaults
+                is_array($this->value) ? $this->value : array(),
+                $defaults
         );
 
         $positions = array(
-            'top-left' => __('Top Left', 'persian-framework'),
-            'top-center' => __('Top Center', 'persian-framework'),
-            'top-right' => __('Top Right', 'persian-framework'),
-            'center-left' => __('Center Left', 'persian-framework'),
-            'center-center' => __('Center Center', 'persian-framework'),
-            'center-right' => __('Center Right', 'persian-framework'),
-            'bottom-left' => __('Bottom Left', 'persian-framework'),
-            'bottom-center' => __('Bottom Center', 'persian-framework'),
-            'bottom-right' => __('Bottom Right', 'persian-framework'),
+                'top-left' => esc_html__('Top Left', 'persian-framework'),
+                'top-center' => esc_html__('Top Center', 'persian-framework'),
+                'top-right' => esc_html__('Top Right', 'persian-framework'),
+                'center-left' => esc_html__('Center Left', 'persian-framework'),
+                'center-center' => esc_html__('Center Center', 'persian-framework'),
+                'center-right' => esc_html__('Center Right', 'persian-framework'),
+                'bottom-left' => esc_html__('Bottom Left', 'persian-framework'),
+                'bottom-center' => esc_html__('Bottom Center', 'persian-framework'),
+                'bottom-right' => esc_html__('Bottom Right', 'persian-framework'),
         );
 
         ?>
@@ -63,20 +63,20 @@ class PersianFramework_Field_Gradient {
             <div class="pf-gradient-container">
                 <div class="pf-gradient-row">
                     <label class="pf-gradient-label">
-                        <span class="pf-gradient-label-text"><?php _e('Type', 'persian-framework'); ?></span>
+                        <span class="pf-gradient-label-text"><?php esc_html_e('Type', 'persian-framework'); ?></span>
                         <select name="<?php echo esc_attr($name); ?>[type]" class="pf-gradient-select">
                             <option value="linear" <?php selected($value['type'], 'linear'); ?>>
-                                <?php _e('Linear', 'persian-framework'); ?>
+                                <?php esc_html_e('Linear', 'persian-framework'); ?>
                             </option>
                             <option value="radial" <?php selected($value['type'], 'radial'); ?>>
-                                <?php _e('Radial', 'persian-framework'); ?>
+                                <?php esc_html_e('Radial', 'persian-framework'); ?>
                             </option>
                         </select>
                     </label>
 
                     <?php if ($value['type'] === 'radial'): ?>
                         <label class="pf-gradient-label">
-                            <span class="pf-gradient-label-text"><?php _e('Position', 'persian-framework'); ?></span>
+                            <span class="pf-gradient-label-text"><?php esc_html_e('Position', 'persian-framework'); ?></span>
                             <select name="<?php echo esc_attr($name); ?>[position]" class="pf-gradient-select">
                                 <?php foreach ($positions as $key => $label): ?>
                                     <option value="<?php echo esc_attr($key); ?>" <?php selected($value['position'], $key); ?>>
@@ -87,7 +87,7 @@ class PersianFramework_Field_Gradient {
                         </label>
                     <?php else: ?>
                         <label class="pf-gradient-label">
-                            <span class="pf-gradient-label-text"><?php _e('Angle', 'persian-framework'); ?></span>
+                            <span class="pf-gradient-label-text"><?php esc_html_e('Angle', 'persian-framework'); ?></span>
                             <div class="pf-gradient-angle">
                                 <input type="range"
                                        name="<?php echo esc_attr($name); ?>[angle]"
@@ -103,7 +103,7 @@ class PersianFramework_Field_Gradient {
 
                 <div class="pf-gradient-row pf-gradient-colors">
                     <label class="pf-gradient-label">
-                        <span class="pf-gradient-label-text"><?php _e('Start Color', 'persian-framework'); ?></span>
+                        <span class="pf-gradient-label-text"><?php esc_html_e('Start Color', 'persian-framework'); ?></span>
                         <div class="pf-gradient-color-wrap">
                             <input type="color"
                                    name="<?php echo esc_attr($name); ?>[from]"
@@ -117,7 +117,7 @@ class PersianFramework_Field_Gradient {
                     </label>
 
                     <label class="pf-gradient-label">
-                        <span class="pf-gradient-label-text"><?php _e('End Color', 'persian-framework'); ?></span>
+                        <span class="pf-gradient-label-text"><?php esc_html_e('End Color', 'persian-framework'); ?></span>
                         <div class="pf-gradient-color-wrap">
                             <input type="color"
                                    name="<?php echo esc_attr($name); ?>[to]"
@@ -132,9 +132,9 @@ class PersianFramework_Field_Gradient {
                 </div>
 
                 <div class="pf-gradient-preview" style="
-                    background: <?php echo $this->build_gradient_css($value); ?>;
-                    ">
-                    <span><?php _e('Preview', 'persian-framework'); ?></span>
+                        background: <?php echo esc_attr($this->build_gradient_css($value)); ?>;
+                        ">
+                    <span><?php esc_html_e('Preview', 'persian-framework'); ?></span>
                 </div>
             </div>
 
@@ -157,9 +157,9 @@ class PersianFramework_Field_Gradient {
     }
 
     private function enqueue_scripts() {
-        static $enqueued = false;
+        static $pf_gradient_enqueued = false;
 
-        if (!$enqueued) {
+        if (!$pf_gradient_enqueued) {
             ?>
             <style>
                 .pf-gradient-container {
@@ -302,7 +302,6 @@ class PersianFramework_Field_Gradient {
                 (function($) {
                     'use strict';
 
-                    // Sync color pickers with hex inputs
                     $(document).on('input', '.pf-gradient-color-picker', function() {
                         var $wrap = $(this).closest('.pf-gradient-color-wrap');
                         var $hex = $wrap.find('.pf-gradient-color-hex');
@@ -320,12 +319,10 @@ class PersianFramework_Field_Gradient {
                         }
                     });
 
-                    // Update preview on any change
                     $(document).on('change input', '.pf-gradient-container select, .pf-gradient-container input', function() {
                         updateGradientPreview($(this));
                     });
 
-                    // Angle display
                     $(document).on('input', '.pf-gradient-range', function() {
                         var $output = $(this).closest('.pf-gradient-angle').find('.pf-gradient-angle-output');
                         $output.text($(this).val() + '°');
@@ -358,7 +355,54 @@ class PersianFramework_Field_Gradient {
                 })(jQuery);
             </script>
             <?php
-            $enqueued = true;
+            $pf_gradient_enqueued = true;
         }
+    }
+
+    public function sanitize($value) {
+        if (!is_array($value)) {
+            return array(
+                    'type' => 'linear',
+                    'from' => '#6366f1',
+                    'to' => '#8b5cf6',
+                    'angle' => 135,
+                    'position' => 'center-center'
+            );
+        }
+
+        $sanitized = array();
+
+        if (isset($value['type'])) {
+            $sanitized['type'] = in_array($value['type'], array('linear', 'radial')) ? $value['type'] : 'linear';
+        }
+
+        if (isset($value['from'])) {
+            $sanitized['from'] = sanitize_hex_color($value['from']);
+            if (empty($sanitized['from'])) {
+                $sanitized['from'] = '#6366f1';
+            }
+        }
+
+        if (isset($value['to'])) {
+            $sanitized['to'] = sanitize_hex_color($value['to']);
+            if (empty($sanitized['to'])) {
+                $sanitized['to'] = '#8b5cf6';
+            }
+        }
+
+        if (isset($value['angle'])) {
+            $sanitized['angle'] = floatval($value['angle']);
+        }
+
+        if (isset($value['position'])) {
+            $allowed_positions = array(
+                    'top-left', 'top-center', 'top-right',
+                    'center-left', 'center-center', 'center-right',
+                    'bottom-left', 'bottom-center', 'bottom-right'
+            );
+            $sanitized['position'] = in_array($value['position'], $allowed_positions) ? $value['position'] : 'center-center';
+        }
+
+        return $sanitized;
     }
 }

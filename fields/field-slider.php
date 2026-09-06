@@ -35,7 +35,7 @@ class PersianFramework_Field_Slider {
         }
         ?>
 
-        <div class="pf-field-wrapper pf-field-slider" <?php echo $required_attributes; ?>>
+        <div class="pf-field-wrapper pf-field-slider" <?php echo wp_kses_data($required_attributes); ?>>
             <?php if (isset($this->field['title'])): ?>
                 <label class="pf-field-label">
                     <?php echo esc_html($this->field['title']); ?>
@@ -73,9 +73,9 @@ class PersianFramework_Field_Slider {
     }
 
     private function enqueue_scripts() {
-        static $enqueued = false;
+        static $pf_slider_enqueued = false;
 
-        if (!$enqueued) {
+        if (!$pf_slider_enqueued) {
             ?>
             <style>
                 .pf-slider-wrapper {
@@ -137,7 +137,6 @@ class PersianFramework_Field_Slider {
                         var $value = $wrapper.find('.pf-slider-value');
                         var val = $(this).val();
 
-                        // Update displayed value
                         $value.html(val + ' <span class="pf-slider-unit">' + ($value.find('.pf-slider-unit').text() || '') + '</span>');
 
                         var fieldId = $(this).attr('id');
@@ -147,7 +146,27 @@ class PersianFramework_Field_Slider {
                 })(jQuery);
             </script>
             <?php
-            $enqueued = true;
+            $pf_slider_enqueued = true;
         }
+    }
+
+    public function sanitize($value) {
+        $value = wp_unslash($value);
+
+        if (!is_numeric($value)) {
+            return isset($this->field['default']) ? $this->field['default'] : 0;
+        }
+
+        $value = floatval($value);
+
+        if (isset($this->field['min']) && $value < $this->field['min']) {
+            $value = $this->field['min'];
+        }
+
+        if (isset($this->field['max']) && $value > $this->field['max']) {
+            $value = $this->field['max'];
+        }
+
+        return $value;
     }
 }

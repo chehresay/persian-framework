@@ -181,7 +181,8 @@ class PersianFramework_Admin {
                                             $value = isset($options[$field['id']]) ? $options[$field['id']] : (isset($field['default']) ? $field['default'] : '');
 
                                             if (class_exists('PersianFramework_Fields')) {
-                                                echo PersianFramework_Fields::render_field($field, $value);
+                                                $field_html = PersianFramework_Fields::render_field($field, $value);
+                                                echo wp_kses_post($field_html);
                                             }
                                             ?>
                                         <?php endforeach; ?>
@@ -241,6 +242,52 @@ class PersianFramework_Admin {
                                 <?php esc_html_e('If you find this framework useful, please consider supporting its development.', 'persian-framework'); ?>
                             </p>
 
+                            <div class="pf-donate-author" style="
+                                background: #f8fafc;
+                                border: 1px solid #e8edf4;
+                                border-radius: 16px;
+                                padding: 20px 24px;
+                                margin-bottom: 24px;
+                                display: flex;
+                                align-items: center;
+                                gap: 20px;
+                                flex-wrap: wrap;
+                            ">
+                                <div style="
+                                    width: 60px;
+                                    height: 60px;
+                                    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+                                    border-radius: 50%;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    font-size: 28px;
+                                    color: white;
+                                    flex-shrink: 0;
+                                ">
+                                <span class="dashicons dashicons-admin-users"></span>
+                                </div>
+                                <div>
+                                    <div style="font-weight: 700; font-size: 18px; color: #1a2332;">
+                                        Morad Chehresay
+                                    </div>
+                                    <div style="color: #64748b; font-size: 14px; display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px;">
+                                        <span>
+                                            <span class="dashicons dashicons-email" style="font-size: 14px; width: 14px; height: 14px; vertical-align: middle;"></span>
+                                            <a href="mailto:chehresay@gmail.com" style="color: #6366f1; text-decoration: none;">chehresay@gmail.com</a>
+                                        </span>
+                                                                <span>
+                                            <span class="dashicons dashicons-admin-site" style="font-size: 14px; width: 14px; height: 14px; vertical-align: middle;"></span>
+                                            <a href="https://parswp.ir" target="_blank" style="color: #6366f1; text-decoration: none;">parswp.ir</a>
+                                        </span>
+                                                                <span>
+                                            <span class="dashicons dashicons-github" style="font-size: 14px; width: 14px; height: 14px; vertical-align: middle;"></span>
+                                            <a href="https://github.com/chehresay" target="_blank" style="color: #6366f1; text-decoration: none;">github.com/chehresay</a>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="pf-donate-grid">
                                 <div class="pf-donate-box">
                                     <h3><?php esc_html_e('Cryptocurrency', 'persian-framework'); ?></h3>
@@ -274,6 +321,20 @@ class PersianFramework_Admin {
                                     </ul>
                                 </div>
                             </div>
+
+                            <div style="
+                                margin-top: 24px;
+                                padding: 16px 20px;
+                                background: #f0fdf4;
+                                border-left: 4px solid #22c55e;
+                                border-radius: 8px;
+                                color: #166534;
+                                font-size: 14px;
+                            ">
+                                <span class="dashicons dashicons-heart" style="color: #22c55e; font-size: 18px; width: 18px; height: 18px; vertical-align: middle;"></span>
+                                <?php esc_html_e('Thank you for using Persian Framework! Your support means the world to me. ❤️', 'persian-framework'); ?>
+                            </div>
+
                         </div>
 
                         <div class="pf-actions">
@@ -1020,16 +1081,9 @@ class PersianFramework_Admin {
                 $('.pfAjaxSaveBtn').on('click', function() {
                     var $btn = $(this);
                     var $form = $('#pfSettingsForm');
-                    var optName = $btn.data('optname');
-                    var instanceId = $btn.data('instance');
+                    var optName = $btn.data('optname') || $form.find('input[name="opt_name"]').val() || 'persian_framework_options';
+                    var instanceId = $btn.data('instance') || $form.data('instance');
                     var nonce = $form.find('input[name="pf_ajax_nonce"]').val();
-
-                    if (!optName) {
-                        optName = $form.find('input[name="opt_name"]').val();
-                    }
-                    if (!instanceId) {
-                        instanceId = $form.data('instance');
-                    }
 
                     $btn.prop('disabled', true);
                     $btn.find('.pfSaveText').text('<?php esc_html_e('Saving...', 'persian-framework'); ?>');
@@ -1047,10 +1101,92 @@ class PersianFramework_Admin {
                         }
                     }
 
-                    var $form = $('#pfSettingsForm');
-                    var optName = $form.find('input[name="opt_name"]').val() || 'persian_framework_options';
                     var formData = $form.serializeArray();
                     var optionsData = {};
+
+                    // ------------------------------------------------------------
+                    // Parse option field names safely.
+                    // Example:
+                    // persian_framework_options[gallery_field][]
+                    // becomes parts = ['gallery_field'], isArray = true.
+                    //
+                    // The old substring(..., name.length - 1) logic removed the
+                    // wrong bracket and turned gallery_field[] into a malformed
+                    // key. As a result, every gallery value overwrote the previous
+                    // value and only the last image was saved.
+                    // ------------------------------------------------------------
+                    function pfParseOptionName(name) {
+                        if (!name || name.indexOf(optName + '[') !== 0) {
+                            return null;
+                        }
+
+                        var raw = name.substring(optName.length);
+                        var isArray = raw.slice(-2) === '[]';
+                        var parts = raw.match(/[^\[\]]+/g);
+
+                        if (!parts || !parts.length) {
+                            return null;
+                        }
+
+                        return {
+                            parts: parts,
+                            isArray: isArray
+                        };
+                    }
+
+                    function pfSetOptionValue(target, parts, value, append) {
+                        var current = target;
+
+                        for (var i = 0; i < parts.length; i++) {
+                            var part = parts[i];
+                            var isLast = i === parts.length - 1;
+
+                            if (isLast) {
+                                if (append) {
+                                    if (!Array.isArray(current[part])) {
+                                        current[part] = [];
+                                    }
+
+                                    if (value !== '' && value !== null && value !== undefined) {
+                                        current[part].push(value);
+                                    }
+                                } else {
+                                    current[part] = value;
+                                }
+                                return;
+                            }
+
+                            if (!current[part] || typeof current[part] !== 'object') {
+                                var nextPart = parts[i + 1];
+                                current[part] = nextPart && /^\d+$/.test(nextPart) ? [] : {};
+                            }
+
+                            current = current[part];
+                        }
+                    }
+
+                    function pfEnsureArrayOption(target, parts) {
+                        var current = target;
+
+                        for (var i = 0; i < parts.length; i++) {
+                            var part = parts[i];
+                            var isLast = i === parts.length - 1;
+
+                            if (isLast) {
+                                if (!Array.isArray(current[part])) {
+                                    current[part] = [];
+                                }
+                                return;
+                            }
+
+                            if (!current[part] || typeof current[part] !== 'object') {
+                                var nextPart = parts[i + 1];
+                                current[part] = nextPart && /^\d+$/.test(nextPart) ? [] : {};
+                            }
+
+                            current = current[part];
+                        }
+                    }
 
                     formData.forEach(function(item) {
                         var name = item.name;
@@ -1061,63 +1197,54 @@ class PersianFramework_Admin {
                             return;
                         }
 
-                        if (!name.startsWith(optName + '[')) {
+                        var parsed = pfParseOptionName(name);
+                        if (!parsed) {
                             return;
                         }
 
-                        var key = name.substring(optName.length + 1, name.length - 1);
-
-                        if (key.endsWith('[]')) {
-                            var cleanKey = key.slice(0, -2);
-                            if (!optionsData[cleanKey]) {
-                                optionsData[cleanKey] = [];
-                            }
-                            optionsData[cleanKey].push(value);
-                            return;
-                        }
-
-                        if (key.includes('[')) {
-                            var parts = key.match(/[^\[\]]+/g);
-                            if (!parts) return;
-
-                            var current = optionsData;
-                            for (var i = 0; i < parts.length; i++) {
-                                var part = parts[i];
-                                if (i === parts.length - 1) {
-                                    current[part] = value;
-                                } else {
-                                    if (!current[part] || typeof current[part] !== 'object') {
-                                        var nextPart = parts[i + 1];
-                                        if (nextPart && /^\d+$/.test(nextPart)) {
-                                            current[part] = [];
-                                        } else {
-                                            current[part] = {};
-                                        }
-                                    }
-                                    current = current[part];
-                                }
-                            }
-                        } else {
-                            optionsData[key] = value;
-                        }
+                        pfSetOptionValue(optionsData, parsed.parts, value, parsed.isArray);
                     });
 
+                    // ------------------------------------------------------------
+                    // Make empty array fields explicit. This is important when a
+                    // gallery is cleared completely: serializeArray() then has no
+                    // gallery inputs, so without this step the old gallery would
+                    // remain in the database.
+                    // ------------------------------------------------------------
+                    $form.find('[name]').each(function() {
+                        var name = $(this).attr('name');
+                        var parsed = pfParseOptionName(name);
+
+                        if (parsed && parsed.isArray) {
+                            pfEnsureArrayOption(optionsData, parsed.parts);
+                        }
+                    });
 
                     // ============================================================
                     // FIX: Handle unchecked checkboxes
                     // ============================================================
                     $form.find('input[type="checkbox"]:not(:checked)').each(function() {
                         var name = $(this).attr('name');
-                        if (!name || !name.startsWith(optName + '[')) return;
+                        var parsed = pfParseOptionName(name);
 
-                        var key = name.substring(optName.length + 1, name.length - 1);
+                        if (!parsed || parsed.isArray) {
+                            return;
+                        }
 
-                        // Skip array checkboxes (they already have empty state)
-                        if (key.endsWith('[]')) return;
-
-                        // For single checkboxes, set to '0' if not checked
-                        if (!optionsData.hasOwnProperty(key)) {
-                            optionsData[key] = '0';
+                        // Do not overwrite an already submitted value.
+                        var current = optionsData;
+                        for (var i = 0; i < parsed.parts.length; i++) {
+                            var part = parsed.parts[i];
+                            if (i === parsed.parts.length - 1) {
+                                if (!Object.prototype.hasOwnProperty.call(current, part)) {
+                                    current[part] = '0';
+                                }
+                            } else {
+                                if (!current[part] || typeof current[part] !== 'object') {
+                                    current[part] = {};
+                                }
+                                current = current[part];
+                            }
                         }
                     });
 
@@ -1127,24 +1254,36 @@ class PersianFramework_Admin {
                     $form.find('select[multiple]').each(function() {
                         var $select = $(this);
                         var name = $select.attr('name');
-                        if (!name || !name.startsWith(optName + '[')) return;
+                        var parsed = pfParseOptionName(name);
 
-                        var key = name.substring(optName.length + 1, name.length - 1);
-                        // Remove trailing []
-                        var cleanKey = key.endsWith('[]') ? key.slice(0, -2) : key;
+                        if (!parsed) {
+                            return;
+                        }
 
-                        // Get selected values
                         var selectedValues = $select.val() || [];
                         if (!Array.isArray(selectedValues)) {
                             selectedValues = [selectedValues];
                         }
 
-                        // Filter out empty values
                         selectedValues = selectedValues.filter(function(v) {
                             return v !== '' && v !== null && v !== undefined;
                         });
 
-                        optionsData[cleanKey] = selectedValues;
+                        // Multiple selects are arrays even if their HTML name
+                        // does not explicitly end with [].
+                        var current = optionsData;
+                        for (var i = 0; i < parsed.parts.length; i++) {
+                            var part = parsed.parts[i];
+                            if (i === parsed.parts.length - 1) {
+                                current[part] = selectedValues;
+                            } else {
+                                if (!current[part] || typeof current[part] !== 'object') {
+                                    var nextPart = parsed.parts[i + 1];
+                                    current[part] = nextPart && /^\d+$/.test(nextPart) ? [] : {};
+                                }
+                                current = current[part];
+                            }
+                        }
                     });
 
                     console.log('formData:', formData);
@@ -1251,6 +1390,30 @@ class PersianFramework_Admin {
     }
 
     private function sanitize_field_value($value, $field_key) {
+        // ============================================================
+        // FIX: Check for gallery field FIRST (before any other processing)
+        // ============================================================
+        if (strpos($field_key, 'gallery') !== false) {
+            // If it's a string (single value), return as array with single value
+            if (is_string($value) && !empty($value)) {
+                return array(absint($value));
+            }
+            // If it's already an array, sanitize each item
+            if (is_array($value)) {
+                $sanitized = array();
+                foreach ($value as $item) {
+                    if (is_numeric($item)) {
+                        $sanitized[] = absint($item);
+                    } elseif (is_array($item) && isset($item['id'])) {
+                        $sanitized[] = absint($item['id']);
+                    }
+                }
+                return $sanitized;
+            }
+            // Empty or null -> return empty array
+            return array();
+        }
+
         $wp_editor_fields = array('wp_editor', 'editor', 'wysiwyg', 'content');
 
         $is_wp_editor = false;
@@ -1266,9 +1429,12 @@ class PersianFramework_Admin {
         }
 
         // ============================================================
-        // FIX: Check for array-type fields FIRST
+        // Check for array-type fields
         // ============================================================
-        $array_fields = array('multi_select', 'multi-select', 'checkbox', 'multi_text', 'multi-text', 'checkbox_multiple', 'multiple');
+        $array_fields = array(
+                'multi_select', 'multi-select', 'checkbox', 'multi_text', 'multi-text',
+                'checkbox_multiple', 'multiple'
+        );
         $is_array_field = false;
         foreach ($array_fields as $field_type) {
             if (strpos($field_key, $field_type) !== false) {
@@ -1277,7 +1443,6 @@ class PersianFramework_Admin {
             }
         }
 
-        // If it's an array-type field, always return array
         if ($is_array_field) {
             if (is_array($value)) {
                 return array_map('sanitize_text_field', $value);
@@ -1288,14 +1453,14 @@ class PersianFramework_Admin {
                 }
                 return array(sanitize_text_field($value));
             }
-            // Empty or null -> return empty array
             return array();
         }
 
         // ============================================================
-        // Handle regular arrays (repeater, gallery, etc.)
+        // Handle regular arrays (repeater, media, sorter, etc.)
         // ============================================================
         if (is_array($value)) {
+            // Media field
             if (isset($value['id']) && isset($value['url'])) {
                 $media_id = absint($value['id']);
                 $media_url = esc_url_raw($value['url']);
@@ -1313,6 +1478,7 @@ class PersianFramework_Admin {
                 );
             }
 
+            // Check if it's a repeater with media fields inside
             $is_repeater_with_media = false;
             if (!empty($value)) {
                 foreach ($value as $k => $v) {
@@ -1347,6 +1513,7 @@ class PersianFramework_Admin {
                 return $sanitized;
             }
 
+            // Numeric array (gallery, etc.) - but gallery is already handled above
             if (!empty($value) && isset($value[0]) && is_numeric($value[0])) {
                 $sanitized = array();
                 foreach ($value as $item) {
@@ -1359,6 +1526,7 @@ class PersianFramework_Admin {
                 return $sanitized;
             }
 
+            // Sortable field
             $is_sortable = false;
             if (!empty($value) && !isset($value['enabled']) && !isset($value['disabled']) && !isset($value['id'])) {
                 $is_sortable = true;
@@ -1386,6 +1554,7 @@ class PersianFramework_Admin {
                 return $sanitized;
             }
 
+            // Multi-text field
             $is_multi_text = true;
             if (!empty($value)) {
                 foreach ($value as $v) {
@@ -1409,10 +1578,12 @@ class PersianFramework_Admin {
                 return array_values($sanitized);
             }
 
+            // Sorter field
             if (isset($value['enabled']) || isset($value['disabled'])) {
                 return $this->sanitize_sorter_array($value);
             }
 
+            // Repeater field (without media)
             $is_repeater = false;
             if (!empty($value)) {
                 foreach ($value as $k => $v) {
@@ -1440,6 +1611,7 @@ class PersianFramework_Admin {
                 return $sanitized;
             }
 
+            // Nested arrays
             $sanitized = array();
             foreach ($value as $k => $v) {
                 $sanitized[sanitize_text_field($k)] = $this->sanitize_field_value($v, $field_key);
@@ -1630,11 +1802,7 @@ class PersianFramework_Admin {
         }
 
         $sortable_js = PERSIAN_FRAMEWORK_URL . 'vendor/sortablejs/Sortable.min.js';
-        if (file_exists(PERSIAN_FRAMEWORK_PATH . 'vendor/sortablejs/Sortable.min.js')) {
-            wp_enqueue_script('sortablejs', $sortable_js, array(), '1.15.0', true);
-        } else {
-            wp_enqueue_script('sortablejs', 'https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js', array(), '1.15.0', true);
-        }
+        wp_enqueue_script('sortablejs', $sortable_js, array(), '1.15.0', true);
 
         wp_enqueue_style('dashicons');
         wp_enqueue_style('pf-admin', PERSIAN_FRAMEWORK_ASSETS . 'css/admin.css', array(), PERSIAN_FRAMEWORK_VERSION);

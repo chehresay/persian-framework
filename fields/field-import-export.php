@@ -69,6 +69,7 @@ class PersianFramework_Field_ImportExport {
                     <span class="pf-ie-status-text"><?php esc_html_e('Ready', 'persian-framework'); ?></span>
                     <span class="pf-ie-status-count">
                         <?php
+                        /* translators: %d: number of characters in the textarea */
                         printf( esc_html__( 'Characters: %d', 'persian-framework' ), esc_html( strlen( $current_value ) ) );
                         ?>
                     </span>
@@ -85,9 +86,9 @@ class PersianFramework_Field_ImportExport {
     }
 
     private function enqueue_scripts() {
-        static $enqueued = false;
+        static $pf_importexport_enqueued = false;
 
-        if (!$enqueued) {
+        if (!$pf_importexport_enqueued) {
             ?>
             <style>
                 .pf-import-export-field {
@@ -158,20 +159,18 @@ class PersianFramework_Field_ImportExport {
                     var $status = $textarea.closest('.pf-import-export-field').find('.pf-ie-status-text');
                     var $count = $textarea.closest('.pf-import-export-field').find('.pf-ie-status-count');
 
-                    // Update character count
                     function updateCount() {
                         var val = $textarea.val();
-                        /* translators: %d: number of characters in the textarea */
-                        $count.text('<?php esc_js( esc_html__( 'Characters: %d', 'persian-framework' ) ); ?>'.replace('%d', val.length));
+                        <?php /* translators: %d: number of characters in the textarea */ ?>
+                        $count.text('<?php esc_html_e('Characters: %d', 'persian-framework'); ?>'.replace('%d', val.length));
                     }
 
                     $textarea.on('input', updateCount);
 
-                    // Export
                     $(document).on('click', '.pf-ie-export', function() {
                         var val = $textarea.val();
                         if (!val) {
-                            alert('<?php echo esc_js( esc_html__( 'Nothing to export. Please enter some JSON data.', 'persian-framework' ) ); ?>');
+                            alert('<?php esc_html_e('Nothing to export. Please enter some JSON data.', 'persian-framework'); ?>');
                             return;
                         }
 
@@ -180,14 +179,13 @@ class PersianFramework_Field_ImportExport {
                             var json = JSON.stringify(data, null, 2);
                             $textarea.val(json);
                             updateCount();
-                            $status.text('<?php echo esc_js( esc_html__( 'Formatted', 'persian-framework' ) ); ?>').addClass('success');
+                            $status.text('<?php esc_html_e('Formatted', 'persian-framework'); ?>').addClass('success');
                         } catch(e) {
-                            $status.text('<?php echo esc_js( esc_html__( 'Error: Invalid JSON', 'persian-framework' ) ); ?>').addClass('error');
-                            alert('<?php echo esc_js( esc_html__( 'Invalid JSON data. Please check your input.', 'persian-framework' ) ); ?>');
+                            $status.text('<?php esc_html_e('Error: Invalid JSON', 'persian-framework'); ?>').addClass('error');
+                            alert('<?php esc_html_e('Invalid JSON data. Please check your input.', 'persian-framework'); ?>');
                         }
                     });
 
-                    // Import (Upload file)
                     $(document).on('click', '.pf-ie-import', function() {
                         var $input = $('<input type="file" accept=".json">');
                         $input.on('change', function(e) {
@@ -201,10 +199,10 @@ class PersianFramework_Field_ImportExport {
                                     var json = JSON.stringify(data, null, 2);
                                     $textarea.val(json);
                                     updateCount();
-                                    $status.text('<?php echo esc_js( esc_html__( 'Imported successfully', 'persian-framework' ) ); ?>').addClass('success');
+                                    $status.text('<?php esc_html_e('Imported successfully', 'persian-framework'); ?>').addClass('success');
                                 } catch(err) {
-                                    $status.text('<?php echo esc_js( esc_html__( 'Error: Invalid file', 'persian-framework' ) ); ?>').addClass('error');
-                                    alert('<?php echo esc_js( esc_html__( 'Invalid JSON file.', 'persian-framework' ) ); ?>');
+                                    $status.text('<?php esc_html_e('Error: Invalid file', 'persian-framework'); ?>').addClass('error');
+                                    alert('<?php esc_html_e('Invalid JSON file.', 'persian-framework'); ?>');
                                 }
                             };
                             reader.readAsText(file);
@@ -212,11 +210,10 @@ class PersianFramework_Field_ImportExport {
                         $input.click();
                     });
 
-                    // Format JSON
                     $(document).on('click', '.pf-ie-format', function() {
                         var val = $textarea.val();
                         if (!val) {
-                            alert('<?php echo esc_js( esc_html__( 'Nothing to format.', 'persian-framework' ) ); ?>');
+                            alert('<?php esc_html_e('Nothing to format.', 'persian-framework'); ?>');
                             return;
                         }
 
@@ -225,40 +222,37 @@ class PersianFramework_Field_ImportExport {
                             var json = JSON.stringify(data, null, 2);
                             $textarea.val(json);
                             updateCount();
-                            $status.text('<?php echo esc_js( esc_html__( 'Formatted', 'persian-framework' ) ); ?>').addClass('success');
+                            $status.text('<?php esc_html_e('Formatted', 'persian-framework'); ?>').addClass('success');
                         } catch(e) {
-                            $status.text('<?php echo esc_js( esc_html__( 'Error: Invalid JSON', 'persian-framework' ) ); ?>').addClass('error');
-                            alert('<?php echo esc_js( esc_html__( 'Invalid JSON data. Please check your input.', 'persian-framework' ) ); ?>');
+                            $status.text('<?php esc_html_e('Error: Invalid JSON', 'persian-framework'); ?>').addClass('error');
+                            alert('<?php esc_html_e('Invalid JSON data. Please check your input.', 'persian-framework'); ?>');
                         }
                     });
 
-                    // Clear
                     $(document).on('click', '.pf-ie-clear', function() {
-                        if (confirm('<?php echo esc_js( esc_html__( 'Clear the textarea?', 'persian-framework' ) ); ?>')) {
+                        if (confirm('<?php esc_html_e('Clear the textarea?', 'persian-framework'); ?>')) {
                             $textarea.val('');
                             updateCount();
-                            $status.text('<?php echo esc_js( esc_html__( 'Cleared', 'persian-framework' ) ); ?>');
+                            $status.text('<?php esc_html_e('Cleared', 'persian-framework'); ?>');
                         }
                     });
 
-                    // Validate on change
                     $textarea.on('change blur', function() {
                         var val = $textarea.val();
                         if (!val) {
-                            $status.text('<?php echo esc_js( esc_html__( 'Empty', 'persian-framework' ) ); ?>');
+                            $status.text('<?php esc_html_e('Empty', 'persian-framework'); ?>');
                             $status.removeClass('success error');
                             return;
                         }
 
                         try {
                             JSON.parse(val);
-                            $status.text('<?php echo esc_js( esc_html__( 'Valid JSON', 'persian-framework' ) ); ?>').addClass('success').removeClass('error');
+                            $status.text('<?php esc_html_e('Valid JSON', 'persian-framework'); ?>').addClass('success').removeClass('error');
                         } catch(e) {
-                            $status.text('<?php echo esc_js( esc_html__( 'Invalid JSON', 'persian-framework' ) ); ?>').addClass('error').removeClass('success');
+                            $status.text('<?php esc_html_e('Invalid JSON', 'persian-framework'); ?>').addClass('error').removeClass('success');
                         }
                     });
 
-                    // Initial validation
                     if ($textarea.val()) {
                         $textarea.trigger('blur');
                     }
@@ -266,7 +260,12 @@ class PersianFramework_Field_ImportExport {
                 })(jQuery);
             </script>
             <?php
-            $enqueued = true;
+            $pf_importexport_enqueued = true;
         }
+    }
+
+    public function sanitize($value) {
+        $value = wp_unslash($value);
+        return sanitize_textarea_field($value);
     }
 }

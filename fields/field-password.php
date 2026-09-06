@@ -44,7 +44,7 @@ class PersianFramework_Field_Password {
                        value="<?php echo esc_attr($value); ?>"
                        placeholder="<?php echo esc_attr($placeholder); ?>"
                        class="pf-field-input pf-password-input"
-                    <?php echo $required; ?> />
+                        <?php echo wp_kses_data($required); ?> />
                 <button type="button" class="pf-password-toggle">
                     <span class="dashicons dashicons-visibility"></span>
                 </button>

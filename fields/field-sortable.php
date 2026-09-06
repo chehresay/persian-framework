@@ -61,14 +61,14 @@ class PersianFramework_Field_Sortable {
                     <?php endif; ?>
                     <?php if ($max_items > 0): ?>
                         <span class="pf-sortable-max-label">
-                            <?php
-                            printf(
-                            /* translators: %d: Maximum number of items */
-                                    esc_html__('(Max: %d)', 'persian-framework'),
-                                    $max_items
-                            );
-                            ?>
-                        </span>
+                        <?php
+                        printf(
+                            /* translators: %d: Maximum number of items allowed */
+                            esc_html__('(Max: %d)', 'persian-framework'),
+                            esc_html($max_items)
+                        );
+                        ?>
+                    </span>
                     <?php endif; ?>
                 </label>
             <?php endif; ?>

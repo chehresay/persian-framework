@@ -24,15 +24,15 @@ class PersianFramework_Field_Spacing {
         $id = isset($this->field['id']) ? $this->field['id'] : '';
         $name = isset($this->field['name']) ? $this->field['name'] : $id;
         $value = wp_parse_args(
-            is_array($this->value) ? $this->value : array(),
-            array(
-                'top' => '',
-                'right' => '',
-                'bottom' => '',
-                'left' => '',
-                'unit' => isset($this->field['unit']) ? $this->field['unit'] : 'px',
-                'linked' => isset($this->field['linked']) ? $this->field['linked'] : true
-            )
+                is_array($this->value) ? $this->value : array(),
+                array(
+                        'top' => '',
+                        'right' => '',
+                        'bottom' => '',
+                        'left' => '',
+                        'unit' => isset($this->field['unit']) ? $this->field['unit'] : 'px',
+                        'linked' => isset($this->field['linked']) ? $this->field['linked'] : true
+                )
         );
 
         $units = isset($this->field['units']) ? $this->field['units'] : array('px', 'em', 'rem', '%', 'vw', 'vh');
@@ -52,10 +52,10 @@ class PersianFramework_Field_Spacing {
                 <div class="pf-spacing-controls">
                     <?php
                     $directions = array(
-                        'top' => __('Top', 'persian-framework'),
-                        'right' => __('Right', 'persian-framework'),
-                        'bottom' => __('Bottom', 'persian-framework'),
-                        'left' => __('Left', 'persian-framework')
+                            'top' => esc_html__('Top', 'persian-framework'),
+                            'right' => esc_html__('Right', 'persian-framework'),
+                            'bottom' => esc_html__('Bottom', 'persian-framework'),
+                            'left' => esc_html__('Left', 'persian-framework')
                     );
                     foreach ($directions as $dir => $label):
                         ?>
@@ -70,7 +70,7 @@ class PersianFramework_Field_Spacing {
                     <?php endforeach; ?>
 
                     <label class="pf-spacing-label pf-spacing-unit">
-                        <span class="pf-spacing-dir-label"><?php _e('Unit', 'persian-framework'); ?></span>
+                        <span class="pf-spacing-dir-label"><?php esc_html_e('Unit', 'persian-framework'); ?></span>
                         <select name="<?php echo esc_attr($name); ?>[unit]" class="pf-spacing-unit-select">
                             <?php foreach ($units as $unit): ?>
                                 <option value="<?php echo esc_attr($unit); ?>" <?php selected($value['unit'], $unit); ?>>
@@ -85,10 +85,10 @@ class PersianFramework_Field_Spacing {
                         <input type="checkbox"
                                name="<?php echo esc_attr($name); ?>[linked]"
                                value="1"
-                            <?php checked(!empty($value['linked']), true); ?>
+                                <?php checked(!empty($value['linked']), true); ?>
                                class="pf-spacing-linked-checkbox" />
                         <span class="pf-spacing-linked-icon dashicons dashicons-admin-links"></span>
-                        <span class="pf-spacing-linked-label"><?php _e('Link values', 'persian-framework'); ?></span>
+                        <span class="pf-spacing-linked-label"><?php esc_html_e('Link values', 'persian-framework'); ?></span>
                     </label>
                 </div>
             </div>
@@ -103,9 +103,9 @@ class PersianFramework_Field_Spacing {
     }
 
     private function enqueue_scripts() {
-        static $enqueued = false;
+        static $pf_spacing_enqueued = false;
 
-        if (!$enqueued) {
+        if (!$pf_spacing_enqueued) {
             ?>
             <style>
                 .pf-spacing-container {
@@ -203,11 +203,6 @@ class PersianFramework_Field_Spacing {
                     color: #94a3b8;
                 }
 
-                /* Linked values - sync inputs */
-                .pf-spacing-linked-checkbox:checked ~ .pf-spacing-input {
-                    /* Visual indication that values are linked */
-                }
-
                 @media (max-width: 768px) {
                     .pf-spacing-controls {
                         flex-direction: column;
@@ -226,14 +221,12 @@ class PersianFramework_Field_Spacing {
                 (function($) {
                     'use strict';
 
-                    // Link/unlink spacing values
                     $(document).on('change', '.pf-spacing-linked-checkbox', function() {
                         var $container = $(this).closest('.pf-spacing-controls');
                         var $inputs = $container.find('.pf-spacing-input');
                         var isLinked = $(this).is(':checked');
 
                         if (isLinked) {
-                            // Get first non-empty value
                             var firstValue = '';
                             $inputs.each(function() {
                                 if ($(this).val() !== '') {
@@ -241,12 +234,10 @@ class PersianFramework_Field_Spacing {
                                     return false;
                                 }
                             });
-                            // Set all inputs to same value
                             $inputs.val(firstValue);
                         }
                     });
 
-                    // Sync linked inputs
                     $(document).on('input', '.pf-spacing-input', function() {
                         var $container = $(this).closest('.pf-spacing-controls');
                         var $checkbox = $container.find('.pf-spacing-linked-checkbox');
@@ -260,7 +251,40 @@ class PersianFramework_Field_Spacing {
                 })(jQuery);
             </script>
             <?php
-            $enqueued = true;
+            $pf_spacing_enqueued = true;
         }
+    }
+
+    public function sanitize($value) {
+        if (!is_array($value)) {
+            return array(
+                    'top' => '',
+                    'right' => '',
+                    'bottom' => '',
+                    'left' => '',
+                    'unit' => 'px',
+                    'linked' => true
+            );
+        }
+
+        $sanitized = array();
+
+        $keys = array('top', 'right', 'bottom', 'left');
+        foreach ($keys as $key) {
+            if (isset($value[$key])) {
+                $sanitized[$key] = sanitize_text_field($value[$key]);
+            }
+        }
+
+        if (isset($value['unit'])) {
+            $allowed_units = array('px', 'em', 'rem', '%', 'vw', 'vh');
+            $sanitized['unit'] = in_array($value['unit'], $allowed_units) ? $value['unit'] : 'px';
+        }
+
+        if (isset($value['linked'])) {
+            $sanitized['linked'] = (bool) $value['linked'];
+        }
+
+        return $sanitized;
     }
 }

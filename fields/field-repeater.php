@@ -27,20 +27,15 @@ class PersianFramework_Field_Repeater {
         $name = isset($this->field['name']) ? $this->field['name'] : $id;
         $fields = isset($this->field['fields']) ? $this->field['fields'] : array();
 
-        // Ensure value is always an array
         $value = $this->normalize_value($this->value);
 
-        // Settings
         $max_items = isset($this->field['max']) ? intval($this->field['max']) : 0;
         $min_items = isset($this->field['min']) ? intval($this->field['min']) : 0;
-        $button_text = isset($this->field['button_text']) ? $this->field['button_text'] : __('Add Item', 'persian-framework');
+        $button_text = isset($this->field['button_text']) ? $this->field['button_text'] : esc_html__('Add Item', 'persian-framework');
         $sortable = isset($this->field['sortable']) ? $this->field['sortable'] : true;
         $collapsible = isset($this->field['collapsible']) ? $this->field['collapsible'] : true;
         $title_field = isset($this->field['title_field']) ? $this->field['title_field'] : '';
 
-        // ========================================
-        // FIX: Ensure slider fields have default values
-        // ========================================
         foreach ($fields as &$field_config) {
             if (isset($field_config['type']) && $field_config['type'] === 'slider') {
                 if (!isset($field_config['default']) && isset($field_config['min'])) {
@@ -50,20 +45,13 @@ class PersianFramework_Field_Repeater {
         }
         unset($field_config);
 
-        // ========================================
-        // Unique identifier for this instance
-        // ========================================
         $instance_id = 'repeater-' . $id . '-' . self::$instance_counter;
         $unique_id = $instance_id;
 
-        // Ensure we have at least minimum items
         if (empty($value) && $min_items > 0) {
             $value = array_fill(0, $min_items, array());
         }
 
-        // ========================================
-        // Pre-fetch dynamic options for select fields with 'data'
-        // ========================================
         $field_options_cache = array();
         foreach ($fields as $field_config) {
             if (isset($field_config['type']) && $field_config['type'] === 'select') {
@@ -134,31 +122,20 @@ class PersianFramework_Field_Repeater {
                             </div>
                             <div class="pf-repeater-item-body" <?php echo $collapsible ? 'style="display:block;"' : ''; ?>>
                                 <?php
-                                // ========================================
-                                // Render fields for this item
-                                // ========================================
                                 foreach ($fields as $field_config):
                                     $field_id = $field_config['id'];
                                     $field_name = $name . '[' . $index . '][' . $field_id . ']';
-                                    // ========================================
-                                    // FIX: Use a more unique ID with index and instance counter
-                                    // ========================================
                                     $field_unique_id = $id . '_' . $index . '_' . $field_id . '_' . self::$instance_counter . '_' . uniqid();
                                     $field_value = isset($item[$field_id]) ? $item[$field_id] : (isset($field_config['default']) ? $field_config['default'] : '');
 
-                                    // Determine field class
                                     $field_class = isset($field_config['class']) ? $field_config['class'] : '';
                                     $field_type = isset($field_config['type']) ? $field_config['type'] : 'text';
                                     $field_class_name = 'PersianFramework_Field_' . ucfirst(str_replace('-', '_', $field_type));
 
-                                    // Add repeater-specific class
                                     $field_config['class'] = trim($field_class . ' pf-repeater-subfield');
-
-                                    // Override name and id
                                     $field_config['name'] = $field_name;
                                     $field_config['id'] = $field_unique_id;
 
-                                    // Pass cached options for select fields
                                     if ($field_type === 'select' && isset($field_options_cache[$field_id])) {
                                         $field_config['options'] = $field_options_cache[$field_id];
                                     }
@@ -169,7 +146,6 @@ class PersianFramework_Field_Repeater {
                                         $field_obj = new $field_class_name($field_config, $field_value);
                                         $field_obj->render();
                                     } else {
-                                        // Fallback to appropriate field type
                                         $this->render_fallback_field($field_config, $field_value);
                                     }
 
@@ -210,9 +186,6 @@ class PersianFramework_Field_Repeater {
         $this->enqueue_scripts($id, $fields, $sortable, $collapsible, $title_field, $item_count, $unique_id, self::$instance_counter, $field_options_cache);
     }
 
-    /**
-     * Render fallback field when class doesn't exist
-     */
     private function render_fallback_field($field_config, $value) {
         $type = isset($field_config['type']) ? $field_config['type'] : 'text';
         $id = isset($field_config['id']) ? $field_config['id'] : '';
@@ -256,7 +229,7 @@ class PersianFramework_Field_Repeater {
 
             case 'select':
                 $options = isset($field_config['options']) ? $field_config['options'] : array();
-                $placeholder = isset($field_config['placeholder']) ? $field_config['placeholder'] : __('Select an option', 'persian-framework');
+                $placeholder = isset($field_config['placeholder']) ? $field_config['placeholder'] : esc_html__('Select an option', 'persian-framework');
                 ?>
                 <select id="<?php echo esc_attr($id); ?>"
                         name="<?php echo esc_attr($name); ?>"
@@ -278,7 +251,7 @@ class PersianFramework_Field_Repeater {
                     <input type="hidden" name="<?php echo esc_attr($name); ?>" value="0">
                     <input type="checkbox" id="<?php echo esc_attr($id); ?>"
                            name="<?php echo esc_attr($name); ?>"
-                           value="1" <?php echo $checked; ?>>
+                           value="1" <?php echo wp_kses_data($checked); ?>>
                     <label for="<?php echo esc_attr($id); ?>" class="pf-switch-label">
                         <span class="pf-switch-slider"></span>
                     </label>
@@ -299,18 +272,13 @@ class PersianFramework_Field_Repeater {
         echo '</div>';
     }
 
-    /**
-     * Get select field options from 'data' attribute
-     */
     private function get_select_options($field_config) {
         $options = array();
 
-        // If options already provided, use them
         if (isset($field_config['options']) && is_array($field_config['options'])) {
             return $field_config['options'];
         }
 
-        // Handle 'data' attribute for dynamic options
         $data_type = isset($field_config['data']) ? $field_config['data'] : '';
         $args = isset($field_config['args']) ? $field_config['args'] : array();
 
@@ -398,9 +366,6 @@ class PersianFramework_Field_Repeater {
         return $options;
     }
 
-    /**
-     * Normalize value to always be an array
-     */
     private function normalize_value($value) {
         if (is_null($value)) {
             return array();
@@ -429,7 +394,7 @@ class PersianFramework_Field_Repeater {
     }
 
     private function enqueue_scripts($id, $fields, $sortable, $collapsible, $title_field, $item_count, $unique_id, $instance_id, $field_options_cache = array()) {
-        static $enqueued = false;
+        static $pf_repeater_enqueued = false;
         static $scripts_printed = array();
 
         $script_key = $id . '_' . $instance_id;
@@ -438,7 +403,7 @@ class PersianFramework_Field_Repeater {
         }
         $scripts_printed[] = $script_key;
 
-        if (!$enqueued) {
+        if (!$pf_repeater_enqueued) {
             ?>
             <style>
                 .pf-repeater-container {
@@ -617,7 +582,6 @@ class PersianFramework_Field_Repeater {
                     margin-bottom: 4px;
                 }
 
-                /* Slider styles */
                 .pf-slider-wrapper {
                     display: flex;
                     align-items: center;
@@ -706,7 +670,7 @@ class PersianFramework_Field_Repeater {
             </style>
 
             <?php
-            $enqueued = true;
+            $pf_repeater_enqueued = true;
         }
 
         ?>
@@ -714,9 +678,6 @@ class PersianFramework_Field_Repeater {
             (function($) {
                 'use strict';
 
-                // ========================================
-                // Use unique container ID
-                // ========================================
                 var containerId = '<?php echo esc_js($unique_id); ?>';
                 var fieldId = '<?php echo esc_js($id); ?>';
                 var fieldName = '<?php echo esc_js($this->field['name']); ?>';
@@ -731,9 +692,6 @@ class PersianFramework_Field_Repeater {
 
                 var $container = $('#' + containerId);
 
-                // ========================================
-                // Calculate item counter
-                // ========================================
                 var itemCounter = 0;
                 var existingItems = $container.find('.pf-repeater-item');
                 if (existingItems.length > 0) {
@@ -756,38 +714,26 @@ class PersianFramework_Field_Repeater {
                     }
                 }
 
-                // ========================================
-                // FIX: Track initialized media fields
-                // ========================================
                 var initializedMediaFields = {};
 
-                // ========================================
-                // FIX: Initialize media fields in a repeater item
-                // ========================================
                 function initMediaFieldsInItem($item) {
                     $item.find('.pf-media-container').each(function() {
                         var $container = $(this);
                         var uniqueId = $container.data('unique-id');
 
-                        // Skip if already initialized
                         if (uniqueId && initializedMediaFields[uniqueId]) {
                             return;
                         }
 
-                        // Mark as initialized
                         if (uniqueId) {
                             initializedMediaFields[uniqueId] = true;
                         }
 
-                        // ========================================
-                        // FIX: Re-initialize media choose button
-                        // ========================================
                         var $chooseBtn = $container.find('.pf-media-choose');
                         var $removeBtn = $container.find('.pf-media-remove');
                         var $idInput = $container.find('.pf-media-id');
                         var $urlInput = $container.find('.pf-media-url');
 
-                        // Remove existing click handlers and add new ones
                         $chooseBtn.off('click').on('click', function(e) {
                             e.preventDefault();
                             var uid = $(this).data('unique-id');
@@ -812,7 +758,7 @@ class PersianFramework_Field_Repeater {
                             $url.val('');
                             $preview.html(
                                 '<span class="dashicons dashicons-format-image"></span>' +
-                                '<span class="pf-media-placeholder"><?php echo esc_js( esc_html__( 'No media selected', 'persian-framework' ) ); ?></span>'
+                                '<span class="pf-media-placeholder"><?php echo esc_html_e('No media selected', 'persian-framework'); ?></span>'
                             );
                             $(this).hide();
 
@@ -823,14 +769,10 @@ class PersianFramework_Field_Repeater {
                     });
                 }
 
-                // ========================================
-                // Render a single field
-                // ========================================
                 function renderField(fieldConfig, value) {
                     var type = fieldConfig.type || 'text';
                     var html = '';
 
-                    // Set default value for slider
                     if (type === 'slider' && (value === undefined || value === '')) {
                         value = fieldConfig.default !== undefined ? fieldConfig.default : (fieldConfig.min || 0);
                     }
@@ -917,9 +859,6 @@ class PersianFramework_Field_Repeater {
                         html += '<input type="color" id="' + fieldConfig.id + '" name="' + fieldConfig.name + '" value="' + (value || '#ffffff') + '" class="pf-field-input pf-color-input">';
                         html += '</div>';
                     } else if (type === 'image' || type === 'media') {
-                        // ========================================
-                        // FIX: Media field - use the modern render from field-media.php
-                        // ========================================
                         var mediaId = (value && value.id) ? value.id : 0;
                         var mediaUrl = (value && value.url) ? value.url : '';
                         var previewUrl = mediaUrl;
@@ -934,7 +873,6 @@ class PersianFramework_Field_Repeater {
                         }
                         html += '<div class="pf-media-container" data-unique-id="' + fieldConfig.id + '">';
 
-                        // Preview
                         html += '<div class="pf-media-preview">';
                         if (previewUrl) {
                             html += '<img src="' + previewUrl + '" alt="' + (title || '') + '" />';
@@ -944,32 +882,30 @@ class PersianFramework_Field_Repeater {
                         } else {
                             html += '<div class="pf-media-empty" style="text-align: center;">';
                             html += '<span class="dashicons dashicons-format-image"></span>';
-                            html += '<span class="pf-media-placeholder"><?php echo esc_js( esc_html__( 'No media selected', 'persian-framework' ) ); ?></span>';
+                            html += '<span class="pf-media-placeholder"><?php echo esc_html_e('No media selected', 'persian-framework'); ?></span>';
                             html += '</div>';
                         }
                         html += '</div>';
 
-                        // Fields
                         html += '<div class="pf-media-fields-wrapper" style="width: 100%; display: inline-block;">';
                         html += '<div class="pf-media-fields">';
                         html += '<div class="pf-media-field-row">';
                         html += '<input type="hidden" class="pf-media-id" name="' + fieldConfig.name + '[id]" value="' + mediaId + '" />';
                         html += '</div>';
                         html += '<div class="pf-media-field-row">';
-                        html += '<input type="text" class="pf-field-input pf-media-url" name="' + fieldConfig.name + '[url]" value="' + mediaUrl + '" placeholder="<?php echo esc_js( esc_html__( 'Media URL', 'persian-framework' ) ); ?>" />';
+                        html += '<input type="text" class="pf-field-input pf-media-url" name="' + fieldConfig.name + '[url]" value="' + mediaUrl + '" placeholder="<?php esc_attr_e('Media URL', 'persian-framework'); ?>" />';
                         html += '</div></div>';
 
-                        // Actions
                         html += '<div class="pf-media-actions">';
                         html += '<button type="button" class="pf-btn pf-btn-primary pf-media-choose" data-unique-id="' + fieldConfig.id + '">';
-                        html += '<span class="dashicons dashicons-edit"></span> ' + (mediaId ? '<?php echo esc_js( esc_html__( 'Replace', 'persian-framework' ) ); ?>' : '<?php echo esc_js( esc_html__( 'Choose', 'persian-framework' ) ); ?>');
+                        html += '<span class="dashicons dashicons-edit"></span> ' + (mediaId ? '<?php esc_html_e('Replace', 'persian-framework'); ?>' : '<?php esc_html_e('Choose', 'persian-framework'); ?>');
                         html += '</button>';
                         html += '<button type="button" class="pf-btn pf-btn-danger pf-media-remove" data-unique-id="' + fieldConfig.id + '" ' + (!mediaId ? 'style="display:none;"' : '') + '>';
-                        html += '<span class="dashicons dashicons-no-alt"></span> <?php echo esc_js( esc_html__( 'Remove', 'persian-framework' ) ); ?>';
+                        html += '<span class="dashicons dashicons-no-alt"></span> <?php esc_html_e('Remove', 'persian-framework'); ?>';
                         html += '</button>';
                         if (mediaUrl) {
                             html += '<a href="' + mediaUrl + '" target="_blank" class="pf-btn pf-btn-secondary pf-media-view">';
-                            html += '<span class="dashicons dashicons-external"></span> <?php echo esc_js( esc_html__( 'View', 'persian-framework' ) ); ?>';
+                            html += '<span class="dashicons dashicons-external"></span> <?php esc_html_e('View', 'persian-framework'); ?>';
                             html += '</a>';
                         }
                         html += '</div></div></div>';
@@ -991,7 +927,6 @@ class PersianFramework_Field_Repeater {
                         html += '<input type="number" id="' + fieldConfig.id + '" name="' + fieldConfig.name + '" value="' + (value || '') + '" min="' + min + '" max="' + max + '" class="pf-field-input">';
                         html += '</div>';
                     } else {
-                        // Default fallback
                         html += '<div class="pf-field-wrapper">';
                         if (fieldConfig.title) {
                             html += '<label class="pf-field-label" for="' + fieldConfig.id + '">' + fieldConfig.title + '</label>';
@@ -1006,9 +941,6 @@ class PersianFramework_Field_Repeater {
                     return html;
                 }
 
-                // ========================================
-                // Generate HTML for a single repeater item
-                // ========================================
                 function generateRepeaterItem(index) {
                     var html = '<div class="pf-repeater-item" data-index="' + index + '">';
                     html += '<div class="pf-repeater-item-header">';
@@ -1016,24 +948,18 @@ class PersianFramework_Field_Repeater {
                         html += '<span class="pf-repeater-handle dashicons dashicons-move"></span>';
                     }
                     html += '<span class="pf-repeater-item-title">';
-                    html += '<?php echo esc_js( esc_html__( 'Item', 'persian-framework' ) ); ?> ' + (index + 1);
+                    html += '<?php echo esc_html__('Item', 'persian-framework'); ?> ' + (index + 1);
                     html += '</span>';
                     if (collapsibleEnabled) {
                         html += '<button type="button" class="pf-repeater-toggle"><span class="dashicons dashicons-arrow-down-alt2"></span></button>';
                     }
-                    html += '<button type="button" class="pf-repeater-remove" aria-label="<?php echo esc_js( esc_html__( 'Remove', 'persian-framework' ) ); ?>"><span class="dashicons dashicons-no-alt"></span></button>';
+                    html += '<button type="button" class="pf-repeater-remove" aria-label="<?php esc_attr_e('Remove', 'persian-framework'); ?>"><span class="dashicons dashicons-no-alt"></span></button>';
                     html += '</div>';
                     html += '<div class="pf-repeater-item-body">';
 
-                    // ========================================
-                    // Render fields using fieldsConfig
-                    // ========================================
                     fieldsConfig.forEach(function(field) {
                         var fieldId = field.id;
                         var fieldType = field.type || 'text';
-                        // ========================================
-                        // FIX: Use unique ID with index and a random suffix
-                        // ========================================
                         var randomSuffix = Math.random().toString(36).substring(2, 8);
                         var uniqueFieldId = '<?php echo esc_js($id); ?>_' + index + '_' + fieldId + '_' + instanceId + '_' + randomSuffix;
                         var fieldName = '<?php echo esc_js($this->field['name']); ?>[' + index + '][' + fieldId + ']';
@@ -1043,12 +969,10 @@ class PersianFramework_Field_Repeater {
                             class: (field.class || '') + ' pf-repeater-subfield'
                         });
 
-                        // Pass cached options for select fields
                         if (fieldType === 'select' && fieldOptionsCache[fieldId]) {
                             fieldConfig.options = fieldOptionsCache[fieldId];
                         }
 
-                        // Set default value for slider
                         if (fieldType === 'slider' && fieldConfig.default === undefined) {
                             fieldConfig.default = fieldConfig.min || 0;
                         }
@@ -1062,9 +986,6 @@ class PersianFramework_Field_Repeater {
                     return html;
                 }
 
-                // ========================================
-                // Update item indexes
-                // ========================================
                 function updateItemIndexes() {
                     $container.find('.pf-repeater-item').each(function(index) {
                         var $item = $(this);
@@ -1099,25 +1020,19 @@ class PersianFramework_Field_Repeater {
                             if ($titleInput.length && $titleInput.val()) {
                                 $title.text($titleInput.val());
                             } else {
-                                $title.text('<?php echo esc_js( esc_html__( 'Item', 'persian-framework' ) ); ?> ' + (index + 1));
+                                $title.text('<?php echo esc_html__('Item', 'persian-framework'); ?> ' + (index + 1));
                             }
                         } else {
-                            $title.text('<?php echo esc_js( esc_html__( 'Item', 'persian-framework' ) ); ?> ' + (index + 1));
+                            $title.text('<?php echo esc_html__('Item', 'persian-framework'); ?> ' + (index + 1));
                         }
                     });
                 }
 
-                // ========================================
-                // Update remove buttons visibility
-                // ========================================
                 function updateRemoveButtons() {
                     var count = $container.find('.pf-repeater-item').length;
                     $container.find('.pf-repeater-remove').toggle(count > minItems);
                 }
 
-                // ========================================
-                // Update title fields
-                // ========================================
                 function updateTitleFields() {
                     if (!titleField) return;
 
@@ -1126,15 +1041,12 @@ class PersianFramework_Field_Repeater {
                         var $title = $item.find('.pf-repeater-item-title');
                         var $field = $item.find('input[name*="[' + titleField + ']"]');
                         if ($field.length) {
-                            var value = $field.val() || '<?php echo esc_js( esc_html__( 'Item', 'persian-framework' ) ); ?> ' + (index + 1);
+                            var value = $field.val() || '<?php echo esc_html__('Item', 'persian-framework'); ?> ' + (index + 1);
                             $title.text(value);
                         }
                     });
                 }
 
-                // ========================================
-                // Initialize slider events
-                // ========================================
                 function initSliderEvents() {
                     $container.find('.pf-slider-input').off('input').on('input', function() {
                         var $this = $(this);
@@ -1155,9 +1067,6 @@ class PersianFramework_Field_Repeater {
                     });
                 }
 
-                // ========================================
-                // Init SortableJS
-                // ========================================
                 function initSortable() {
                     if (!sortableEnabled || typeof Sortable === 'undefined') return;
 
@@ -1190,22 +1099,15 @@ class PersianFramework_Field_Repeater {
                     }
                 }
 
-                // ========================================
-                // Add event listeners for this specific container
-                // ========================================
                 var $addBtn = $('.pf-repeater-add[data-target="' + containerId + '"]');
                 var $clearBtn = $('.pf-repeater-clear[data-target="' + containerId + '"]');
 
-                // ========================================
-                // Add new item - with minimize existing items
-                // ========================================
                 $addBtn.on('click', function() {
                     if (maxItems > 0 && $container.find('.pf-repeater-item').length >= maxItems) {
-                        alert('<?php echo esc_js( esc_html__( 'Maximum number of items reached.', 'persian-framework' ) ); ?>');
+                        alert('<?php esc_html_e('Maximum number of items reached.', 'persian-framework'); ?>');
                         return;
                     }
 
-                    // Minimize all existing items
                     if (collapsibleEnabled) {
                         $container.find('.pf-repeater-item-body').slideUp(300);
                         $container.find('.pf-repeater-toggle').addClass('collapsed');
@@ -1215,7 +1117,6 @@ class PersianFramework_Field_Repeater {
                     var $item = $(generateRepeaterItem(index));
                     $container.append($item);
 
-                    // Ensure new item is expanded
                     if (collapsibleEnabled) {
                         var $newBody = $item.find('.pf-repeater-item-body');
                         var $newToggle = $item.find('.pf-repeater-toggle');
@@ -1223,9 +1124,6 @@ class PersianFramework_Field_Repeater {
                         $newToggle.removeClass('collapsed');
                     }
 
-                    // ========================================
-                    // FIX: Initialize media fields in new item
-                    // ========================================
                     setTimeout(function() {
                         initMediaFieldsInItem($item);
                     }, 50);
@@ -1233,10 +1131,7 @@ class PersianFramework_Field_Repeater {
                     updateItemIndexes();
                     updateRemoveButtons();
                     updateTitleFields();
-
-                    // Re-initialize slider events
                     setTimeout(initSliderEvents, 100);
-
                     $(document).trigger('pf-repeater-add', [fieldId, instanceId, $item]);
 
                     if (sortableEnabled) {
@@ -1246,9 +1141,6 @@ class PersianFramework_Field_Repeater {
                     $clearBtn.show();
                 });
 
-                // ========================================
-                // Remove item
-                // ========================================
                 $(document).on('click', '.pf-repeater-remove', function() {
                     var $item = $(this).closest('.pf-repeater-item');
                     if ($item.closest('#' + containerId).length === 0) return;
@@ -1256,11 +1148,11 @@ class PersianFramework_Field_Repeater {
                     var count = $container.find('.pf-repeater-item').length;
 
                     if (count <= minItems) {
-                        alert('<?php echo esc_js( esc_html__( 'Minimum number of items required.', 'persian-framework' ) ); ?>');
+                        alert('<?php esc_html_e('Minimum number of items required.', 'persian-framework'); ?>');
                         return;
                     }
 
-                    if (confirm('<?php echo esc_js( esc_html__( 'Remove this item?', 'persian-framework' ) ); ?>')) {
+                    if (confirm('<?php esc_html_e('Remove this item?', 'persian-framework'); ?>')) {
                         $item.fadeOut(300, function() {
                             $item.remove();
                             updateItemIndexes();
@@ -1276,17 +1168,14 @@ class PersianFramework_Field_Repeater {
                     }
                 });
 
-                // ========================================
-                // Clear all items
-                // ========================================
                 $clearBtn.on('click', function() {
                     var count = $container.find('.pf-repeater-item').length;
                     if (count <= minItems) {
-                        alert('<?php echo esc_js( esc_html__( 'Minimum number of items required.', 'persian-framework' ) ); ?>');
+                        alert('<?php esc_html_e('Minimum number of items required.', 'persian-framework'); ?>');
                         return;
                     }
 
-                    if (confirm('<?php echo esc_js( esc_html__( 'Remove all items?', 'persian-framework' ) ); ?>')) {
+                    if (confirm('<?php esc_html_e('Remove all items?', 'persian-framework'); ?>')) {
                         $container.find('.pf-repeater-item').fadeOut(300, function() {
                             $container.empty();
                             for (var i = 0; i < minItems; i++) {
@@ -1300,7 +1189,6 @@ class PersianFramework_Field_Repeater {
                             $clearBtn.hide();
 
                             setTimeout(initSliderEvents, 100);
-
                             $(document).trigger('pf-repeater-clear', [fieldId, instanceId]);
 
                             if (sortableEnabled) {
@@ -1310,9 +1198,6 @@ class PersianFramework_Field_Repeater {
                     }
                 });
 
-                // ========================================
-                // Toggle item body
-                // ========================================
                 $(document).on('click', '.pf-repeater-toggle', function() {
                     if (!collapsibleEnabled) return;
 
@@ -1324,9 +1209,6 @@ class PersianFramework_Field_Repeater {
                     $(this).toggleClass('collapsed');
                 });
 
-                // ========================================
-                // Update title on input change
-                // ========================================
                 $(document).on('input', '.pf-repeater-item input, .pf-repeater-item textarea', function() {
                     if (!titleField) return;
 
@@ -1336,14 +1218,11 @@ class PersianFramework_Field_Repeater {
                     var $field = $item.find('input[name*="[' + titleField + ']"]');
                     if ($field.length && $field.is(this)) {
                         var $title = $item.find('.pf-repeater-item-title');
-                        var value = $(this).val() || '<?php echo esc_js( esc_html__( 'Item', 'persian-framework' ) ); ?> ' + ($item.data('index') + 1);
+                        var value = $(this).val() || '<?php echo esc_html__('Item', 'persian-framework'); ?> ' + ($item.data('index') + 1);
                         $title.text(value);
                     }
                 });
 
-                // ========================================
-                // Initialize on document ready
-                // ========================================
                 $(document).ready(function() {
                     var existingItems = $container.find('.pf-repeater-item');
                     if (existingItems.length > 0) {
@@ -1365,9 +1244,6 @@ class PersianFramework_Field_Repeater {
                         }, 100);
                     }
 
-                    // ========================================
-                    // FIX: Initialize media fields in all items
-                    // ========================================
                     $container.find('.pf-repeater-item').each(function() {
                         initMediaFieldsInItem($(this));
                     });
@@ -1387,7 +1263,6 @@ class PersianFramework_Field_Repeater {
                     }
                 });
 
-                // Re-init on tab switch
                 $(document).on('pf-tab-switch', function() {
                     if (sortableEnabled) {
                         setTimeout(initSortable, 400);
@@ -1398,5 +1273,27 @@ class PersianFramework_Field_Repeater {
             })(jQuery);
         </script>
         <?php
+    }
+
+    public function sanitize($value) {
+        if (!is_array($value)) {
+            return array();
+        }
+
+        $sanitized = array();
+        foreach ($value as $index => $item) {
+            if (is_array($item)) {
+                $sanitized[$index] = array();
+                foreach ($item as $sub_key => $sub_value) {
+                    if (is_array($sub_value)) {
+                        $sanitized[$index][sanitize_text_field($sub_key)] = $this->sanitize($sub_value);
+                    } else {
+                        $sanitized[$index][sanitize_text_field($sub_key)] = sanitize_text_field($sub_value);
+                    }
+                }
+            }
+        }
+
+        return $sanitized;
     }
 }

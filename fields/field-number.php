@@ -51,7 +51,7 @@ class PersianFramework_Field_Number {
                        step="<?php echo esc_attr($step); ?>"
                        placeholder="<?php echo esc_attr($placeholder); ?>"
                        class="pf-field-input pf-number-input"
-                    <?php echo $required; ?> />
+                        <?php echo wp_kses_data($required); ?> />
                 <button type="button" class="pf-number-btn pf-number-plus">+</button>
             </div>
 
@@ -65,9 +65,9 @@ class PersianFramework_Field_Number {
     }
 
     private function enqueue_scripts() {
-        static $enqueued = false;
+        static $pf_number_enqueued = false;
 
-        if (!$enqueued) {
+        if (!$pf_number_enqueued) {
             ?>
             <style>
                 .pf-number-wrapper {
@@ -128,7 +128,27 @@ class PersianFramework_Field_Number {
                 })(jQuery);
             </script>
             <?php
-            $enqueued = true;
+            $pf_number_enqueued = true;
         }
+    }
+
+    public function sanitize($value) {
+        $value = wp_unslash($value);
+
+        if (!is_numeric($value)) {
+            return isset($this->field['default']) ? $this->field['default'] : 0;
+        }
+
+        $value = floatval($value);
+
+        if (isset($this->field['min']) && $value < $this->field['min']) {
+            $value = $this->field['min'];
+        }
+
+        if (isset($this->field['max']) && $value > $this->field['max']) {
+            $value = $this->field['max'];
+        }
+
+        return $value;
     }
 }

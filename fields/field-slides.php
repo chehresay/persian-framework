@@ -306,7 +306,7 @@ class PersianFramework_Field_Slides {
             }
 
             .pf-slides-item {
-                border: 2px solid #e8edf4;
+                border: 1px solid #e8edf4;
                 border-radius: 12px;
                 background: white;
                 transition: all 0.2s ease;
@@ -440,7 +440,7 @@ class PersianFramework_Field_Slides {
             .pf-slides-field .pf-field-input {
                 width: 100%;
                 padding: 10px 14px;
-                border: 2px solid #e8edf4;
+                border: 1px solid #e8edf4;
                 border-radius: 8px;
                 font-size: 14px;
                 font-family: inherit;
@@ -493,7 +493,7 @@ class PersianFramework_Field_Slides {
                 border-radius: 8px;
                 overflow: hidden;
                 background: #f8f9fa;
-                border: 2px solid #e8edf4;
+                border: 1px solid #e8edf4;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -904,8 +904,33 @@ class PersianFramework_Field_Slides {
                     container.sortableInstance = sortable;
                 }
 
+
+
                 // Initialize on document ready
                 $(document).ready(function() {
+                    var existingItems = $container.find('.pf-slides-item');
+                    if (existingItems.length > 0) {
+                        var maxIndex = -1;
+                        existingItems.each(function() {
+                            var index = parseInt($(this).data('index'));
+                            if (!isNaN(index) && index > maxIndex) {
+                                maxIndex = index;
+                            }
+                        });
+                        if (maxIndex >= 0) {
+                            itemCounter = maxIndex + 1;
+                        } else {
+                            itemCounter = existingItems.length;
+                        }
+
+                        // ✅ Collapse all items on page load
+                        setTimeout(function() {
+                            $container.find('.pf-slides-toggle').addClass('collapsed');
+                            $container.find('.pf-slides-item-body').slideUp(300);
+                        }, 100);
+                    }
+
+
                     updateItemIndexes();
                     updateRemoveButtons();
                     updateSlideTitles();

@@ -24,34 +24,31 @@ class PersianFramework_Field_Dimensions {
         $id = isset($this->field['id']) ? $this->field['id'] : '';
         $name = isset($this->field['name']) ? $this->field['name'] : $id;
 
-        // Default values
         $defaults = array(
-            'width' => '',
-            'height' => '',
-            'min-width' => '',
-            'max-width' => '',
-            'min-height' => '',
-            'max-height' => '',
-            'unit' => 'px'
+                'width' => '',
+                'height' => '',
+                'min-width' => '',
+                'max-width' => '',
+                'min-height' => '',
+                'max-height' => '',
+                'unit' => 'px'
         );
 
         $value = wp_parse_args(
-            is_array($this->value) ? $this->value : array(),
-            $defaults
+                is_array($this->value) ? $this->value : array(),
+                $defaults
         );
 
-        // Basic dimensions
         $basic_keys = array(
-            'width' => _e('Width', 'persian-framework'),
-            'height' => _e('Height', 'persian-framework')
+                'width' => esc_html__('Width', 'persian-framework'),
+                'height' => esc_html__('Height', 'persian-framework')
         );
 
-        // Advanced dimensions
         $advanced_keys = array(
-            'min-width' => _e('Min Width', 'persian-framework'),
-            'max-width' => _e('Max Width', 'persian-framework'),
-            'min-height' => _e('Min Height', 'persian-framework'),
-            'max-height' => _e('Max Height', 'persian-framework')
+                'min-width' => esc_html__('Min Width', 'persian-framework'),
+                'max-width' => esc_html__('Max Width', 'persian-framework'),
+                'min-height' => esc_html__('Min Height', 'persian-framework'),
+                'max-height' => esc_html__('Max Height', 'persian-framework')
         );
 
         $show_advanced = isset($this->field['advanced']) && $this->field['advanced'];
@@ -87,7 +84,7 @@ class PersianFramework_Field_Dimensions {
                         <div class="pf-dimensions-advanced-toggle">
                             <button type="button" class="pf-dimensions-toggle-btn">
                                 <span class="dashicons dashicons-arrow-down-alt2"></span>
-                                <?php _e('Advanced Dimensions', 'persian-framework'); ?>
+                                <?php esc_html_e('Advanced Dimensions', 'persian-framework'); ?>
                             </button>
                         </div>
                         <div class="pf-dimensions-advanced-fields" style="display:none;">
@@ -108,7 +105,7 @@ class PersianFramework_Field_Dimensions {
 
                 <div class="pf-dimensions-unit">
                     <label class="pf-dimensions-label">
-                        <span class="pf-dimensions-label-text"><?php _e('Unit', 'persian-framework'); ?></span>
+                        <span class="pf-dimensions-label-text"><?php esc_html_e('Unit', 'persian-framework'); ?></span>
                         <select name="<?php echo esc_attr($name); ?>[unit]" class="pf-dimensions-unit-select">
                             <?php
                             $units = array('px', '%', 'rem', 'em', 'vw', 'vh', 'auto');
@@ -133,9 +130,9 @@ class PersianFramework_Field_Dimensions {
     }
 
     private function enqueue_scripts() {
-        static $enqueued = false;
+        static $pf_dimensions_enqueued = false;
 
-        if (!$enqueued) {
+        if (!$pf_dimensions_enqueued) {
             ?>
             <style>
                 .pf-dimensions-container {
@@ -277,7 +274,6 @@ class PersianFramework_Field_Dimensions {
                 (function($) {
                     'use strict';
 
-                    // Toggle advanced dimensions
                     $(document).on('click', '.pf-dimensions-toggle-btn', function() {
                         var $btn = $(this);
                         var $fields = $btn.closest('.pf-dimensions-advanced').find('.pf-dimensions-advanced-fields');
@@ -288,7 +284,37 @@ class PersianFramework_Field_Dimensions {
                 })(jQuery);
             </script>
             <?php
-            $enqueued = true;
+            $pf_dimensions_enqueued = true;
         }
+    }
+
+    public function sanitize($value) {
+        if (!is_array($value)) {
+            return array(
+                    'width' => '',
+                    'height' => '',
+                    'min-width' => '',
+                    'max-width' => '',
+                    'min-height' => '',
+                    'max-height' => '',
+                    'unit' => 'px'
+            );
+        }
+
+        $sanitized = array();
+
+        $keys = array('width', 'height', 'min-width', 'max-width', 'min-height', 'max-height');
+        foreach ($keys as $key) {
+            if (isset($value[$key])) {
+                $sanitized[$key] = sanitize_text_field($value[$key]);
+            }
+        }
+
+        if (isset($value['unit'])) {
+            $allowed_units = array('px', '%', 'rem', 'em', 'vw', 'vh', 'auto');
+            $sanitized['unit'] = in_array($value['unit'], $allowed_units) ? $value['unit'] : 'px';
+        }
+
+        return $sanitized;
     }
 }

@@ -146,7 +146,8 @@ class PersianFramework_Metabox {
             $field['id'] = $field_id;
 
             if (class_exists('PersianFramework_Fields')) {
-                echo PersianFramework_Fields::render_field($field, $value);
+                $field_html = PersianFramework_Fields::render_field($field, $value);
+                echo wp_kses_post($field_html);
             }
 
             if (isset($field['description'])) {

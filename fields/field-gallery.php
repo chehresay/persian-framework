@@ -37,6 +37,7 @@ class PersianFramework_Field_Gallery {
                     <?php if ($max_items > 0): ?>
                         <span class="pf-gallery-max">
                             <?php
+                            /* translators: %d: Maximum number of images allowed in the gallery */
                             printf( esc_html__( '(Max: %d)', 'persian-framework' ), esc_html( $max_items ) );
                             ?>
                         </span>
@@ -72,16 +73,16 @@ class PersianFramework_Field_Gallery {
                 <div class="pf-gallery-actions">
                     <button type="button" class="pf-btn pf-btn-secondary pf-gallery-choose">
                         <span class="dashicons dashicons-format-gallery"></span>
-                        <?php _e('Add Images', 'persian-framework'); ?>
+                        <?php esc_html_e('Add Images', 'persian-framework'); ?>
                     </button>
                     <button type="button" class="pf-btn pf-btn-danger pf-gallery-clear" style="<?php echo empty($value) ? 'display:none;' : ''; ?>">
                         <span class="dashicons dashicons-trash"></span>
-                        <?php _e('Clear All', 'persian-framework'); ?>
+                        <?php esc_html_e('Clear All', 'persian-framework'); ?>
                     </button>
                 </div>
 
                 <p class="pf-gallery-empty" style="<?php echo !empty($value) ? 'display:none;' : ''; ?>">
-                    <?php _e('No images selected. Click "Add Images" to select.', 'persian-framework'); ?>
+                    <?php esc_html_e('No images selected. Click "Add Images" to select.', 'persian-framework'); ?>
                 </p>
 
                 <?php if (isset($this->field['desc'])): ?>
@@ -95,9 +96,9 @@ class PersianFramework_Field_Gallery {
     }
 
     private function enqueue_scripts() {
-        static $enqueued = false;
+        static $pf_gallery_enqueued = false;
 
-        if (!$enqueued) {
+        if (!$pf_gallery_enqueued) {
             wp_enqueue_media();
 
             ?>
@@ -255,7 +256,8 @@ class PersianFramework_Field_Gallery {
 
                                 // Check max limit
                                 if (maxItems > 0 && $list.find('.pf-gallery-item').length >= maxItems) {
-                                    alert('<?php esc_js(__('Maximum gallery items reached.', 'persian-framework')); ?>');
+                                    /* translators: %s: Maximum number of items allowed */
+                                    alert('<?php esc_html_e('Maximum gallery items reached.', 'persian-framework'); ?>');
                                     return false;
                                 }
 
@@ -267,7 +269,7 @@ class PersianFramework_Field_Gallery {
                                 var $item = $('<div class="pf-gallery-item" data-id="' + id + '">' +
                                     '<img src="' + url + '" alt="">' +
                                     '<div class="pf-gallery-item-overlay">' +
-                                    '<button type="button" class="pf-gallery-remove" aria-label="<?php esc_js(__('Remove', 'persian-framework')); ?>">' +
+                                    '<button type="button" class="pf-gallery-remove" aria-label="<?php esc_attr_e('Remove', 'persian-framework'); ?>">' +
                                     '<span class="dashicons dashicons-no-alt"></span>' +
                                     '</button>' +
                                     '</div>' +
@@ -311,7 +313,7 @@ class PersianFramework_Field_Gallery {
                         var $container = $(this).closest('.pf-gallery-container');
                         var $list = $container.find('.pf-gallery-list');
 
-                        if (confirm('<?php esc_js(__('Remove all images?', 'persian-framework')); ?>')) {
+                        if (confirm('<?php esc_html_e('Remove all images?', 'persian-framework'); ?>')) {
                             $list.empty();
                             $(this).hide();
                             $container.find('.pf-gallery-empty').show();
@@ -333,7 +335,24 @@ class PersianFramework_Field_Gallery {
                 })(jQuery);
             </script>
             <?php
-            $enqueued = true;
+            $pf_gallery_enqueued = true;
         }
+    }
+
+    public function sanitize($value) {
+        if (!is_array($value)) {
+            return array();
+        }
+
+        $sanitized = array();
+        foreach ($value as $item) {
+            if (is_numeric($item)) {
+                $sanitized[] = absint($item);
+            } elseif (is_array($item) && isset($item['id'])) {
+                $sanitized[] = absint($item['id']);
+            }
+        }
+
+        return $sanitized;
     }
 }

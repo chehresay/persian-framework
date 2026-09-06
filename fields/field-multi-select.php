@@ -25,7 +25,7 @@ class PersianFramework_Field_MultiSelect {
         $name = isset($this->field['name']) ? $this->field['name'] : $id;
         $value = $this->value !== null ? (array) $this->value : (isset($this->field['default']) ? (array) $this->field['default'] : array());
         $options = isset($this->field['options']) ? $this->field['options'] : array();
-        $placeholder = isset($this->field['placeholder']) ? $this->field['placeholder'] : __('Select options', 'persian-framework');
+        $placeholder = isset($this->field['placeholder']) ? $this->field['placeholder'] : esc_html__('Select options', 'persian-framework');
         $searchable = isset($this->field['searchable']) ? $this->field['searchable'] : true;
         $max = isset($this->field['max']) ? $this->field['max'] : 0;
         $required = isset($this->field['required']) && $this->field['required'] ? 'required' : '';
@@ -42,7 +42,12 @@ class PersianFramework_Field_MultiSelect {
                         <span class="pf-required">*</span>
                     <?php endif; ?>
                     <?php if ($max > 0): ?>
-                        <span class="pf-select-max"><?php printf(__('(Max: %d)', 'persian-framework'), $max); ?></span>
+                        <span class="pf-select-max">
+                            <?php
+                            /* translators: %d: Maximum number of items allowed */
+                            printf( esc_html__( '(Max: %d)', 'persian-framework' ), esc_html( $max ) );
+                            ?>
+                        </span>
                     <?php endif; ?>
                 </label>
             <?php endif; ?>
@@ -62,11 +67,11 @@ class PersianFramework_Field_MultiSelect {
                         name="<?php echo esc_attr($name); ?>[]"
                         class="pf-field-input pf-multi-select"
                         multiple
-                    <?php echo $required; ?>
-                        size="<?php echo min(count($options) + 1, 10); ?>">
+                        <?php echo wp_kses_data($required); ?>
+                        size="<?php echo esc_attr(min(count($options) + 1, 10)); ?>">
                     <?php foreach ($options as $key => $label): ?>
                         <option value="<?php echo esc_attr($key); ?>"
-                            <?php echo in_array((string) $key, array_map('strval', $value), true) ? 'selected' : ''; ?>>
+                                <?php echo in_array((string) $key, array_map('strval', $value), true) ? 'selected' : ''; ?>>
                             <?php echo esc_html($label); ?>
                         </option>
                     <?php endforeach; ?>
@@ -94,9 +99,9 @@ class PersianFramework_Field_MultiSelect {
     }
 
     private function enqueue_scripts() {
-        static $enqueued = false;
+        static $pf_multiselect_enqueued = false;
 
-        if (!$enqueued) {
+        if (!$pf_multiselect_enqueued) {
             ?>
             <style>
                 .pf-multi-select-container {
@@ -233,7 +238,6 @@ class PersianFramework_Field_MultiSelect {
                 (function($) {
                     'use strict';
 
-                    // Search filter
                     $(document).on('input', '.pf-multi-select-search-input', function() {
                         var $container = $(this).closest('.pf-multi-select-container');
                         var $select = $container.find('.pf-multi-select');
@@ -245,22 +249,18 @@ class PersianFramework_Field_MultiSelect {
                         });
                     });
 
-                    // Update tags when selection changes
                     $(document).on('change', '.pf-multi-select', function() {
                         var $container = $(this).closest('.pf-multi-select-container');
                         var $tags = $container.find('.pf-multi-select-tags');
                         var max = parseInt($container.data('max')) || 0;
                         var selected = $(this).val() || [];
 
-                        // Check max limit
                         if (max > 0 && selected.length > max) {
-                            alert('<?php esc_js(__('Maximum selection limit reached.', 'persian-framework')); ?>');
-                            // Deselect last added
+                            alert('<?php esc_html_e('Maximum selection limit reached.', 'persian-framework'); ?>');
                             $(this).find('option:selected:last').prop('selected', false);
                             return;
                         }
 
-                        // Update tags
                         $tags.empty();
                         var $select = $(this);
                         $select.find('option:selected').each(function() {
@@ -268,16 +268,14 @@ class PersianFramework_Field_MultiSelect {
                             var label = $(this).text();
                             var $tag = $('<span class="pf-multi-select-tag" data-value="' + value + '">' +
                                 label +
-                                '<button type="button" class="pf-multi-select-tag-remove" aria-label="<?php esc_js(__('Remove', 'persian-framework')); ?>">×</button>' +
+                                '<button type="button" class="pf-multi-select-tag-remove" aria-label="<?php esc_attr_e('Remove', 'persian-framework'); ?>">×</button>' +
                                 '</span>');
                             $tags.append($tag);
                         });
 
-                        // Trigger change event
                         $(this).trigger('pf-multi-select-change', [selected]);
                     });
 
-                    // Remove tag
                     $(document).on('click', '.pf-multi-select-tag-remove', function(e) {
                         e.stopPropagation();
                         var $tag = $(this).closest('.pf-multi-select-tag');
@@ -289,7 +287,6 @@ class PersianFramework_Field_MultiSelect {
                         $select.trigger('change');
                     });
 
-                    // Initialize tags on load
                     $(document).ready(function() {
                         $('.pf-multi-select').each(function() {
                             $(this).trigger('change');
@@ -299,7 +296,27 @@ class PersianFramework_Field_MultiSelect {
                 })(jQuery);
             </script>
             <?php
-            $enqueued = true;
+            $pf_multiselect_enqueued = true;
         }
+    }
+
+    public function sanitize($value) {
+        $options = isset($this->field['options']) ? array_keys($this->field['options']) : array();
+        $value = (array) $value;
+
+        $sanitized = array();
+        foreach ($value as $item) {
+            $item = sanitize_text_field($item);
+            if (in_array($item, $options, true)) {
+                $sanitized[] = $item;
+            }
+        }
+
+        $max = isset($this->field['max']) ? intval($this->field['max']) : 0;
+        if ($max > 0 && count($sanitized) > $max) {
+            $sanitized = array_slice($sanitized, 0, $max);
+        }
+
+        return $sanitized;
     }
 }

@@ -43,7 +43,7 @@ class PersianFramework_Field_Email {
                    value="<?php echo esc_attr($value); ?>"
                    placeholder="<?php echo esc_attr($placeholder); ?>"
                    class="pf-field-input"
-                <?php echo $required; ?> />
+                    <?php echo wp_kses_data($required); ?> />
 
             <?php if (isset($this->field['desc'])): ?>
                 <p class="pf-field-desc"><?php echo esc_html($this->field['desc']); ?></p>
@@ -51,5 +51,10 @@ class PersianFramework_Field_Email {
         </div>
 
         <?php
+    }
+
+    public function sanitize($value) {
+        $value = wp_unslash($value);
+        return sanitize_email($value);
     }
 }
