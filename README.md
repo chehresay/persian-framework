@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Persian Framework](https://img.shields.io/badge/version-1.0.1-blue)
+![Persian Framework](https://img.shields.io/badge/version-1.0.2-blue)
 ![WordPress](https://img.shields.io/badge/WordPress-5.0+-green)
 ![PHP](https://img.shields.io/badge/PHP-7.4+-purple)
 ![License](https://img.shields.io/badge/license-GPLv2-yellow)
@@ -260,6 +260,41 @@ $framework->add_section([
     ],
 ]);
 ```
+
+## 🎯 Using Saved Data in Your Theme
+
+After saving your settings, retrieve them anywhere in your theme:
+
+```php
+// Get all options
+$options = get_option('my_options');
+
+// Get single option with fallback
+$logo = $options['site_logo'] ?? '';
+$primary_color = $options['primary_color'] ?? '#0073aa';
+
+// Display safely
+if (!empty($logo)) {
+    echo '<img src="' . esc_url($logo) . '" alt="' . esc_attr(get_bloginfo('name')) . '">';
+}
+
+// Inline CSS
+echo '<style>
+    .site-header {
+        background-color: ' . esc_attr($primary_color) . ';
+    }
+</style>';
+
+// Repeater example
+$team = $options['team_members'] ?? array();
+foreach ($team as $member) {
+    echo '<div class="team-member">';
+    echo '<h3>' . esc_html($member['name']) . '</h3>';
+    echo '<p>' . esc_html($member['position']) . '</p>';
+    echo '</div>';
+}
+```
+
 
 ## 🎯 Metabox Usage
 
