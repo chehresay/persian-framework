@@ -339,7 +339,7 @@ if (class_exists('PersianFramework_Metabox')) {
 
 ## 💝 Donations
 
-If you find Cordova Pro GUI useful, please consider supporting its development:
+If you find Persian Framework useful, please consider supporting its development:
 
 ### Cryptocurrency
 
