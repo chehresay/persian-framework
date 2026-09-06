@@ -71,7 +71,7 @@
 - 📝 **Well Documented** - Clean, documented code
 - 🎨 **Customizable** - Override templates and styles
 - 🔌 **Extensible** - Add custom field types
-- 🧪 **Tested** - Tested up to WordPress 6.7
+- 🧪 **Tested** - Tested up to WordPress 7.1
 
 ---
 
